@@ -63,23 +63,38 @@ const sessions = defineCollection({
  *  labs — internals sections. Body is MDX and may embed islands.
  * ------------------------------------------------------------------ */
 
+/**
+ * Interactive labs available to a section. The island is named here rather
+ * than embedded in the body, so lab files stay plain Markdown — Swift code
+ * is full of braces, which MDX would try to evaluate.
+ *
+ * 'inspector:<id>' renders src/data/inspectors/<id>.ts through the generic
+ * Inspector component, so a new pick-a-case lab is a data file and nothing else.
+ */
+const islandId = z.union([
+  z.enum(['allocation', 'cow', 'shallow-copy', 'capture', 'reentrancy']),
+  z.string().regex(/^inspector:[a-z0-9-]+$/, 'Use inspector:<data-file-name>'),
+]);
+
 const labs = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/labs' }),
   schema: z.object({
-    /** Stable slug used by sessions[].labs and by deep links. */
+    /** Section heading. May contain inline <code>. */
     title: z.string(),
     /** Which day-block this lab sits under, as an ISO date. */
     day: isoDate,
-    /** Order within the day. */
+    /** Order within the day. Section numbers (01, 02, …) are derived. */
     order: z.number().int(),
-    /** Optional myth callout rendered above the lab. */
+    /** Optional myth callout rendered above the intro. */
     myth: z.string().optional(),
     /** Lead paragraph under the heading. */
     intro: z.string().optional(),
+    /** HTML rendered between the intro and the lab. Rare. */
+    preamble: z.string().optional(),
+    /** The interactive component, if this section has one. */
+    island: islandId.optional(),
     /** Footnote ids attached to the heading. Must exist in `notes`. */
     notes: z.array(z.string()).default([]),
-    /** The "Say it as" callout. */
-    sayIt: z.string().optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),

@@ -1,0 +1,54 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Fn from '~/components/Fn.astro';
+import AllocationLab from '~/components/react/labs/AllocationLab';
+import CowLab from '~/components/react/labs/CowLab';
+import ShallowCopyLab from '~/components/react/labs/ShallowCopyLab';
+import CaptureLab from '~/components/react/labs/CaptureLab';
+import ReentrancyLab from '~/components/react/labs/ReentrancyLab';
+import Inspector from '~/components/react/labs/Inspector';
+import type { InspectorSpec } from '~/lib/inspector';
+
+interface Props { lab: CollectionEntry<'labs'>; num: number; }
+const { lab, num } = Astro.props;
+const { Content } = await render(lab);
+const d = lab.data;
+
+const specs = import.meta.glob<{ default: InspectorSpec }>('~/data/inspectors/*.ts', { eager: true });
+const specFor = (id: string) => {
+  const hit = Object.entries(specs).find(([path]) => path.endsWith(`/${id}.ts`));
+  if (!hit) {
+    throw new Error(
+      `Lab "${lab.id}" asks for inspector:${id}, but src/data/inspectors/${id}.ts does not exist.`,
+    );
+  }
+  return hit[1].default;
+};
+
+// client:idle rather than client:visible: day-2 and day-3 labs start inside a
+// display:none tab panel, where an IntersectionObserver never fires.
+const island = d.island;
+const inspectorId = island?.startsWith('inspector:') ? island.slice('inspector:'.length) : null;
+---
+<section class="labsection" id={lab.id}>
+  <p class="num">{String(num).padStart(2, '0')}</p>
+  <h2>
+    <Fragment set:html={d.title} />
+    {d.notes.map((n) => <Fn id={n} />)}
+  </h2>
+
+  {d.myth && (
+    <div class="myth"><b>The myth</b>{d.myth}</div>
+  )}
+  {d.intro && <p class="intro" set:html={d.intro} />}
+  {d.preamble && <Fragment set:html={d.preamble} />}
+
+  {island === 'allocation' && <AllocationLab client:idle />}
+  {island === 'cow' && <CowLab client:idle />}
+  {island === 'shallow-copy' && <ShallowCopyLab client:idle />}
+  {island === 'capture' && <CaptureLab client:idle />}
+  {island === 'reentrancy' && <ReentrancyLab client:idle />}
+  {inspectorId && <Inspector client:idle spec={specFor(inspectorId)} />}
+
+  <Content />
+</section>

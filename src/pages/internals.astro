@@ -1,0 +1,87 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import NoteStore from '~/components/NoteStore.astro';
+import LabSection from '~/components/LabSection.astro';
+import { labsByDay, allLabs } from '~/lib/content';
+import { formatShort, sessionOrdinal } from '~/lib/progress';
+
+const days = await labsByDay();
+const all = await allLabs();
+// Section numbers run continuously across days, exactly as the original did.
+const numberOf = new Map(all.map((l, i) => [l.id, i + 1]));
+
+const DAY_TITLE: Record<string, string> = {
+  '2026-08-24': 'Value semantics & ARC',
+  '2026-08-25': 'Concurrency',
+  '2026-08-26': 'Sendable, proven',
+};
+---
+<Shell title="Internals" track="internals" description="Swift internals labs — working models to poke at.">
+  <p class="eyebrow">Track 03 · W1–3 internals</p>
+  <h1>Where things live,<br />and <em>who owns them</em>.</h1>
+  <p class="lede">
+    Value semantics, copy-on-write, and ARC — the three ideas Swift concurrency is built on.
+    Each one is a working model to poke at, not a paragraph to reread.
+  </p>
+
+  <div class="legend">
+    <span><i class="sw" style="background:var(--stack)"></i>Stack — scoped, automatic</span>
+    <span><i class="sw" style="background:var(--heap)"></i>Heap — allocated, reference-counted</span>
+  </div>
+
+  <div class="dayswitch" id="dayswitch">
+    {days.map(({ day }, i) => (
+      <a href={`#day-${day}`} data-day={day} class={i === 0 ? 'on' : ''}>
+        <span class="dt">{formatShort(day)} · day {sessionOrdinal(day)}</span>
+        {DAY_TITLE[day] ?? 'Session'}
+      </a>
+    ))}
+  </div>
+
+  {days.map(({ day, labs }, i) => (
+    <div class="dayblock" data-day={day} id={`day-${day}`} style={i === 0 ? '' : 'display:none'}>
+      {labs.map((lab) => <LabSection lab={lab} num={numberOf.get(lab.id)!} />)}
+    </div>
+  ))}
+
+  <div class="colophon">
+    <span>{all.length} labs across {days.length} sessions</span>
+    <span>Superscript markers open the proof for the claim beside them</span>
+  </div>
+
+  <NoteStore />
+</Shell>
+
+<script>
+  // Day switcher. Deep links (#day-2026-08-26, or any lab id) select the right block.
+  const sw = document.getElementById('dayswitch');
+  const blocks = Array.from(document.querySelectorAll<HTMLElement>('.dayblock'));
+  if (sw && blocks.length) {
+    const tabs = Array.from(sw.querySelectorAll<HTMLAnchorElement>('a'));
+
+    function show(day: string, scroll = true) {
+      blocks.forEach((b) => { b.style.display = b.dataset.day === day ? '' : 'none'; });
+      tabs.forEach((t) => t.classList.toggle('on', t.dataset.day === day));
+      if (scroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    tabs.forEach((t) => {
+      t.addEventListener('click', (e) => {
+        e.preventDefault();
+        const day = t.dataset.day;
+        if (day) { show(day); history.replaceState(null, '', `#day-${day}`); }
+      });
+    });
+
+    // Open the block that owns whatever the hash points at.
+    const hash = decodeURIComponent(location.hash.slice(1));
+    if (hash) {
+      const direct = hash.startsWith('day-') ? hash.slice(4) : null;
+      const owner = direct ?? blocks.find((b) => b.querySelector(`#${CSS.escape(hash)}`))?.dataset.day;
+      if (owner) {
+        show(owner, false);
+        document.getElementById(hash)?.scrollIntoView({ block: 'start' });
+      }
+    }
+  }
+</script>
