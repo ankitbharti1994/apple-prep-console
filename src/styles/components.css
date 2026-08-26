@@ -231,7 +231,7 @@ details.ans p { font-family: var(--body); font-size: 14px; color: var(--ink-2); 
 .wk.done { opacity: .45; }
 .wk.now { background: var(--ink); border-color: var(--ink); }
 .wk.now b { color: var(--paper); }
-.wk.now span { color: var(--muted); }
+.wk.now span { color: var(--on-ink-dim); }
 .wk.now::after { content: ""; position: absolute; left: 50%; bottom: -9px; width: 9px; height: 9px; transform: translateX(-50%) rotate(45deg); background: var(--ink); }
 .raillegend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin-bottom: 32px; }
 .raillegend i { width: 9px; height: 9px; border-radius: 1px; display: inline-block; margin-right: 6px; }

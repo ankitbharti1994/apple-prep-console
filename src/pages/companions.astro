@@ -10,7 +10,7 @@ const items = prep.companions.map((c) => {
   const key = Object.keys(files).find((k) => k.endsWith(`/${c.file}`));
   if (!key) throw new Error(`prep.config.ts lists companions/${c.file}, but that file does not exist.`);
   const source = files[key]!;
-  return { ...c, source, lines: source.split('\n').length, anchor: c.file.replace('.', '-') };
+  return { ...c, source, lines: source.replace(/\n$/, '').split('\n').length, anchor: c.file.replace('.', '-') };
 });
 ---
 <Shell title="Companions" track="internals" description="The runnable Swift files behind the internals claims.">

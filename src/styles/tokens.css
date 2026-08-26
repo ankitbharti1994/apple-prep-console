@@ -38,6 +38,7 @@
   --pane-stack-border: #C3D0E2;
   --pane-heap-border: #E7D4AE;
   --on-accent: #FFFFFF;
+  --on-ink-dim: #A4ADB6;
   --verdict-ok-ink: #1E4E3A;
   --verdict-warn-ink: #6E4711;
   --verdict-bad-ink: #7E2C1F;
@@ -78,6 +79,7 @@
   --pane-stack-border: #33425C;
   --pane-heap-border: #5A461F;
   --on-accent: #10131C;
+  --on-ink-dim: #6B6459;
   --verdict-ok-ink: #9BDFBB;
   --verdict-warn-ink: #EFC77E;
   --verdict-bad-ink: #F2A794;
