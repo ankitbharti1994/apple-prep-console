@@ -1,0 +1,40 @@
+---
+/**
+ * Where you are, with room to say it properly.
+ * Both figures are derived — nothing here is written down anywhere.
+ */
+import { counts, sessionDates } from '~/lib/content';
+import { standing, pct } from '~/lib/progress';
+import { prep } from '../../prep.config';
+
+const c = await counts();
+const s = standing(await sessionDates());
+
+const topicPct = pct(c.problems, prep.currentTopic.target);
+const rows = [
+  {
+    label: prep.currentTopic.name,
+    value: `${c.problems} of ${prep.currentTopic.target} traced`,
+    pct: topicPct,
+    note: topicPct >= 100 ? 'topic complete' : `${prep.currentTopic.target - c.problems} to go`,
+  },
+  {
+    label: `${prep.totalWeeks}-week plan`,
+    value: `day ${s.sessionOrdinal} of ${prep.totalSessions}`,
+    pct: s.elapsedPct,
+    note: `week ${s.week} · ${s.weeksRemaining} remaining`,
+  },
+];
+---
+<div class="standing">
+  {rows.map((r) => (
+    <div class="st-row">
+      <div class="st-head">
+        <span class="st-lbl">{r.label}</span>
+        <span class="st-val">{r.value}</span>
+      </div>
+      <div class="st-bar"><i style={`width:${r.pct}%`}></i></div>
+      <div class="st-foot"><span>{r.note}</span><b>{r.pct}%</b></div>
+    </div>
+  ))}
+</div>

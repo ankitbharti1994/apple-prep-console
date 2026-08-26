@@ -2,7 +2,7 @@
 import ThemeToggle from '~/components/react/ThemeToggle';
 import PaletteButton from '~/components/react/PaletteButton';
 import { counts, sessionDates } from '~/lib/content';
-import { standing, pct } from '~/lib/progress';
+import { standing } from '~/lib/progress';
 import { prep } from '../../prep.config';
 
 interface Props { track: string; }
@@ -19,8 +19,6 @@ const badge: Record<string, string | number> = {
   sessions: c.sessions,
 };
 
-const topicPct = pct(c.problems, prep.currentTopic.target);
-const topicShort = prep.currentTopic.name.replace(/^Topic \d+ · /, '');
 ---
 <header class="topbar">
   <a class="brand" href="/">
@@ -39,17 +37,6 @@ const topicShort = prep.currentTopic.name.replace(/^Topic \d+ · /, '');
       </a>
     ))}
   </nav>
-
-  <div class="meters" aria-hidden="false">
-    <div class="meter" title={`${c.problems} of ${prep.currentTopic.target} problems in ${topicShort}`}>
-      <div class="mt"><span>{topicShort}</span><b>{c.problems}</b></div>
-      <div class="mb"><i style={`width:${topicPct}%`}></i></div>
-    </div>
-    <div class="meter" title={`Session ${s.sessionOrdinal} of ${prep.totalSessions}`}>
-      <div class="mt"><span>plan</span><b>day {s.sessionOrdinal}</b></div>
-      <div class="mb"><i style={`width:${s.elapsedPct}%`}></i></div>
-    </div>
-  </div>
 
   <div class="tools">
     <PaletteButton client:idle />

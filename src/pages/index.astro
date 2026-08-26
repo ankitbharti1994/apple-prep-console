@@ -1,6 +1,7 @@
 ---
 import Shell from '~/layouts/Shell.astro';
 import SessionCards from '~/components/SessionCards.astro';
+import Standing from '~/components/Standing.astro';
 import { allSessions, counts, planPhases, sessionDates } from '~/lib/content';
 import { problems } from '~/data/problems';
 import { standing, formatLong, formatShort, sessionOrdinal } from '~/lib/progress';
@@ -49,6 +50,8 @@ const prevDate = previous[0]?.data.date;
       <div class="sub">mocks start week 6</div>
     </div>
   </div>
+
+  <Standing />
 
   {latest && (
     <>
