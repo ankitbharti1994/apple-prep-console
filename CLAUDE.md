@@ -11,6 +11,37 @@ rewrite is that **adding a day is creating one small file**. Read this before ed
    progress bars, nav badges, "new" flags and open/closed tallies are all computed. The old
    file hand-maintained them and they had already drifted out of sync with each other.
 
+## The usual way in: `/log-session`
+
+The maintainer describes their morning in plain words and you write the files.
+`/log-session` carries the full procedure; this is the shape of the mapping.
+
+> *"Coding 6:00–6:50: solved Two Sum and Valid Anagram, both O(n) with a
+> dictionary. Two Sum I first wrote as nested loops before spotting the
+> complement trick. Internals 6:50–7:30: task groups and cancellation —
+> cancellation is cooperative, the task has to check `Task.isCancelled` itself."*
+
+becomes six files:
+
+| File | Why |
+|---|---|
+| `src/content/sessions/2026-08-27.mdx` | the session itself, two blocks |
+| `src/data/problems/15-two-sum.ts` | new problem, with a real trace |
+| `src/data/problems/16-valid-anagram.ts` | new problem, with a real trace |
+| `src/content/labs/12-task-groups-and-cancellation.md` | new internals topic |
+| `src/content/open-items/two-sum-started-brute-force.md` | `kind: regression` — the nested-loop first attempt |
+| — | `problems: [15, 16]`, `labs: [12-task-groups-and-cancellation]` wired into the session |
+
+Two things that are easy to miss and matter most:
+
+- **The mistake is not a footnote, it is the record.** "First wrote nested loops"
+  becomes an open item, because the pattern across mistakes is what this site
+  exists to surface. Three days in, the maintainer had already found the same
+  testing failure twice running — only visible because both were written down.
+- **Carry-forward.** If something from yesterday reappeared under a new name, it
+  goes in `carriesForward:`. It is the field most worth filling and the first
+  one skipped.
+
 ## Logging a session — the common case
 
 ```bash
