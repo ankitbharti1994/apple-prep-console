@@ -1,0 +1,120 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import { planPhases } from '~/lib/content';
+import { weekOf, weekStart, formatShort, todayISO, isoWeekday } from '~/lib/progress';
+import { prep } from '../../prep.config';
+
+const phases = (await planPhases()).map((p) => p.data);
+const today = todayISO();
+const curWeek = weekOf(today);
+const started = today >= prep.startDate;
+const finished = today > prep.endDate;
+
+const inPhase = (w: number, p: { weeks: readonly [number, number] }) =>
+  w >= p.weeks[0] && p.weeks[1] >= w;
+const phaseOfWeek = (w: number) => phases.find((p) => inPhase(w, p));
+const isCurrentPhase = (p: { weeks: readonly [number, number] }) =>
+  started && !finished && inPhase(curWeek, p);
+const band = (n: number) => `var(--p${n})`;
+
+// "Where you are" — computed, not typed.
+const cur = phaseOfWeek(curWeek);
+const dow = isoWeekday(today);
+const slotIndex = dow <= 5 ? 0 : dow === 6 ? 1 : 2;
+const slot = cur?.blocks[slotIndex] ?? cur?.blocks[0];
+---
+<Shell title="Plan" track="plan" description="The twelve-week plan to the Apple loop.">
+  <p class="eyebrow">
+    Track 01 · {formatShort(prep.startDate)} → {formatShort(prep.endDate)} 2026 · {prep.locations.join(', ')}
+  </p>
+  <h1>Twelve weeks<br />to the <em>Apple</em> loop.</h1>
+  <p class="lede">
+    Weekday mornings 6:00–7:30, Saturday deep work, Sunday review. Four phases, each
+    ramping one track while keeping the last one warm.
+  </p>
+
+  <div class="sourcenote">
+    <b>Where you are:</b>{' '}
+    {!started && <span>The plan starts {formatShort(prep.startDate)} 2026.</span>}
+    {finished && <span>Plan complete — ended {formatShort(prep.endDate)} 2026.</span>}
+    {started && !finished && cur && slot && (
+      <span>
+        Week <b>{curWeek}</b> of {prep.totalWeeks} — phase {cur.id}, {cur.title}. Today is a{' '}
+        <b>{slot.name.toLowerCase()}</b> day ({slot.slot}).
+      </span>
+    )}
+  </div>
+
+  <div class="railhead">
+    <span>Week 1 · {formatShort(prep.startDate)}</span>
+    <span>Week {prep.totalWeeks} · {formatShort(prep.endDate)}</span>
+  </div>
+
+  <div class="weeks">
+    {Array.from({ length: prep.totalWeeks }, (_, i) => i + 1).map((w) => {
+      const p = phaseOfWeek(w)!;
+      return (
+        <a
+          class:list={['wk', { done: w < curWeek, now: w === curWeek }]}
+          style={`--band:${band(p.band)}`}
+          href={`#phase-${p.id}`}
+          title={`Week ${w} · ${p.title}`}
+        >
+          <b>{w}</b><span>{formatShort(weekStart(w))}</span>
+        </a>
+      );
+    })}
+  </div>
+
+  <div class="raillegend">
+    {phases.map((p) => (
+      <span><i style={`background:${band(p.band)}`}></i>W{p.weeks[0]}–{p.weeks[1]} · {p.title}</span>
+    ))}
+  </div>
+
+  <h2 class="sec">The four phases</h2>
+  <p class="sec-sub">Tap a week above to jump to its phase.</p>
+
+  {phases.map((p) => {
+    const current = isCurrentPhase(p);
+    return (
+      <section class:list={['phase', { current }]} id={`phase-${p.id}`} style={`--band:${band(p.band)}`}>
+        <div class="phase-head">
+          <span class="chip">Weeks {p.weeks[0]}–{p.weeks[1]}</span>
+          <h3>{p.title}</h3>
+          <span class="dates">{p.dates}</span>
+        </div>
+        <div class="blocks">
+          {p.blocks.map((b) => (
+            <div class="pblock">
+              <div class="slot">{b.slot}</div>
+              <h4>{b.name}</h4>
+              {b.groups.map((g) => (
+                <Fragment>
+                  <div class="lead">{g.lead}</div>
+                  <ul>{g.items.map((i) => <li>{i}</li>)}</ul>
+                </Fragment>
+              ))}
+              {b.note && <p class="pnote">{b.note}</p>}
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  })}
+
+  <h2 class="sec">Weekly rhythm</h2>
+  <table class="rhythm">
+    <thead><tr><th>Slot</th><th>Block</th><th>Runs</th></tr></thead>
+    <tbody>
+      {prep.rhythm.map((r) => (
+        <tr><td>{r.slot}</td><td>{r.block}</td><td>{r.runs}</td></tr>
+      ))}
+    </tbody>
+  </table>
+
+  <div class="colophon">
+    <span>{phases.length} phases · {prep.totalWeeks} weeks · {prep.totalSessions} weekday sessions</span>
+    <span>{formatShort(prep.startDate)} — {formatShort(prep.endDate)} 2026</span>
+  </div>
+</Shell>

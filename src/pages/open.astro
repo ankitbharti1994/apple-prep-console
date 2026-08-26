@@ -1,0 +1,80 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import NoteStore from '~/components/NoteStore.astro';
+import OpenItemCard from '~/components/OpenItemCard.astro';
+import { allOpenItems } from '~/lib/content';
+import { getCollection, render } from 'astro:content';
+
+const items = await allOpenItems();
+const log = items.filter((i) => i.data.section === 'log');
+const backlog = items.filter((i) => i.data.section === 'backlog');
+
+const openCount = log.filter((i) => i.data.status === 'open').length;
+const closedCount = log.filter((i) => i.data.status === 'closed').length;
+const backlogOpen = backlog.filter((i) => i.data.status === 'open').length;
+
+const steps = (await getCollection('nextSteps'))
+  .filter((s) => !s.data.done)
+  .sort((a, b) => a.data.order - b.data.order);
+const renderedSteps = await Promise.all(
+  steps.map(async (s) => ({ s, Content: (await render(s)).Content })),
+);
+
+const setup = (await getCollection('pages')).find((p) => p.id === 'session-setup');
+const SetupContent = setup ? (await render(setup)).Content : null;
+
+const word = (n: number) =>
+  ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] ?? String(n);
+---
+<Shell title="Open items" track="open" description="What did not stay solved — the carry-forward log.">
+  <p class="eyebrow">Track 04 · carry-forward</p>
+  <h1>What did not<br /><em>stay solved</em>.</h1>
+  <p class="lede">
+    {word(openCount)} still open, {word(closedCount)} now closed. Worth separating the kinds: a
+    regression on something already solved is recall decay and needs re-drilling, whereas a gap is
+    something never known and needs building. A correction is a third kind — a rule held
+    confidently in the wrong direction.
+  </p>
+
+  {log.map((item) => <OpenItemCard item={item} />)}
+
+  {backlog.length > 0 && (
+    <>
+      <h2 class="sec">Backlog</h2>
+      <p class="sec-sub">
+        {backlogOpen === 0
+          ? 'Nothing owed. Every carried problem has been paid before new work was added.'
+          : `${backlogOpen} problem${backlogOpen === 1 ? '' : 's'} owed from an earlier session.`}
+      </p>
+      {backlog.map((item) => <OpenItemCard item={item} />)}
+    </>
+  )}
+
+  {renderedSteps.length > 0 && (
+    <>
+      <h2 class="sec">Next steps</h2>
+      <ol class="next">
+        {renderedSteps.map(({ s, Content }) => (
+          <li>
+            <b set:html={s.data.title} />{' '}
+            <Content />
+          </li>
+        ))}
+      </ol>
+    </>
+  )}
+
+  {SetupContent && (
+    <>
+      <h2 class="sec">Session setup</h2>
+      <div class="setup"><SetupContent /></div>
+    </>
+  )}
+
+  <div class="colophon">
+    <span>Data Structures &amp; Algorithms in Swift — Kodeco</span>
+    <span>{openCount} open · {closedCount} closed</span>
+  </div>
+
+  <NoteStore />
+</Shell>

@@ -1,0 +1,99 @@
+/* ============================================================
+   Design tokens — ported from apple-prep-console.html
+   Light is the original paper palette, verbatim.
+   Dark is a warm charcoal counterpart built on the same roles.
+   ============================================================ */
+
+:root {
+  --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --disp: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+
+  /* surfaces + ink */
+  --paper: #EEEDE9;
+  --surface: #FFFFFF;
+  --surface-2: #F6F5F2;
+  --ink: #1B1A18;
+  --ink-2: #4A473F;
+  --muted: #86817A;
+  --rule: #DCD8D1;
+  --rule-2: #C6C1B8;
+
+  /* track accents */
+  --coding: #2F5FBF;      --coding-soft: #E6ECF9;
+  --internals: #A9701C;   --internals-soft: #F7EEDD;
+  --stack: #3F5E8C;       --stack-soft: #E5EBF3;
+  --heap: #B0731E;        --heap-soft: #F8EEDC;
+  --good: #2C6E52;        --good-soft: #E2EFE8;
+  --bad: #B3402F;         --bad-soft: #F8E5E1;
+  --accent: #2F5FBF;      --accent-soft: #E6ECF9;
+
+  /* phase bands */
+  --b1: #2B3A55; --b2: #3F6B63; --b3: #6B4A72; --b4: #8A5A2B;
+  --p1: var(--b1); --p2: var(--b2); --p3: var(--b3); --p4: var(--b4);
+
+  /* derived / component-level */
+  --cell-inwin-border: #E3C87E;
+  --cell-ok-border: #A9D2C3;
+  --pane-stack-border: #C3D0E2;
+  --pane-heap-border: #E7D4AE;
+  --on-accent: #FFFFFF;
+  --verdict-ok-ink: #1E4E3A;
+  --verdict-warn-ink: #6E4711;
+  --verdict-bad-ink: #7E2C1F;
+  --tag-medium-ink: #8A5A0F;
+  --em-ink: #1B4193;
+  --shadow-1: 0 1px 2px rgba(27, 26, 24, .04);
+  --shadow-2: 0 8px 30px rgba(27, 26, 24, .12);
+
+  /* syntax */
+  --syn-kw: #7B4CA8; --syn-ty: #1F6187; --syn-st: var(--good);
+  --syn-cm: var(--muted); --syn-nu: #A35A17;
+
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  --paper: #16151A;
+  --surface: #1D1C22;
+  --surface-2: #232228;
+  --ink: #EDEAE4;
+  --ink-2: #B8B3AA;
+  --muted: #837D74;
+  --rule: #302E36;
+  --rule-2: #423F49;
+
+  --coding: #7CA0F0;      --coding-soft: #1E2740;
+  --internals: #E0A94B;   --internals-soft: #33280F;
+  --stack: #8AA8D8;       --stack-soft: #1C2536;
+  --heap: #DFA346;        --heap-soft: #322611;
+  --good: #6BC79B;        --good-soft: #14291F;
+  --bad: #E8836E;         --bad-soft: #331A15;
+  --accent: #7CA0F0;      --accent-soft: #1E2740;
+
+  --b1: #7C90B8; --b2: #6FB6A6; --b3: #B58CC0; --b4: #D69A5C;
+
+  --cell-inwin-border: #6B5624;
+  --cell-ok-border: #2F5A47;
+  --pane-stack-border: #33425C;
+  --pane-heap-border: #5A461F;
+  --on-accent: #10131C;
+  --verdict-ok-ink: #9BDFBB;
+  --verdict-warn-ink: #EFC77E;
+  --verdict-bad-ink: #F2A794;
+  --tag-medium-ink: #E8BC72;
+  --em-ink: #AEC6FA;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, .3);
+  --shadow-2: 0 8px 30px rgba(0, 0, 0, .5);
+
+  --syn-kw: #C79BE8; --syn-ty: #7FC0E0; --syn-st: #8BD3AA;
+  --syn-cm: var(--muted); --syn-nu: #E0A369;
+
+  color-scheme: dark;
+}
+
+/* per-track accent theming, exactly as the original did with [data-view] */
+[data-track='coding']    { --accent: var(--coding);    --accent-soft: var(--coding-soft); }
+[data-track='internals'] { --accent: var(--internals); --accent-soft: var(--internals-soft); }
+[data-track='plan']      { --accent: var(--b1);        --accent-soft: var(--surface-2); }
+[data-track='open']      { --accent: var(--heap);      --accent-soft: var(--heap-soft); }

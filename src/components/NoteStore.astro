@@ -1,0 +1,26 @@
+---
+/**
+ * Renders every footnote body once, inert, into <template> elements.
+ * The client script clones one into a .notepanel when a marker is clicked.
+ * Include once per page that uses <Fn/>.
+ */
+import { render } from 'astro:content';
+import { allNotes } from '~/lib/content';
+
+const notes = await allNotes();
+const rendered = await Promise.all(
+  notes.map(async (n) => ({ n, Content: (await render(n)).Content })),
+);
+---
+<div id="note-store" hidden>
+  {rendered.map(({ n, Content }) => (
+    <template data-note-body={n.id} data-kind={n.data.kind} data-title={n.data.title}>
+      <Content />
+    </template>
+  ))}
+</div>
+
+<script>
+  import { initFootnotes } from '~/lib/footnotes';
+  initFootnotes();
+</script>

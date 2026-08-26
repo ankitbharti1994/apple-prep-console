@@ -1,0 +1,242 @@
+[
+  {
+    "id": 1,
+    "band": 1,
+    "weeks": [1, 3],
+    "title": "Coding foundations + Swift concurrency",
+    "dates": "24 Aug – 13 Sep",
+    "blocks": [
+      {
+        "slot": "Mon–Fri · 6:00–7:30",
+        "name": "Morning session",
+        "groups": [
+          {
+            "lead": "Coding — foundations ramp",
+            "items": [
+              "Easy→medium across core patterns, in Swift",
+              "Build your own array, hash map, heap, trie for intuition",
+              "Two mediums a day — untimed at first, then timed",
+              "Narrate out loud from day one"
+            ]
+          },
+          {
+            "lead": "Internals — Swift + concurrency",
+            "items": [
+              "Advanced Swift for language internals",
+              "The full concurrency book, not just the docs",
+              "Swift 6 strict concurrency: migrate a real target incrementally",
+              "Core WWDC concurrency sessions end to end"
+            ]
+          }
+        ],
+        "note": "Suggested split: 50 min coding / 40 min internals."
+      },
+      {
+        "slot": "Sat · 9:00–11:00",
+        "name": "Build block",
+        "groups": [
+          {
+            "lead": "Consolidate",
+            "items": [
+              "Turn the week's Swift and concurrency reading into code",
+              "Anything you only read about gets written"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sun · 10:00–10:30",
+        "name": "Weekly checkpoint",
+        "groups": [
+          {
+            "lead": "Review",
+            "items": [
+              "Tick off what actually got done",
+              "Which track is lagging? Reallocate next week's mornings toward it",
+              "Can you finish a random medium in 25 minutes, narrated?"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "band": 2,
+    "weeks": [4, 6],
+    "title": "UIKit/SwiftUI internals + Instruments",
+    "dates": "14 Sep – 4 Oct",
+    "blocks": [
+      {
+        "slot": "Mon–Fri · 6:00–7:30",
+        "name": "Morning session",
+        "groups": [
+          {
+            "lead": "Internals — platform + Instruments",
+            "items": [
+              "UIKit rendering pipeline, run loop, Core Animation",
+              "SwiftUI identity, diffing, the Observation framework",
+              "Time Profiler, Allocations, App Launch template, signposts",
+              "Cut measurable milliseconds off a real app launch"
+            ]
+          }
+        ],
+        "note": "Keep coding warm: one medium a day, timed to 25 min, narrated."
+      },
+      {
+        "slot": "Sat · 9:00–11:00",
+        "name": "Showcase project",
+        "groups": [
+          {
+            "lead": "Small app, component architecture",
+            "items": [
+              "Design tokens, theming, versioning, snapshot tests",
+              "Accessibility built in, not bolted on",
+              "README written as if onboarding another team"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sun",
+        "name": "Checkpoint → mock",
+        "groups": [
+          {
+            "lead": "Handover",
+            "items": [
+              "Weekly checkpoint through week 5",
+              "Mocks start week 6, once there's something real to test"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "band": 3,
+    "weeks": [7, 9],
+    "title": "Hard problems + system design prompts",
+    "dates": "5 Oct – 25 Oct",
+    "blocks": [
+      {
+        "slot": "Mon–Fri · 6:00–7:30",
+        "name": "Morning session",
+        "groups": [
+          {
+            "lead": "Coding — selective hard",
+            "items": [
+              "Hard problems only in high-frequency patterns",
+              "Data-structure design with concurrency follow-ups (LRU → thread-safe)",
+              "Practise recovering out loud when stuck",
+              "Strict 25-min timebox, review every miss"
+            ]
+          },
+          {
+            "lead": "System design",
+            "items": [
+              "Twelve prompts using the mobile system-design framework",
+              "Build backend and reliability vocabulary deliberately",
+              "Rehearse the 45-min shape until timing is automatic"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sat · 9:00–11:00",
+        "name": "System design + STAR stories",
+        "groups": [
+          {
+            "lead": "System design",
+            "items": [
+              "Write up three designs in full, with real trade-off sections",
+              "Always cover memory, battery, background limits, reliability",
+              "Go deepest on the design-system prompt — that's your edge"
+            ]
+          },
+          {
+            "lead": "STAR bank",
+            "items": [
+              "Twelve stories, quantified, one page each",
+              "Map each to craft, ownership, collaboration, mentorship",
+              "Prepare questions for each interviewer type"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sun · 10:00–11:30",
+        "name": "Mock interview + review",
+        "groups": [
+          {
+            "lead": "Rotate rounds",
+            "items": [
+              "Coding → system design → behavioral → repeat",
+              "Book via interviewing.io, Prepfully, or IGotAnOffer",
+              "Afterwards: write down the one thing that went worst, make it next week's focus"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "band": 4,
+    "weeks": [10, 12],
+    "title": "Daily warmups + behavioral rehearsal",
+    "dates": "26 Oct – 15 Nov",
+    "blocks": [
+      {
+        "slot": "Mon–Fri · 6:00–7:30",
+        "name": "Morning session",
+        "groups": [
+          {
+            "lead": "Coding — warmups",
+            "items": [
+              "One medium every morning to keep timing sharp",
+              "Revisit every problem you previously failed",
+              "Practise in the exact editor the team will use"
+            ]
+          },
+          {
+            "lead": "Behavioral — rehearse",
+            "items": [
+              "Record yourself answering, watch it back",
+              "Cut every story to under three minutes",
+              "Practise the follow-up layer, not just the opener",
+              "Sharpen the \"why Apple\" answer until it's specific to the team"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sat · 9:00–11:00",
+        "name": "System design + STAR stories",
+        "groups": [
+          {
+            "lead": "Keep going",
+            "items": [
+              "Finish the three full design write-ups",
+              "Twelve quantified stories, one page each"
+            ]
+          }
+        ]
+      },
+      {
+        "slot": "Sun · 10:00–11:30",
+        "name": "Mock + offer prep",
+        "groups": [
+          {
+            "lead": "From week 10",
+            "items": [
+              "Confirm target level (ICT4) in writing",
+              "Research specific teams",
+              "Line up a competing offer before any number is discussed"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,45 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { formatShort } from '~/lib/progress';
+
+interface Props { item: CollectionEntry<'openItems'>; }
+const { item } = Astro.props;
+const { Content } = await render(item);
+const d = item.data;
+const closedCls = d.status === 'closed';
+---
+<article
+  class:list={['rev', { closed: closedCls, regression: d.kind === 'regression' && !closedCls, parked: d.kind === 'parked' }]}
+  id={item.id}
+>
+  <h4>
+    {d.title}
+    <span class="kindtag">{d.kind}</span>
+  </h4>
+
+  {(d.closed || d.status === 'closed') && (
+    <p>
+      {d.kind === 'correction' || d.kind === 'gap' ? (
+        <span class="corrected">found {formatShort(d.opened)}</span>
+      ) : null}
+      {d.closed && <span class="resolved">closed {formatShort(d.closed)}</span>}
+    </p>
+  )}
+  {d.status === 'open' && d.kind === 'correction' && (
+    <p><span class="corrected">{formatShort(d.opened)}</span></p>
+  )}
+
+  <Content />
+
+  {d.meta.length > 0 && (
+    <div class="tags" style="margin-top:10px">
+      {d.meta.map((m) =>
+        m.href ? (
+          <a class:list={['tag', m.cls]} href={m.href} target="_blank" rel="noopener">{m.label}</a>
+        ) : (
+          <span class:list={[m.cls === 'resolved' ? 'resolved' : 'tag', m.cls !== 'resolved' && m.cls]}>{m.label}</span>
+        ),
+      )}
+    </div>
+  )}
+</article>

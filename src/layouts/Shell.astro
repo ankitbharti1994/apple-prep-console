@@ -1,0 +1,56 @@
+---
+import '~/styles/global.css';
+import Rail from '~/components/Rail.astro';
+import CommandPalette from '~/components/react/CommandPalette';
+import { buildIndex } from '~/lib/searchIndex';
+import { prep } from '../../prep.config';
+
+interface Props {
+  title: string;
+  track: string;
+  description?: string;
+}
+
+const { title, track, description } = Astro.props;
+const index = await buildIndex();
+const pageTitle = title === prep.title ? title : `${title} · ${prep.title}`;
+---
+<!doctype html>
+<html lang="en" data-track={track}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  {description && <meta name="description" content={description} />}
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <script is:inline>
+    // Set the theme before first paint so there is no flash.
+    (function () {
+      try {
+        var saved = localStorage.getItem('prep-theme');
+        var dark = saved
+          ? saved === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (dark) document.documentElement.setAttribute('data-theme', 'dark');
+      } catch (e) {
+        /* private mode, blocked storage — light is a fine default */
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <Rail track={track} />
+    <main class="main" id="main">
+      <slot />
+    </main>
+  </div>
+  <CommandPalette client:idle entries={index} />
+</body>
+</html>

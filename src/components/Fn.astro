@@ -1,0 +1,23 @@
+---
+/**
+ * Footnote marker. Numbering is assigned client-side in document order,
+ * exactly as the original console did, so inserting a note mid-page
+ * renumbers everything automatically.
+ *
+ * The id MUST match a file in src/content/notes/. A missing id fails the
+ * build rather than rendering a dead marker.
+ */
+import { noteMap } from '~/lib/content';
+
+interface Props { id: string; }
+const { id } = Astro.props;
+
+const notes = await noteMap();
+if (!notes.has(id)) {
+  throw new Error(
+    `<Fn id="${id}"/> refers to a note that does not exist.\n` +
+      `Create src/content/notes/${id}.mdx, or use one of: ${[...notes.keys()].join(', ')}`,
+  );
+}
+---
+<sup class="fn" data-note={id} role="button" tabindex="0"></sup>

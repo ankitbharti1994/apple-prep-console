@@ -1,0 +1,37 @@
+{
+  "name": "apple-prep-console",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Apple ICT4 interview prep console — content-driven, LLM-friendly.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check && tsc --noEmit",
+    "new:session": "tsx scripts/new.ts session",
+    "new:problem": "tsx scripts/new.ts problem",
+    "new:lab": "tsx scripts/new.ts lab",
+    "new:note": "tsx scripts/new.ts note",
+    "new:open-item": "tsx scripts/new.ts open-item",
+    "coverage": "tsx scripts/coverage-check.ts"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/mdx": "^4.3.14",
+    "@astrojs/react": "^4.4.2",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^5.18.2",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5.9.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "tsx": "^4.23.12"
+  }
+}
