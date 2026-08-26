@@ -20,8 +20,11 @@ const renderedSteps = await Promise.all(
   steps.map(async (s) => ({ s, Content: (await render(s)).Content })),
 );
 
-const setup = (await getCollection('pages')).find((p) => p.id === 'session-setup');
+const pages = await getCollection('pages');
+const setup = pages.find((p) => p.id === 'session-setup');
 const SetupContent = setup ? (await render(setup)).Content : null;
+const backlogNote = pages.find((p) => p.id === 'backlog-note');
+const BacklogNote = backlogNote ? (await render(backlogNote)).Content : null;
 
 const word = (n: number) =>
   ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] ?? String(n);
@@ -41,11 +44,14 @@ const word = (n: number) =>
   {backlog.length > 0 && (
     <>
       <h2 class="sec">Backlog</h2>
-      <p class="sec-sub">
-        {backlogOpen === 0
-          ? 'Nothing owed. Every carried problem has been paid before new work was added.'
-          : `${backlogOpen} problem${backlogOpen === 1 ? '' : 's'} owed from an earlier session.`}
-      </p>
+      <div class="sec-sub">
+        {BacklogNote ? <BacklogNote /> : null}
+        <p style="margin:0">
+          {backlogOpen === 0
+            ? 'Nothing owed right now.'
+            : `${backlogOpen} problem${backlogOpen === 1 ? '' : 's'} still owed.`}
+        </p>
+      </div>
       {backlog.map((item) => <OpenItemCard item={item} />)}
     </>
   )}

@@ -53,6 +53,8 @@ const sessions = defineCollection({
     carriesForward: z
       .array(z.object({ from: z.string(), to: z.string() }))
       .default([]),
+    /** Sub-heading above that table. */
+    carriesForwardNote: z.string().optional(),
     /** Did the session overrun / get cut short? Free text, optional. */
     note: z.string().optional(),
     draft: z.boolean().default(false),

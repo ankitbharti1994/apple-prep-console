@@ -66,7 +66,9 @@ const prevDate = previous[0]?.data.date;
   {carries.length > 0 && prevDate && (
     <>
       <h2 class="sec">How {formatShort(prevDate)} fed {formatShort(latest!.data.date)}</h2>
-      <p class="sec-sub">The same moves again, one day later, wearing different names.</p>
+      <p class="sec-sub">
+        {latest!.data.carriesForwardNote ?? 'The same moves again, one day later, wearing different names.'}
+      </p>
       <table class="ptable">
         <thead>
           <tr><th>{formatShort(prevDate)}</th><th>{formatShort(latest!.data.date)}</th></tr>

@@ -17,7 +17,8 @@
     "new:open-item": "tsx scripts/new.ts open-item",
     "coverage": "tsx scripts/coverage-check.ts",
     "verify:traces": "tsx scripts/verify-traces.ts",
-    "build:fast": "astro build"
+    "build:fast": "astro build",
+    "verify": "npm run verify:traces && npm run coverage"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

@@ -2,7 +2,9 @@
 import Shell from '~/layouts/Shell.astro';
 import ProblemFilter from '~/components/react/ProblemFilter';
 import { problems } from '~/data/problems';
-import { sessionDates } from '~/lib/content';
+import { sessionDates, allOpenItems } from '~/lib/content';
+import { getCollection, render } from 'astro:content';
+import { formatShort } from '~/lib/progress';
 import { prep } from '../../../prep.config';
 
 // "new" means "added in the most recent session" — derived, never written down.
@@ -18,6 +20,19 @@ const rows = problems.map((p) => ({
   isNew: !!latest && p.traced === latest,
   traced: p.traced ?? null,
 }));
+
+// Backlog state is derived from the open-items, not written down.
+const backlog = (await allOpenItems()).filter((o) => o.data.section === 'backlog');
+const owed = backlog.filter((o) => o.data.status === 'open');
+const lastCleared = backlog
+  .filter((o) => o.data.status === 'closed')
+  .map((o) => o.data.closed!)
+  .sort()
+  .at(-1);
+
+const pages = await getCollection('pages');
+const roadmap = pages.find((x) => x.id === 'coding-roadmap');
+const Roadmap = roadmap ? (await render(roadmap)).Content : null;
 
 const byDiff = (d: string) => problems.filter((p) => p.difficulty === d).length;
 const totalFrames = problems.reduce((a, p) => a + p.trace().length, 0);
@@ -39,9 +54,19 @@ const totalFrames = problems.reduce((a, p) => a + p.trace().length, 0);
 
   <div class="picker">
     {problems.map((p) => (
-      <a class="pk" href={`/coding/${p.n}`} title={p.title}>{p.n}</a>
+      <a class="pk" href={`/coding/${p.n}`} title={p.title}>{String(p.n).padStart(2, '0')}</a>
     ))}
+    {owed.length === 0 ? (
+      <span
+        class="pk todo"
+        title={lastCleared ? `${backlog.at(-1)?.data.title.replace(/ — cleared$/, '')} cleared ${formatShort(lastCleared)} — nothing carried` : 'nothing carried'}
+      >backlog · clear</span>
+    ) : (
+      <a class="pk todo" href="/open" title={`${owed.length} owed`}>backlog · {owed.length}</a>
+    )}
   </div>
+
+  {Roadmap && <p class="stripnote" style="margin-top:-6px"><Roadmap /></p>}
 
   <ProblemFilter client:load rows={rows} />
 

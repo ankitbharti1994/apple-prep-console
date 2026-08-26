@@ -85,6 +85,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
   {d.carriesForward.length > 0 && older && (
     <>
       <h2 class="sec">How {formatShort(older.data.date)} fed this session</h2>
+      {d.carriesForwardNote && <p class="sec-sub">{d.carriesForwardNote}</p>}
       <table class="ptable">
         <thead><tr><th>{formatShort(older.data.date)}</th><th>{formatShort(d.date)}</th></tr></thead>
         <tbody>
