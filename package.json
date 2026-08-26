@@ -15,7 +15,8 @@
     "new:lab": "tsx scripts/new.ts lab",
     "new:note": "tsx scripts/new.ts note",
     "new:open-item": "tsx scripts/new.ts open-item",
-    "coverage": "tsx scripts/coverage-check.ts"
+    "coverage": "tsx scripts/coverage-check.ts",
+    "verify:traces": "tsx scripts/verify-traces.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

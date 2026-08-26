@@ -1,0 +1,48 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import ProblemFilter from '~/components/react/ProblemFilter';
+import { problems } from '~/data/problems';
+import { prep } from '../../../prep.config';
+
+const rows = problems.map((p) => ({
+  n: p.n,
+  title: p.title,
+  difficulty: p.difficulty,
+  lc: p.lc,
+  complexity: p.complexity,
+  tags: p.tags ?? [],
+  isNew: !!p.isNew,
+  traced: p.traced ?? null,
+}));
+
+const byDiff = (d: string) => problems.filter((p) => p.difficulty === d).length;
+const totalFrames = problems.reduce((a, p) => a + p.trace().length, 0);
+---
+<Shell title="Coding" track="coding" description="Traced coding problems, step by step.">
+  <p class="eyebrow">Track 02 · {prep.currentTopic.name}</p>
+  <h1>{problems.length} problems,<br /><em>traced step by step</em>.</h1>
+  <p class="lede">
+    Pick a problem and scrub the timeline. The locals pane shows exactly the variables you would
+    name while narrating, so stepping through is rehearsing the explanation.
+  </p>
+
+  <div class="metrics">
+    <div class="metric"><div class="lb">Traced</div><div class="vv">{problems.length}</div><div class="sub">{totalFrames} frames in total</div></div>
+    <div class="metric"><div class="lb">Easy</div><div class="vv">{byDiff('Easy')}</div><div class="sub">foundations</div></div>
+    <div class="metric"><div class="lb">Medium</div><div class="vv">{byDiff('Medium')}</div><div class="sub">interview band</div></div>
+    <div class="metric"><div class="lb">Hard</div><div class="vv">{byDiff('Hard')}</div><div class="sub">from week 7</div></div>
+  </div>
+
+  <div class="picker">
+    {problems.map((p) => (
+      <a class="pk" href={`/coding/${p.n}`} title={p.title}>{p.n}</a>
+    ))}
+  </div>
+
+  <ProblemFilter client:load rows={rows} />
+
+  <div class="colophon">
+    <span>{prep.currentTopic.name} · target {prep.currentTopic.target}</span>
+    <span>Open any problem for the scrubbable trace</span>
+  </div>
+</Shell>

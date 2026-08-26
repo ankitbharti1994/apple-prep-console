@@ -1,0 +1,36 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import ProblemCard from '~/components/ProblemCard.astro';
+import { problems } from '~/data/problems';
+
+export function getStaticPaths() {
+  return problems.map((p) => ({ params: { n: String(p.n) }, props: { p } }));
+}
+
+const { p } = Astro.props;
+const i = problems.findIndex((x) => x.n === p.n);
+const prev = problems[i - 1];
+const next = problems[i + 1];
+---
+<Shell title={p.title} track="coding" description={p.complexity}>
+  <p class="eyebrow">Track 02 · question {p.n} of {problems.length}</p>
+  <h1>{p.title}</h1>
+
+  <div class="picker">
+    {problems.map((q) => (
+      <a class:list={['pk', { on: q.n === p.n }]} href={`/coding/${q.n}`} title={q.title}>{q.n}</a>
+    ))}
+  </div>
+
+  <ProblemCard problem={p} />
+
+  <div class="filterbar" style="justify-content:space-between">
+    {prev ? <a class="pk" href={`/coding/${prev.n}`}>← {prev.n}. {prev.title}</a> : <span></span>}
+    {next ? <a class="pk" href={`/coding/${next.n}`}>{next.n}. {next.title} →</a> : <span></span>}
+  </div>
+
+  <div class="colophon">
+    <span>← → step · space play/pause · Home / End jump</span>
+    <span>{p.traced ? `first traced ${p.traced}` : ''}</span>
+  </div>
+</Shell>
