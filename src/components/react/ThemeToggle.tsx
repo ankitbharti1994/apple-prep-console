@@ -25,7 +25,7 @@ export default function ThemeToggle() {
   }
 
   return (
-    <button className="railbtn" onClick={toggle} aria-pressed={dark} type="button">
+    <button className="toolbtn" onClick={toggle} aria-pressed={dark} type="button">
       <span aria-hidden="true">{ready && dark ? '☾' : '☀'}</span>
       <span>{ready && dark ? 'Dark' : 'Light'}</span>
     </button>

@@ -1,6 +1,6 @@
 ---
 import '~/styles/global.css';
-import Rail from '~/components/Rail.astro';
+import TopBar from '~/components/TopBar.astro';
 import CommandPalette from '~/components/react/CommandPalette';
 import { buildIndex } from '~/lib/searchIndex';
 import { assertReferencesResolve } from '~/lib/validate';
@@ -48,7 +48,7 @@ const pageTitle = title === prep.title ? title : `${title} · ${prep.title}`;
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <div class="shell">
-    <Rail track={track} />
+    <TopBar track={track} />
     <main class="main" id="main" data-pagefind-body>
       <slot />
     </main>

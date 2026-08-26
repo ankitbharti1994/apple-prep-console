@@ -1,0 +1,58 @@
+---
+import ThemeToggle from '~/components/react/ThemeToggle';
+import PaletteButton from '~/components/react/PaletteButton';
+import { counts, sessionDates } from '~/lib/content';
+import { standing, pct } from '~/lib/progress';
+import { prep } from '../../prep.config';
+
+interface Props { track: string; }
+const { track } = Astro.props;
+
+const c = await counts();
+const s = standing(await sessionDates());
+
+const badge: Record<string, string | number> = {
+  plan: `${prep.totalWeeks}w`,
+  coding: c.problems,
+  internals: c.labs,
+  open: c.openActive,
+  sessions: c.sessions,
+};
+
+const topicPct = pct(c.problems, prep.currentTopic.target);
+const topicShort = prep.currentTopic.name.replace(/^Topic \d+ · /, '');
+---
+<header class="topbar">
+  <a class="brand" href="/">
+    <span class="mark" aria-hidden="true"></span>
+    <span class="bt">
+      {prep.title}
+      <em>Week {s.week} of {prep.totalWeeks} · {prep.role}</em>
+    </span>
+  </a>
+
+  <nav class="nav" aria-label="Tracks">
+    {prep.tracks.map((t) => (
+      <a href={t.href} aria-current={t.id === track ? 'page' : undefined}>
+        <span class="lbl">{t.label}</span>
+        {badge[t.id] !== undefined && <span class="ct">{badge[t.id]}</span>}
+      </a>
+    ))}
+  </nav>
+
+  <div class="meters" aria-hidden="false">
+    <div class="meter" title={`${c.problems} of ${prep.currentTopic.target} problems in ${topicShort}`}>
+      <div class="mt"><span>{topicShort}</span><b>{c.problems}</b></div>
+      <div class="mb"><i style={`width:${topicPct}%`}></i></div>
+    </div>
+    <div class="meter" title={`Session ${s.sessionOrdinal} of ${prep.totalSessions}`}>
+      <div class="mt"><span>plan</span><b>day {s.sessionOrdinal}</b></div>
+      <div class="mb"><i style={`width:${s.elapsedPct}%`}></i></div>
+    </div>
+  </div>
+
+  <div class="tools">
+    <PaletteButton client:idle />
+    <ThemeToggle client:idle />
+  </div>
+</header>
