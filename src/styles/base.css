@@ -156,25 +156,37 @@ code {
 }
 .nav a[aria-current='page'] .ct { color: var(--accent); background: var(--accent-soft); }
 
-.tools { display: flex; gap: 6px; flex: none; }
-.toolbtn .lbl-search { display: none; }
+/* Search and theme are one cluster, pinned to the right edge and
+   framed like the nav so the bar reads as three groups, not seven parts. */
+.tools {
+  display: flex; align-items: center; gap: 2px;
+  margin-left: auto; flex: none; padding: 2px;
+  background: var(--surface-2); border: 1px solid var(--rule); border-radius: 12px;
+}
 .toolbtn {
   display: flex; align-items: center; gap: 8px;
-  padding: 9px 12px;
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: 11px;
+  padding: 7px 11px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 9px;
   color: var(--ink-2);
   cursor: pointer;
   font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
-  transition: background var(--fast), border-color var(--fast), color var(--fast), transform var(--fast) var(--spring);
+  transition: background var(--fast), border-color var(--fast), color var(--fast);
 }
-.toolbtn:hover { border-color: color-mix(in srgb, var(--accent) 45%, transparent); color: var(--accent); transform: translateY(-1px); }
+.toolbtn:hover {
+  background: var(--glass);
+  border-color: color-mix(in srgb, var(--accent) 32%, transparent);
+  color: var(--accent);
+  box-shadow: var(--glass-shadow), var(--glass-spec);
+}
+.toolbtn .lbl-search { display: none; }
 .toolbtn kbd {
   font-family: var(--mono); font-size: 9.5px;
   background: var(--surface); border: 1px solid var(--rule); border-radius: 5px;
   padding: 2px 5px; color: var(--muted);
 }
+.toolbtn:hover kbd { border-color: color-mix(in srgb, var(--accent) 32%, transparent); }
 
 /* ---------- main ---------- */
 .main { min-width: 0; }
@@ -220,17 +232,23 @@ h2.sec {
 .skip:focus { left: 0; }
 
 /* ---------- responsive ---------- */
-@media (max-width: 820px) {
-  .shell { padding: 10px 14px 70px; }
-  .topbar {
-    top: 8px; flex-wrap: wrap; gap: 10px; padding: 10px 12px; margin-bottom: 22px;
-    border-radius: 16px;
-  }
+/* Wrap before the nav has to scroll — seeing all six tracks matters
+   more than keeping the bar on one line. */
+@media (max-width: 1040px) {
+  .topbar { flex-wrap: wrap; gap: 10px; }
   .brand { order: 1; }
   .tools { order: 2; margin-left: auto; }
   .nav { order: 3; flex-basis: 100%; }
-  .toolbtn { padding: 8px 10px; }
-  .toolbtn span:not(:first-child) { display: none; }
+}
+
+@media (max-width: 820px) {
+  .shell { padding: 10px 14px 70px; }
+  .topbar { top: 8px; padding: 10px 12px; margin-bottom: 22px; border-radius: 16px; }
+}
+
+@media (max-width: 640px) {
+  .toolbtn { padding: 7px 9px; }
+  .toolbtn .lbl-theme { display: none; }
   .toolbtn kbd { display: none; }
 }
 

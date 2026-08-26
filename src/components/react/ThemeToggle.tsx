@@ -27,7 +27,7 @@ export default function ThemeToggle() {
   return (
     <button className="toolbtn" onClick={toggle} aria-pressed={dark} type="button">
       <span aria-hidden="true">{ready && dark ? '☾' : '☀'}</span>
-      <span>{ready && dark ? 'Dark' : 'Light'}</span>
+      <span className="lbl-theme">{ready && dark ? 'Dark' : 'Light'}</span>
     </button>
   );
 }
