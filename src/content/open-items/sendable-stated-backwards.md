@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-26
 order: 6
-labs: ['sendable-is-about-captures']
+labs: ['10-sendable-is-about-captures']
 notes: ['p-sendfn']
 ---
 

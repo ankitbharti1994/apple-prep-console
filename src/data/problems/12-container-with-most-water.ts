@@ -9,7 +9,7 @@ const problem: Problem = {
   lcSlug: 'container-with-most-water',
   complexity: 'Time O(n) · Space O(1) — single pass, each line retired at most once',
   tags: ['two-pointers', 'greedy'],
-  traced: '2026-08-26',
+  traced: '2026-08-24',
   notes: [
     'Ties can move either pointer — both lines are equally capping, and any strictly-inner pair is still reachable',
     'Handles two-element input, zero heights, and all-equal heights with no special cases',

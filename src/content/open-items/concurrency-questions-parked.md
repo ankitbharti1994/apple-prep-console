@@ -4,7 +4,7 @@ kind: parked
 status: open
 opened: 2026-08-25
 order: 7
-labs: ['sendable-is-about-captures']
+labs: ['10-sendable-is-about-captures']
 ---
 
 <p>Day 2 stopped before <code>Task</code> boundaries and capture rules. Capture rules are now covered (day 3, section 10); the rest is untouched.</p>

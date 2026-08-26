@@ -1,0 +1,44 @@
+---
+date: 2026-08-25
+headline: Concurrency, then <em>bucket sort</em>.
+lede: >-
+  Internals first: Sendable formalises yesterday's question, actors turn out not to prevent the bug
+  everyone assumes they prevent, and @unchecked left a gap on reads. Then Top K Frequent reached
+  O(n) after two wrong turns. One of two coding problems — Group Anagrams went to the backlog.
+blocks:
+  - track: internals
+    time: 6:00 — 6:50
+    title: Sendable, actors, and the escape hatch
+    href: /internals#day-2026-08-25
+    bullets:
+      - Sendable, actor reentrancy, @unchecked — gap found on reads
+      - Actors eliminate data races, not race conditions
+  - track: coding
+    time: 6:50 — 7:30
+    title: Bucket sort, after two wrong turns
+    href: /coding/13
+    bullets:
+      - Top K Frequent — reached O(n) after two wrong turns
+      - 'Aggregate analysis: why nested loops here are still linear'
+      - 1 of 2 coding problems — Group Anagrams to backlog
+problems: [13]
+labs:
+  - 06-sendable-formalized
+  - 07-actor-reentrancy
+  - 08-actors-and-mainactor
+openItems:
+  - unchecked-sendable-reads
+  - top-k-two-wrong-turns
+  - concurrency-questions-parked
+  - q9-string-units
+carriesForward:
+  - from: Value semantics
+    to: Sendable — the compiler asking whether your type really behaves like a value
+  - from: Shallow copy leak
+    to: Why a struct with a class property fails Sendable under strict concurrency
+  - from: Copy-on-write
+    to: How to make a reference-backed type safe to send
+  - from: ARC + captures
+    to: Capturing across Task boundaries, and why lifetimes get harder there
+note: Ran internals first, then coding. Carried one problem forward.
+---

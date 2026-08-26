@@ -2,14 +2,14 @@
 import TracePlayer from '~/components/react/TracePlayer';
 import type { Problem } from '~/lib/trace';
 
-interface Props { problem: Problem; }
-const { problem: p } = Astro.props;
+interface Props { problem: Problem; isNew?: boolean; }
+const { problem: p, isNew = false } = Astro.props;
 const frames = p.trace();
 const lcHref = p.lcSlug ? `https://leetcode.com/problems/${p.lcSlug}/` : null;
 ---
 <article class="card" id={`p${p.n}`}>
   <div class="card-h">
-    <div class="no">Question {p.n}{p.isNew ? ' · new' : ''}</div>
+    <div class="no">Question {p.n}{isNew ? ' · new' : ''}</div>
     <h2>{p.title}</h2>
     <div class="tags">
       <span class:list={['tag', p.difficulty.toLowerCase()]}>{p.difficulty}</span>

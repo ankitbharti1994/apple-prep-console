@@ -1,0 +1,48 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import { highlightSwift } from '~/components/react/TracePlayer';
+import { prep } from '../../prep.config';
+
+// Read the real files from companions/ so the page can never drift from what runs.
+const files = import.meta.glob('/companions/*.swift', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+
+const items = prep.companions.map((c) => {
+  const key = Object.keys(files).find((k) => k.endsWith(`/${c.file}`));
+  if (!key) throw new Error(`prep.config.ts lists companions/${c.file}, but that file does not exist.`);
+  const source = files[key]!;
+  return { ...c, source, lines: source.split('\n').length, anchor: c.file.replace('.', '-') };
+});
+---
+<Shell title="Companions" track="internals" description="The runnable Swift files behind the internals claims.">
+  <p class="eyebrow">Companion files</p>
+  <h1>Claims you can<br /><em>actually run</em>.</h1>
+  <p class="lede">
+    Both files live in <code>companions/</code> in this repo and are read straight off disk at build
+    time, so what is printed here is what runs. Copy the command, run the file, read the output.
+  </p>
+
+  <div class="picker">
+    {items.map((c) => <a class="pk" href={`#${c.anchor}`}>{c.file}</a>)}
+  </div>
+
+  {items.map((c) => (
+    <section class="labsection" id={c.anchor}>
+      <p class="num">{c.file}</p>
+      <h2>{c.title}</h2>
+      <p class="intro">{c.blurb}</p>
+      <div class="proofbar" style="margin:0 0 14px">
+        <span class="pl">Run it</span>
+        <code>{c.run}</code>
+        <span style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted)">{c.lines} lines</span>
+      </div>
+      <div class="card">
+        <pre class="srcblock" style="padding:16px 17px"><code set:html={highlightSwift(c.source)} /></pre>
+      </div>
+    </section>
+  ))}
+
+  <div class="colophon">
+    <span>{items.length} companion files · {items.reduce((a, c) => a + c.lines, 0)} lines</span>
+    <span>Read from disk at build time</span>
+  </div>
+</Shell>

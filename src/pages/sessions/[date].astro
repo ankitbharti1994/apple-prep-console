@@ -1,0 +1,103 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import SessionCards from '~/components/SessionCards.astro';
+import { render } from 'astro:content';
+import { allSessions, allLabs, allOpenItems } from '~/lib/content';
+import { problems } from '~/data/problems';
+import { formatLong, formatShort, sessionOrdinal, weekOf } from '~/lib/progress';
+import { prep } from '../../../prep.config';
+
+export async function getStaticPaths() {
+  const sessions = await allSessions();
+  return sessions.map((entry, i) => ({
+    params: { date: entry.data.date },
+    props: { entry, newer: sessions[i - 1], older: sessions[i + 1] },
+  }));
+}
+
+const { entry, newer, older } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const labs = (await allLabs()).filter((l) => d.labs.includes(l.id));
+const open = (await allOpenItems()).filter((o) => d.openItems.includes(o.id));
+const traced = problems.filter((p) => d.problems.includes(p.n));
+---
+<Shell title={formatShort(d.date)} track="sessions" description={d.lede}>
+  <p class="eyebrow">
+    {formatLong(d.date)} · session {sessionOrdinal(d.date)} of {prep.totalSessions} · week {weekOf(d.date)}
+  </p>
+  <h1 set:html={d.headline} />
+  <p class="lede" set:html={d.lede} />
+
+  <SessionCards sessions={[entry]} showDate={false} />
+
+  <div class="prose" style="margin-top:22px"><Content /></div>
+
+  {traced.length > 0 && (
+    <>
+      <h2 class="sec">Problems traced</h2>
+      <table class="ptable">
+        <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Complexity</th></tr></thead>
+        <tbody>
+          {traced.map((p) => (
+            <tr>
+              <td>{p.n}</td>
+              <td><a href={`/coding/${p.n}`}>{p.title}</a></td>
+              <td><span class:list={['tag', p.difficulty.toLowerCase()]}>{p.difficulty}</span></td>
+              <td style="font-family:var(--mono);font-size:11.5px">{p.complexity}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  )}
+
+  {labs.length > 0 && (
+    <>
+      <h2 class="sec">Labs worked</h2>
+      <ol class="next">
+        {labs.map((l) => (
+          <li>
+            <a href={`/internals#${l.id}`}><b set:html={l.data.title} /></a>
+            {l.data.intro && <span set:html={` — ${l.data.intro}`} />}
+          </li>
+        ))}
+      </ol>
+    </>
+  )}
+
+  {open.length > 0 && (
+    <>
+      <h2 class="sec">Open items touched</h2>
+      <ol class="next">
+        {open.map((o) => (
+          <li>
+            <a href={`/open#${o.id}`}><b>{o.data.title}</b></a>
+            <span class="kindtag">{o.data.kind}</span>
+            <span class="kindtag">{o.data.status}</span>
+          </li>
+        ))}
+      </ol>
+    </>
+  )}
+
+  {d.carriesForward.length > 0 && older && (
+    <>
+      <h2 class="sec">How {formatShort(older.data.date)} fed this session</h2>
+      <table class="ptable">
+        <thead><tr><th>{formatShort(older.data.date)}</th><th>{formatShort(d.date)}</th></tr></thead>
+        <tbody>
+          {d.carriesForward.map((r) => (
+            <tr><td set:html={r.from} /><td set:html={r.to} /></tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  )}
+
+  <div class="filterbar" style="justify-content:space-between;margin-top:24px">
+    {older ? <a class="pk" href={`/sessions/${older.data.date}`}>← {formatShort(older.data.date)}</a> : <span></span>}
+    {newer ? <a class="pk" href={`/sessions/${newer.data.date}`}>{formatShort(newer.data.date)} →</a> : <span></span>}
+  </div>
+</Shell>

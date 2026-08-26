@@ -1,0 +1,53 @@
+---
+import Shell from '~/layouts/Shell.astro';
+import { allSessions, counts } from '~/lib/content';
+import { problems } from '~/data/problems';
+import { formatLong, sessionOrdinal, weekOf, standing } from '~/lib/progress';
+import { prep } from '../../../prep.config';
+
+const sessions = await allSessions();
+const c = await counts();
+const s = standing(sessions.map((x) => x.data.date));
+---
+<Shell title="Sessions" track="sessions" description="Every session, newest first.">
+  <p class="eyebrow">Track 05 · the log</p>
+  <h1>{c.sessions} session{c.sessions === 1 ? '' : 's'},<br /><em>in order</em>.</h1>
+  <p class="lede">
+    One file per morning. Each entry links to the problems traced and the labs worked, so the
+    record and the material never drift apart.
+  </p>
+
+  <div class="metrics">
+    <div class="metric"><div class="lb">Logged</div><div class="vv">{c.sessions}</div><div class="sub">of {prep.totalSessions} weekday blocks</div></div>
+    <div class="metric"><div class="lb">Streak</div><div class="vv">{s.streak}</div><div class="sub">consecutive weekdays</div></div>
+    <div class="metric"><div class="lb">Week</div><div class="vv">{s.week}</div><div class="sub">of {prep.totalWeeks}</div></div>
+    <div class="metric"><div class="lb">Elapsed</div><div class="vv">{s.elapsedPct}%</div><div class="sub">of the programme</div></div>
+  </div>
+
+  {sessions.map((entry) => {
+    const d = entry.data;
+    const traced = problems.filter((p) => d.problems.includes(p.n));
+    return (
+      <article class="rev" style="border-left-color:var(--accent)" id={d.date}>
+        <p class="tm" style="font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 4px">
+          {formatLong(d.date)} · session {sessionOrdinal(d.date)} · week {weekOf(d.date)}
+        </p>
+        <h4><a href={`/sessions/${d.date}`} set:html={d.headline.replace(/<br\s*\/?>/g, ' ')} /></h4>
+        <p set:html={d.lede} />
+        <div class="tags">
+          {traced.map((p) => (
+            <a class="tag lc" href={`/coding/${p.n}`}>{p.n}. {p.title}</a>
+          ))}
+          {d.labs.length > 0 && (
+            <a class="tag" href={`/internals#day-${d.date}`}>{d.labs.length} lab{d.labs.length === 1 ? '' : 's'}</a>
+          )}
+        </div>
+      </article>
+    );
+  })}
+
+  <div class="colophon">
+    <span>Newest first</span>
+    <span>{c.sessions} of {prep.totalSessions} logged</span>
+  </div>
+</Shell>

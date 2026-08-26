@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatShort } from '~/lib/progress';
+
+interface Props { sessions: CollectionEntry<'sessions'>[]; showDate?: boolean; }
+const { sessions, showDate = true } = Astro.props;
+---
+<div class="today">
+  {sessions.flatMap((s) =>
+    s.data.blocks.map((b) => (
+      <div class:list={['tcard', b.track]}>
+        <div class="tm">
+          {showDate ? `${formatShort(s.data.date)} · ` : ''}{b.time ? `${b.time} · ` : ''}{b.track}
+        </div>
+        <h3>{b.title}</h3>
+        <ul>{b.bullets.map((x) => <li set:html={x} />)}</ul>
+        {b.href && <a class="go" href={b.href}>Open →</a>}
+      </div>
+    )),
+  )}
+</div>

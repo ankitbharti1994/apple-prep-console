@@ -2,7 +2,11 @@
 import Shell from '~/layouts/Shell.astro';
 import ProblemFilter from '~/components/react/ProblemFilter';
 import { problems } from '~/data/problems';
+import { sessionDates } from '~/lib/content';
 import { prep } from '../../../prep.config';
+
+// "new" means "added in the most recent session" — derived, never written down.
+const latest = (await sessionDates()).sort().at(-1) ?? null;
 
 const rows = problems.map((p) => ({
   n: p.n,
@@ -11,7 +15,7 @@ const rows = problems.map((p) => ({
   lc: p.lc,
   complexity: p.complexity,
   tags: p.tags ?? [],
-  isNew: !!p.isNew,
+  isNew: !!latest && p.traced === latest,
   traced: p.traced ?? null,
 }));
 

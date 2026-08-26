@@ -3,6 +3,7 @@ import '~/styles/global.css';
 import Rail from '~/components/Rail.astro';
 import CommandPalette from '~/components/react/CommandPalette';
 import { buildIndex } from '~/lib/searchIndex';
+import { assertReferencesResolve } from '~/lib/validate';
 import { prep } from '../../prep.config';
 
 interface Props {
@@ -12,6 +13,7 @@ interface Props {
 }
 
 const { title, track, description } = Astro.props;
+await assertReferencesResolve();
 const index = await buildIndex();
 const pageTitle = title === prep.title ? title : `${title} · ${prep.title}`;
 ---
@@ -47,7 +49,7 @@ const pageTitle = title === prep.title ? title : `${title} · ${prep.title}`;
   <a class="skip" href="#main">Skip to content</a>
   <div class="shell">
     <Rail track={track} />
-    <main class="main" id="main">
+    <main class="main" id="main" data-pagefind-body>
       <slot />
     </main>
   </div>

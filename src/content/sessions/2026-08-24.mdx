@@ -1,0 +1,33 @@
+---
+date: 2026-08-24
+headline: Where things live, and <em>who owns them</em>.
+lede: >-
+  First session. Twelve problems traced end to end in the coding block, then the three ideas Swift
+  concurrency is built on — value semantics, copy-on-write and ARC — each as a working model rather
+  than a paragraph to reread.
+blocks:
+  - track: coding
+    time: 6:00 — 6:50
+    title: Two pointers, converging
+    href: /coding
+    bullets:
+      - Container with most water — solved, O(n)
+      - Longest substring — solved, one bug found
+      - Derived the domination argument unaided
+  - track: internals
+    time: 6:50 — 7:30
+    title: Where things live, who owns them
+    href: /internals
+    bullets:
+      - Struct vs class allocation — myth corrected
+      - Copy-on-write and the O(n²) trap
+      - weak vs unowned, and why unowned crashes late
+problems: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+labs:
+  - 01-where-storage-lives
+  - 02-copy-on-write
+  - 03-shallow-copy
+  - 04-capture-semantics
+  - 05-prove-it
+openItems: ['q9-longest-substring-regression']
+---

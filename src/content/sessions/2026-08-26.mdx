@@ -1,0 +1,46 @@
+---
+date: 2026-08-26
+headline: Debt cleared,<br />and <em>three things stated backwards</em>.
+lede: >-
+  Day 3 paid back the Group Anagrams problem owed from 25 Aug, then closed the oldest open item by
+  running the @unchecked lab under Thread Sanitizer. Three corrections came out of it — the grouping
+  dictionary, the hash test, and @Sendable itself. The pattern across all three is the same: each
+  was a claim that sounded right and could not have failed a check.
+blocks:
+  - track: coding
+    time: 6:00 — 6:50
+    title: Anagrams, the backlog paid
+    href: /coding/14
+    bullets:
+      - Group Anagrams — backlog cleared, O(n·k) count-vector key
+      - First attempt inverted the dictionary — word → signature
+      - Hash values are seeded per process, so they are never assertable
+  - track: internals
+    time: 6:50 — 7:30
+    title: Sendable, proven
+    href: /internals#day-2026-08-26
+    bullets:
+      - '@unchecked closed under TSan — count right, race real'
+      - '@Sendable stated backwards — it licenses concurrency, not isolation'
+      - The guarantee ends wherever a reference to mutable state escapes
+problems: [14]
+labs:
+  - 09-unchecked-under-tsan
+  - 10-sendable-is-about-captures
+  - 11-where-the-guarantee-ends
+openItems:
+  - group-anagrams-dictionary-direction
+  - hashable-what-a-hash-test-proves
+  - sendable-stated-backwards
+  - backlog-group-anagrams
+carriesForward:
+  - from: Bucketing beats sorting
+    to: Counting beats sorting for the anagram key — <code>O(n·k)</code> against <code>O(n·k log k)</code>, the identical move
+  - from: Membership-only test
+    to: A test that passes against a deliberately broken implementation — <b>same failure, two days running</b>
+  - from: String units, parked
+    to: Forced as a coding decision — <em>what unit are you keying on</em> — rather than answered as trivia
+  - from: '@unchecked gap on reads'
+    to: Closed under TSan — and a second gap surfaced beside it, <code>@Sendable</code> described as isolation rather than as a capture rule
+note: Ran coding first, then internals — and overran.
+---

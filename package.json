@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "astro build && pagefind --site dist --output-subdir pagefind",
     "preview": "astro preview",
     "check": "astro check && tsc --noEmit",
     "new:session": "tsx scripts/new.ts session",
@@ -16,7 +16,8 @@
     "new:note": "tsx scripts/new.ts note",
     "new:open-item": "tsx scripts/new.ts open-item",
     "coverage": "tsx scripts/coverage-check.ts",
-    "verify:traces": "tsx scripts/verify-traces.ts"
+    "verify:traces": "tsx scripts/verify-traces.ts",
+    "build:fast": "astro build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
@@ -31,8 +32,10 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@types/node": "^26.3.0",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
+    "pagefind": "^1.5.2",
     "tsx": "^4.23.12"
   }
 }

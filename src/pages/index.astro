@@ -1,6 +1,118 @@
 ---
 import Shell from '~/layouts/Shell.astro';
+import SessionCards from '~/components/SessionCards.astro';
+import { allSessions, counts, planPhases, sessionDates } from '~/lib/content';
+import { problems } from '~/data/problems';
+import { standing, formatLong, formatShort, sessionOrdinal } from '~/lib/progress';
+import { prep } from '../../prep.config';
+
+const sessions = await allSessions();          // newest first
+const c = await counts();
+const s = standing(await sessionDates());
+const phases = (await planPhases()).map((p) => p.data);
+
+const latest = sessions[0];
+const previous = sessions.slice(1);
+const curWeek = s.week;
+const inPhase = (w: number, p: { weeks: readonly [number, number] }) => w >= p.weeks[0] && p.weeks[1] >= w;
+
+const problemsThisSession = latest ? problems.filter((p) => p.traced === latest.data.date).length : 0;
+const carries = latest?.data.carriesForward ?? [];
+const prevDate = previous[0]?.data.date;
 ---
-<Shell title="Overview" track="overview">
-  <h1>Placeholder</h1>
+<Shell title={prep.title} track="overview" description="Where the Apple prep stands today.">
+  {latest && (
+    <>
+      <p class="eyebrow">
+        {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date)} of {prep.totalSessions}
+      </p>
+      <h1 set:html={latest.data.headline} />
+      <p class="lede" set:html={latest.data.lede} />
+    </>
+  )}
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="lb">Problems traced</div><div class="vv">{c.problems}</div>
+      <div class="sub">{prep.currentTopic.name.replace(/^Topic \d+ · /, '')}</div>
+    </div>
+    <div class="metric">
+      <div class="lb">Internals labs</div><div class="vv">{c.labs}</div>
+      <div class="sub">across {c.sessions} sessions</div>
+    </div>
+    <div class="metric">
+      <div class="lb">Open items</div><div class="vv">{c.openActive}</div>
+      <div class="sub">{c.openClosed} closed so far</div>
+    </div>
+    <div class="metric">
+      <div class="lb">Weeks remaining</div><div class="vv">{s.weeksRemaining}</div>
+      <div class="sub">mocks start week 6</div>
+    </div>
+  </div>
+
+  {latest && (
+    <>
+      <h2 class="sec">Latest session</h2>
+      <p class="sec-sub">
+        {problemsThisSession > 0
+          ? `${problemsThisSession} problem${problemsThisSession === 1 ? '' : 's'} traced and ${latest.data.labs.length} lab${latest.data.labs.length === 1 ? '' : 's'} worked.`
+          : `${latest.data.labs.length} lab${latest.data.labs.length === 1 ? '' : 's'} worked.`}
+        {latest.data.note ? ` ${latest.data.note}` : ''}
+      </p>
+      <SessionCards sessions={[latest]} showDate={false} />
+    </>
+  )}
+
+  {carries.length > 0 && prevDate && (
+    <>
+      <h2 class="sec">How {formatShort(prevDate)} fed {formatShort(latest!.data.date)}</h2>
+      <p class="sec-sub">The same moves again, one day later, wearing different names.</p>
+      <table class="ptable">
+        <thead>
+          <tr><th>{formatShort(prevDate)}</th><th>{formatShort(latest!.data.date)}</th></tr>
+        </thead>
+        <tbody>
+          {carries.map((r) => (
+            <tr><td set:html={r.from} /><td set:html={r.to} /></tr>
+          ))}
+        </tbody>
+      </table>
+    </>
+  )}
+
+  <h2 class="sec">The twelve weeks</h2>
+  <div class="phases">
+    {phases.map((p) => (
+      <a class:list={['phasecard', { now: inPhase(curWeek, p) }]} href={`/plan#phase-${p.id}`}>
+        <div class="wk">W{p.weeks[0]}–{p.weeks[1]}{inPhase(curWeek, p) ? ' · now' : ''}</div>
+        <div class="nm">{p.title}</div>
+      </a>
+    ))}
+  </div>
+  <p class="stripnote">
+    Weekday mornings 6:00–7:30 {prep.timezone} · Saturday deep-work blocks · mocks held back until week 6.
+  </p>
+  <a class="pk" href="/plan" style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
+    See the full {prep.totalWeeks}-week plan →
+  </a>
+
+  {previous.length > 0 && (
+    <>
+      <h2 class="sec">Earlier sessions</h2>
+      <p class="sec-sub">
+        {c.sessions} block{c.sessions === 1 ? '' : 's'} so far, {s.streak} consecutive.
+      </p>
+      <SessionCards sessions={previous} />
+      <p style="margin-top:14px">
+        <a class="pk" href="/sessions" style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
+          Every session →
+        </a>
+      </p>
+    </>
+  )}
+
+  <div class="colophon">
+    <span>Apple prep · {formatShort(prep.startDate)} — {formatShort(prep.endDate)} 2026</span>
+    <span>Session {s.sessionOrdinal} of {prep.totalSessions} · week {curWeek} of {prep.totalWeeks}</span>
+  </div>
 </Shell>

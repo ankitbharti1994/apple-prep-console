@@ -72,8 +72,6 @@ export interface Problem {
   code: string;
   /** Label for the main array row. */
   arrLabel?: string;
-  /** Marks a problem added in the most recent session. */
-  isNew?: boolean;
   /** Date first traced, ISO. Used to link problems back to sessions. */
   traced?: string;
   trace: () => Frame[];

@@ -7,7 +7,6 @@ const problem: Problem = {
   lc: 49,
   lcName: 'Group Anagrams',
   lcSlug: 'group-anagrams',
-  isNew: true,
   traced: '2026-08-26',
   complexity: 'Time O(n·k) · Space O(n·k) — n strings, k average length; counting, never comparing',
   tags: ['hash-map', 'grouping'],
