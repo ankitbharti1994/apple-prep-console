@@ -39,6 +39,24 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     match: /^nums2 leftovers get copied in\./,
     why: 'unreachable in both versions — problem 6\'s sample input never enters the leftover loop, so this frame was never rendered in the original either (verify-traces confirms the two traces are frame-for-frame identical)',
   },
+
+  /* --- superseded on 27 Aug, day 4 ------------------------------------ *
+   * The original was wrong about how @Sendable rejects a captured var, and
+   * running the three cases separately settled it. These strings are gone
+   * because they were corrected, not because they were lost — the day-4
+   * lab quotes each of them and says what replaced it.                    */
+  {
+    match: /captures are by value|can not be mutated|cannot be mutated/i,
+    why: 'FACTUALLY WRONG, corrected 27 Aug. A captured var is boxed and captured by reference, so the ban covers reference rather than mutation — measured as "reference to captured var \'seed\' in concurrently-executing code [#SendableClosureCaptures]". Quoted and replaced in labs/12-sendable-what-the-compiler-said.',
+  },
+  {
+    match: /^Parameters and return type are already visible in the signature/,
+    why: 'same paragraph as above — kept verbatim except for the corrected final clause, plus a note pointing at the day-4 evidence',
+  },
+  {
+    match: /^(State @Sendable cold, unprompted|Two new problems, no debt|Fix the testing habit, not the individual tests)/,
+    why: 'next-steps rewritten on 27 Aug to reflect what happened: the cold statement was attempted and failed on mechanism, the two-problem test was deferred a second time, and the testing weakness is now three sessions old rather than two',
+  },
 ];
 
 function decodeEntities(s: string): string {

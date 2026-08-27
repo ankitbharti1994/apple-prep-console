@@ -7,9 +7,9 @@ const spec: InspectorSpec = {
       {
         "name": "capture a mutable var",
         "verdict": "n",
-        "title": "Rejected",
-        "body": "Captures are by value. Mutating one inside a concurrently-executing closure would mean two copies drifting apart, so the compiler refuses outright.",
-        "code": "<span class=\"kw\">var</span> counter = 0\n<span class=\"kw\">let</span> f: @Sendable () -&gt; <span class=\"ty\">Void</span> = { counter += 1 }\n<span class=\"cm\">// error: mutation of captured var 'counter'</span>\n<span class=\"cm\">//        in concurrently-executing code</span>"
+        "title": "Rejected — even for a read",
+        "body": "A captured <code>var</code> is <b>boxed and captured by reference</b>, so the closure and the enclosing scope share one storage slot. That is why the ban covers <em>reference</em> rather than mutation — a read can tear against a concurrent write. Capturing a <code>let</code>, or writing <code>{ [seed] in seed }</code> to force an immutable copy, both compile.",
+        "code": "<span class=\"kw\">var</span> seed = 0\n<span class=\"kw\">let</span> f: @Sendable () -&gt; <span class=\"ty\">Int</span> = { seed }   <span class=\"cm\">// just a read</span>\n<span class=\"cm\">// error: reference to captured var 'seed'</span>\n<span class=\"cm\">//        in concurrently-executing code</span>\n<span class=\"cm\">//        [#SendableClosureCaptures]</span>"
       },
       {
         "name": "capture a non-Sendable class",

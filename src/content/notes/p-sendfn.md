@@ -14,8 +14,9 @@ title: 'Proving @Sendable constrains captures rather than execution'
 <p>Now the other direction — change only the capture and watch the same signature get rejected:</p>
 <pre>swiftc -swift-version 6 captures.swift</pre>
 <pre><span class="kw">var</span> counter = 0
-<span class="kw">let</span> a: @Sendable () -&gt; <span class="ty">Void</span> = { counter += 1 }
-<span class="cm">// error: mutation of captured var 'counter'</span>
+<span class="kw">let</span> a: @Sendable () -&gt; <span class="ty">Int</span> = { counter }   <span class="cm">// a read, not a write</span>
+<span class="cm">// error: reference to captured var 'counter' in</span>
+<span class="cm">//        concurrently-executing code [#SendableClosureCaptures]</span>
 
 <span class="kw">final class</span> <span class="ty">Box</span> { <span class="kw">var</span> v = 0 }
 <span class="kw">let</span> box = <span class="ty">Box</span>()

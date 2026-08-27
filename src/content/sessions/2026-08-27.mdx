@@ -1,0 +1,51 @@
+---
+date: 2026-08-27
+headline: Nothing settled by argument,<br /><em>everything by the compiler</em>.
+lede: >-
+  Internals only, by choice, and it took the whole block. @Sendable was re-attempted cold and failed
+  on mechanism — then the day-3 record of it turned out to be wrong on both halves. String units were
+  said cold and closed with one gap. Task inheritance and cancellation were new ground and produced
+  two wrong answers. Every correction on both sides came from a diagnostic or a printed line, not
+  from an argument.
+blocks:
+  - track: internals
+    time: 6:00 — past 8:00
+    title: Three tracks, one block
+    href: /internals#day-2026-08-27
+    bullets:
+      - '@Sendable cold — behaviour right, mechanism wrong. Captured vars are boxed and captured by reference, so the ban covers reading, not just mutating'
+      - 'String units cold — three of four, with ZWJ counts unanswered. The negative-control pair now demonstrates the Group Anagrams argument rather than reciting it'
+      - 'Task vs Task.detached — cancellation sets a flag and stops nothing. Answered as the reverse, which is the direction that causes real bugs'
+      - 'Three assistant errors, all corrected by the compiler or by output rather than by argument'
+problems: []
+labs:
+  - 12-sendable-what-the-compiler-said
+  - 13-string-units-proven
+  - 14-task-inheritance-and-cancellation
+openItems:
+  - enforcement-not-observation
+  - sendable-stated-backwards
+  - case-b-never-observed
+  - cancellation-timing-unmeasured
+  - two-problems-at-ninety-minutes
+carriesForwardNote: The third session running in which the weakness was in the checking, not the solving.
+carriesForward:
+  - from: '@Sendable stated backwards'
+    to: Re-attempted cold and failed on <b>mechanism</b> — and the correction recorded on day 3 was itself wrong on both halves
+  - from: String units, still owed cold
+    to: Said cold, three of four. The <code>utf8</code> negative control now <em>demonstrates</em> the Group Anagrams key rather than asserting it
+  - from: A hash test that could not fail
+    to: The capture-list experiment had the identical flaw — two mechanisms live in one program, so it could not distinguish the hypothesis from its alternative
+  - from: '@unchecked — a claim that could not have failed a check'
+    to: Twice more, in the same shape. Now named as one item rather than three
+note: Internals only — coding did not run, and the two-mediums-in-90-minutes commitment is now deferred twice.
+---
+
+## The scheduling risk, stated
+
+Weekday carry-forward is absorbed at weekends rather than pushed into the next weekday. Saturday
+9:00–11:00 already owns *"anything you only read about gets written."* If overflow lands there by
+default, that block quietly becomes catch-up rather than build.
+
+Sunday's checkpoint is thirty minutes and mostly review, so it has room to extend if a dedicated
+overflow slot is wanted. Worth deciding before it decides itself.

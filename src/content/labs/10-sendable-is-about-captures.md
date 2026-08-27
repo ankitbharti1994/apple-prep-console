@@ -9,7 +9,8 @@ intro: Stated backwards on 26 Aug as "the function will be executed in isolation
 preamble: |
   <div class="rev" style="border-left-color:var(--bad);margin-bottom:20px">
     <h4 style="font-size:14.5px">The correction, stated precisely</h4>
-    <p style="margin-bottom:0">Parameters and return type are already visible in the signature and already checked. What a closure closed over is <em>invisible at the call site</em> — that is the hole <code>@Sendable</code> plugs. Two rules follow: every captured value must itself be Sendable, and captured <code>var</code>s cannot be mutated, because captures are by value.</p>
+    <p>Parameters and return type are already visible in the signature and already checked. What a closure closed over is <em>invisible at the call site</em> — that is the hole <code>@Sendable</code> plugs. Two rules follow: every captured value must itself be Sendable, and a captured <code>var</code> cannot be <b>referenced at all</b>, because <code>var</code>s are boxed and captured by reference.</p>
+    <p style="margin-bottom:0"><span class="corrected">sharpened 27 Aug</span> This section originally said captured <code>var</code>s "cannot be mutated, because captures are by value." Both halves were wrong — see <a href="/internals#12-sendable-what-the-compiler-said">day 4</a>, where the control case separates the capture rule from actor-isolation checking.</p>
   </div>
 ---
 
