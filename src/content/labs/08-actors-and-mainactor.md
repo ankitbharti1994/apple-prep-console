@@ -25,6 +25,7 @@ intro: An actor is a reference type that protects its own mutable state. Its sto
   <tr><td>Task { } inside it</td><td>Yes — stays on the main actor</td></tr>
   <tr><td>Task.detached { }</td><td><b>No</b> — the usual source of "why is my UI update on a background thread"</td></tr>
 </table>
+<p>That table answers the isolation question only. Isolation is not the only thing <code>detached</code> drops — see <a href="/internals#14-task-inheritance-and-cancellation">day 4</a>, where task-local values turn out to be the one that actually bites.</p>
 
 <h3>What conforms to Sendable automatically</h3>
 <table>

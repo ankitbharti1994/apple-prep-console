@@ -54,6 +54,10 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'same paragraph as above — kept verbatim except for the corrected final clause, plus a note pointing at the day-4 evidence',
   },
   {
+    match: /^These are orthogonal, and one function can carry both\./,
+    why: 'TOO STRONG, qualified 27 Aug. A *synchronous* global-actor-isolated function cannot be @Sendable — measured as "main actor-isolated synchronous global function \'stillOnMain()\' cannot be marked as \'@Sendable\'". The sentence is kept with the exception and the fix (make it async) added beside it.',
+  },
+  {
     match: /^(State @Sendable cold, unprompted|Two new problems, no debt|Fix the testing habit, not the individual tests)/,
     why: 'next-steps rewritten on 27 Aug to reflect what happened: the cold statement was attempted and failed on mechanism, the two-problem test was deferred a second time, and the testing weakness is now three sessions old rather than two',
   },

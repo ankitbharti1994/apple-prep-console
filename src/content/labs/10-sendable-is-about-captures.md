@@ -20,7 +20,14 @@ preamble: |
   <tr><td><code>@MainActor () -&gt; Void</code></td><td><b>Where</b> it runs — isolation</td></tr>
   <tr><td><code>@Sendable () -&gt; Void</code></td><td><b>Whether</b> it is safe to hand off — captures</td></tr>
 </table>
-<p>These are orthogonal, and one function can carry both. Notice also that none of the compiler errors in the picker above mentions threads, queues, or execution: every one of them is about what crossed the boundary.</p>
+<p>These are orthogonal, and a function can carry both — with one exception measured on <a href="/internals#12-sendable-what-the-compiler-said">day 4</a>: a <b>synchronous</b> global-actor-isolated function cannot be <code>@Sendable</code>, because there is no suspension point at which to hop onto the actor, so the two annotations contradict each other outright.</p>
+<pre><span class="kw">@MainActor</span> @<span class="ty">Sendable</span> <span class="kw">func</span> stillOnMain() { }
+<span class="cm">// error: main actor-isolated synchronous global function</span>
+<span class="cm">//        'stillOnMain()' cannot be marked as '@Sendable'</span>
+
+<span class="kw">@MainActor</span> @<span class="ty">Sendable</span> <span class="kw">func</span> stillOnMain() <span class="kw">async</span> { }
+<span class="cm">// fine — and it still runs on the main actor</span></pre>
+<p>Notice also that none of the compiler errors in the picker above mentions threads, queues, or execution: every one of them is about what crossed the boundary.</p>
 
 <div class="say">
   <div class="say-h">Say it out loud</div>
