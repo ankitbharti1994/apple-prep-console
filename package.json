@@ -18,7 +18,8 @@
     "coverage": "tsx scripts/coverage-check.ts",
     "verify:traces": "tsx scripts/verify-traces.ts",
     "build:fast": "astro build",
-    "verify": "npm run verify:traces && npm run coverage"
+    "verify": "npm run verify:traces && npm run lint:traces && npm run coverage",
+    "lint:traces": "tsx scripts/lint-traces.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",

@@ -106,6 +106,35 @@ Optional: `second` for a result row, `mode: 'bars'` with `bars: number[]` for a 
 Finally add the number to that session's `problems:` list. Nothing else — the problem list,
 the filter, the picker, the JSON API and the ⌘K palette all pick it up from the file.
 
+### What makes a trace worth scrubbing
+
+This is the part with all the value and the part easiest to fake. A trace that
+jumps from setup to answer passes every schema check and is worthless, so there
+is a second gate:
+
+```bash
+npm run lint:traces
+```
+
+It measures frames per element, narration length, whether the visible state
+actually advances between frames, and whether `codeLines` resolve to real lines.
+Thresholds are calibrated against the original fourteen, so the bar is "as good
+as what is already here".
+
+What it cannot judge is whether the narration is any *good*. The rule:
+
+> **`note` is the sentence you would say out loud in the room at that moment** —
+> what just changed and why it matters. Not a restatement of the line of code.
+
+Compare, from problem 9:
+
+- ✅ *"`b` was seen before, but **outside** the window. The guard blocks the jump —
+  left must never retreat."*
+- ❌ *"Check if the character is in the dictionary and update the left pointer."*
+
+The first is a thing you could say in an interview. The second is the code read
+aloud. Open the page and scrub it before calling the problem done.
+
 ## Adding an internals lab
 
 ```bash
