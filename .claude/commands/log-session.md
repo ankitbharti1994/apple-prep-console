@@ -1,13 +1,39 @@
 ---
-description: Log a prep session from a plain description of what you did
+description: Log a prep session from a written report or a plain description
 ---
 
-Log a session in this repo from the description below. If it is empty, ask what
-happened this morning before doing anything.
+Log a session in this repo from whatever is below.
 
 <session>
 $ARGUMENTS
 </session>
+
+## First, work out what you were given
+
+- **A file path, or an attached document** (`day-05-report.md`, a path, an
+  `@`-mention) — read the whole file before doing anything else. This is the
+  normal case. The report is the source of truth; do not summarise it from the
+  filename or from a partial read.
+- **A plain description typed in the message** — work from that.
+- **Nothing at all** — ask what happened this morning, then stop and wait.
+
+If a report is supplied, **follow its own instructions** where it has any. These
+reports sometimes carry conventions of their own — a distinction between what was
+measured, predicted and merely claimed; an instruction not to fabricate a track
+that did not run; a request to record something as one item rather than several.
+Those instructions outrank the defaults below.
+
+Two rules that hold regardless:
+
+- **Never invent a track that did not happen.** If coding did not run, there is no
+  coding block and `problems:` is empty. An honest gap is content; a fabricated
+  entry is corruption.
+- **A report may correct something already on the site.** When it does, find every
+  place the superseded claim appears — `grep` for the phrase, and check labs,
+  open items, notes and `src/data/inspectors/` — fix all of them, and have each
+  one quote what it replaced rather than silently overwriting. Then add the old
+  strings to `EXPECTED_DROPS` in `scripts/coverage-check.ts` with the reason, or
+  `npm run coverage` will fail and it will be right to.
 
 ## What to do
 
