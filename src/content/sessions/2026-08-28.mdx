@@ -1,0 +1,44 @@
+---
+date: 2026-08-28
+headline: A suite where <em>none of the five</em> could fail.
+lede: >-
+  Short block, started late, and explicitly not the two-problem test — that needs the full ninety
+  minutes to mean anything. Valid Anagram came out correct and optimal on the first attempt, and the
+  session's finding was entirely in the test suite: run against an implementation that ignores letter
+  counts, zero of five assertions fired. The case that closes it was found here rather than pointed at.
+blocks:
+  - track: coding
+    time: ~60 minutes, late start
+    title: Valid Anagram, and a suite that could not fail
+    href: /coding/15
+    bullets:
+      - 'Q15 solved correctly and optimally first attempt — O(n+m), 26-slot count vectors, no correction needed'
+      - 'The utf8 choice was made deliberately against the stated constraint. First time the day-4 string-units material was spent rather than recited'
+      - 'Measured: against an implementation using <code>Set(s) == Set(t)</code>, all five original assertions passed'
+      - 'Two repair attempts missed the same property, then <code>("aab","bab",false)</code> closed it — equal length, identical letter set, different multiplicities'
+problems: [15]
+labs: []
+openItems:
+  - distinguishing-input
+  - unicode-follow-up-to-q15
+  - saturday-is-overcommitted
+  - two-problems-at-ninety-minutes
+  - sendable-stated-backwards
+carriesForwardNote: The fourth instance of one technique — and the first one closed rather than pointed at.
+carriesForward:
+  - from: A hash test that could not fail
+    to: A five-case suite that could not fail, found the same way — <b>run it against a deliberately broken implementation</b> and count how many assertions fire
+  - from: Case C — remove <code>@Sendable</code> and see which rule owns the diagnostic
+    to: Remove the counting and see whether anything notices. Nothing did, which is the same move against a test suite instead of a compiler
+  - from: The <code>utf8</code> negative control, proven on day 4
+    to: Spent on day 5 as a coding decision — the 26-slot vector chosen knowingly, with what it costs stated out loud
+  - from: '@Sendable cold, third attempt'
+    to: Deferred by choice at the start of the block. Open into a fourth session — <em>deferred, not failed</em>
+note: Coding ran for the first time in three sessions. Internals did not run, so there is no day-5 internals block and the section numbering stands at 14.
+---
+
+## Why this pair is the one traced
+
+The trace on [question 15](/coding/15) walks `("aab", "bab")` rather than a passing pair. It is the
+only input in the suite that separates counting from set-membership, so watching the two censuses
+diverge while the letter *set* stays identical is the whole argument for the count vector.

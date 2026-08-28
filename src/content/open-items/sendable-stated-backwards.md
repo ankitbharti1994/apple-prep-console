@@ -25,3 +25,10 @@ notes: ['p-sendfn', 'p-captures']
   <li>The cited <code>main actor-isolated var</code> error belongs to isolation checking, not to <code>@Sendable</code>. The control case fires it with the attribute absent.</li>
   <li>Still owed: state the corrected sentence cold, unprompted. Follow-up reading self-assigned — the <code>sendable-closure-captures</code> diagnostic doc and SE-0302.</li>
 </ul>
+
+<p><span class="kindtag" style="margin-left:0">deferred 28 Aug</span></p>
+<p>Third attempt skipped by request at the start of the block, so it opens into a <b>fourth</b> session. Recorded as <em>deferred, not failed</em> — nothing was attempted and nothing was got wrong.</p>
+<ul>
+  <li>The distinction is worth keeping precisely because it is the one that erodes: two more deferrals and it becomes indistinguishable from a thing that is simply not being done.</li>
+  <li>It is now the oldest unclosed item on the board, and the only one carried by choice rather than by circumstance.</li>
+</ul>
