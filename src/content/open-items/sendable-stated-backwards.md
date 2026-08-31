@@ -1,8 +1,9 @@
 ---
 title: '@Sendable — stated backwards'
 kind: correction
-status: open
+status: closed
 opened: 2026-08-26
+closed: 2026-08-31
 order: 6
 labs: ['10-sendable-is-about-captures', '12-sendable-what-the-compiler-said']
 notes: ['p-sendfn', 'p-captures']
@@ -18,9 +19,9 @@ notes: ['p-sendfn', 'p-captures']
 </ul>
 
 <p><span class="corrected">re-attempted 27 Aug — failed on mechanism</span></p>
-<p>Attempted cold on day 4. The <b>behaviour</b> was called correctly — a captured <code>var</code> cannot be read inside a <code>@Sendable</code> closure — but the mechanism was credited to the wrong rule, and the sentence recorded here on 26 Aug turned out to be wrong on both halves.</p>
+<p>Attempted cold on day 4. The <b>behaviour</b> was called correctly — a captured <code>var</code> cannot be read inside a <code>@Sendable</code> closure — but the mechanism was credited to the wrong rule, and the sentence recorded here on 26 Aug turned out to be false in one half and incomplete in the other.</p>
 <ul>
-  <li>"Captured <code>var</code>s cannot be mutated" understated it. The ban covers <b>reference</b>: <code>error: reference to captured var 'seed' in concurrently-executing code</code>.</li>
+  <li>"Captured <code>var</code>s cannot be mutated" understated it — reading is banned too: <code>error: reference to captured var 'seed' in concurrently-executing code</code>. <span class="resolved">refined 31 Aug</span> Mutation is <em>also</em> banned; the two are one rule with two wordings, both under <code>[#SendableClosureCaptures]</code>.</li>
   <li>"Captures are by value" is simply false for a <code>var</code>. It is boxed and captured by reference, which is <em>why</em> reading is banned — a read can tear against a concurrent write.</li>
   <li>The cited <code>main actor-isolated var</code> error belongs to isolation checking, not to <code>@Sendable</code>. The control case fires it with the attribute absent.</li>
   <li>Still owed: state the corrected sentence cold, unprompted. Follow-up reading self-assigned — the <code>sendable-closure-captures</code> diagnostic doc and SE-0302.</li>
@@ -31,4 +32,12 @@ notes: ['p-sendfn', 'p-captures']
 <ul>
   <li>The distinction is worth keeping precisely because it is the one that erodes: two more deferrals and it becomes indistinguishable from a thing that is simply not being done.</li>
   <li>It is now the oldest unclosed item on the board, and the only one carried by choice rather than by circumstance.</li>
+</ul>
+
+<p><span class="resolved">closed 31 Aug — fourth attempt</span></p>
+<p>The <b>mechanism</b> came out this time rather than the error text, which is what makes it a close. A captured <code>var</code> is rejected because it is <em>shared mutable state</em>: the closure holds the box, not a copy, so concurrent invocations touch the same storage and can race.</p>
+<ul>
+  <li>The two diagnostics were not understood at first, then correct once the sub-question was made explicit — both carry <code>[#SendableClosureCaptures]</code> and the wording only reports read versus write.</li>
+  <li><code>{ [seed] in seed }</code> was given unprompted, and correctly identified as the fix that proves by-value capture is not the default. The <code>let</code>-binding fix needed supplying.</li>
+  <li>Four sessions, but what landed is the mechanism rather than a memorised sentence. That version survives a follow-up question; the memorised one would not have.</li>
 </ul>

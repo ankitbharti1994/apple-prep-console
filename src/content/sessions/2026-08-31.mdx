@@ -1,0 +1,66 @@
+---
+date: 2026-08-31
+headline: Four closed,<br />and a correction that <em>overreached</em>.
+lede: >-
+  Ninety minutes after two rest days, then a further thirty on internals — open items first by
+  request, then coding, then task groups. Four items closed, two problems solved and tested, one new
+  internals section. Two findings ran against the week's direction: case B vindicated a string the
+  console had been showing unverified, and Q17's suite turned out to need no new case at all.
+blocks:
+  - track: internals
+    time: 6:00 — 6:30
+    title: Four open items, all measured
+    href: /internals#day-2026-08-31
+    bullets:
+      - 'Case B measured — <code>mutation of captured var</code> is real, so the 27 Aug correction overreached: the rule covers reading <em>and</em> writing'
+      - 'Cancellation timing measured — all five ticks print, task ends at 266ms rather than 500ms'
+      - '@Sendable closed on the fourth attempt, on mechanism rather than error text'
+      - 'Unicode follow-up closed — a byte histogram can return a plausible wrong answer, which is worse than the crash'
+  - track: coding
+    time: 6:30 — 8:00
+    title: Two problems, two suites that could not fail
+    href: /coding/16
+    bullets:
+      - 'Q16 Contains Duplicate — correct first attempt; six cases passed <code>nums[0] == nums[1]</code>, then nine passed an adjacent-only fake'
+      - '<code>[1,2,1]</code> killed it, and the reasoning came before it was given — the duplicate has to sit at index 0 and index 2'
+      - 'Q17 Missing Number — Gauss sum, O(1) space, and a better fake produced unprompted than the one supplied'
+      - 'Q17 needed <b>no new case</b>. First time the answer to "what would a wrong version survive?" is nothing'
+  - track: internals
+    time: 8:00 — 8:30
+    title: Task groups, run cold
+    href: /internals#15-task-groups
+    bullets:
+      - 'Three of five correct cold. Q3 missed what happens to the siblings; Q5 was recall, not a gap'
+      - 'The group cancels the remaining children, <em>waits for them all</em>, then rethrows'
+      - 'Why <code>images.append</code> is safe: the <code>for await</code> runs in the parent, one result at a time — self-corrected unprompted'
+      - 'Cancellation inside a child is a signature problem, not a logic problem'
+problems: [16, 17]
+labs: ['15-task-groups']
+openItems:
+  - case-b-never-observed
+  - cancellation-timing-unmeasured
+  - sendable-stated-backwards
+  - unicode-follow-up-to-q15
+  - distinguishing-input
+  - two-problems-at-ninety-minutes
+carriesForwardNote: Two of these ran against the direction of travel, which is new.
+carriesForward:
+  - from: '"The ban covers reference, not mutation" — the 27 Aug correction'
+    to: Case B measured. It covers <b>both</b> — one rule, two wordings. <em>A correction can itself overreach, and this one did</em>
+  - from: Cancellation is cooperative — reasoned but never run
+    to: Measured. Five ticks, 266ms, the last four on the same millisecond. The timestamp column is the model as an artifact rather than an argument
+  - from: Name the cheapest wrong implementation, then kill it
+    to: Two more instances in one problem, and a fifth overall. The step that has still never happened unprompted is <b>naming the fake</b>
+  - from: '"Cancels" means a flag, not a stop'
+    to: Reused correctly inside task groups — the group cancels the siblings and then <em>waits for them anyway</em>, because a flag stops nothing
+note: >-
+  First session where both tracks ran, and the first with two problems in one block. Coding has now
+  run in 3 of 6 sessions; phase 1 is nominally coding-foundations with concurrency alongside, and the
+  week's split has been the reverse.
+---
+
+## Two problems ran, but this was not the test
+
+Roughly sixty minutes, two easies. The commitment is **two problems in a ninety-minute block**, and
+today tells you two easies fit in an hour — useful, but not the same claim. Deferred a fourth time.
+The next full block should run it with two mediums.

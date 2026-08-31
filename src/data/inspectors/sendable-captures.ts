@@ -5,11 +5,11 @@ const spec: InspectorSpec = {
     "layout": "list",
     "cases": [
       {
-        "name": "capture a mutable var",
+        "name": "capture a mutable var — read or write",
         "verdict": "n",
-        "title": "Rejected — even for a read",
-        "body": "A captured <code>var</code> is <b>boxed and captured by reference</b>, so the closure and the enclosing scope share one storage slot. That is why the ban covers <em>reference</em> rather than mutation — a read can tear against a concurrent write. Capturing a <code>let</code>, or writing <code>{ [seed] in seed }</code> to force an immutable copy, both compile.",
-        "code": "<span class=\"kw\">var</span> seed = 0\n<span class=\"kw\">let</span> f: @Sendable () -&gt; <span class=\"ty\">Int</span> = { seed }   <span class=\"cm\">// just a read</span>\n<span class=\"cm\">// error: reference to captured var 'seed'</span>\n<span class=\"cm\">//        in concurrently-executing code</span>\n<span class=\"cm\">//        [#SendableClosureCaptures]</span>"
+        "title": "Rejected either way",
+        "body": "A captured <code>var</code> is <b>boxed and captured by reference</b>, so the closure and the enclosing scope share one storage slot. Both reading and writing are rejected — one rule, two wordings under the same diagnostic category, and the message only reports which way you tripped it. Capturing a <code>let</code>, or writing <code>{ [seed] in seed }</code> to force an immutable copy, both compile.",
+        "code": "<span class=\"kw\">var</span> seed = 0\n\n<span class=\"kw\">let</span> r: @Sendable () -&gt; <span class=\"ty\">Int</span> = { seed }        <span class=\"cm\">// a read</span>\n<span class=\"cm\">// error: reference to captured var 'seed'   [27 Aug]</span>\n\n<span class=\"kw\">let</span> w: @Sendable () -&gt; <span class=\"ty\">Void</span> = { seed += 1 }   <span class=\"cm\">// a write</span>\n<span class=\"cm\">// error: mutation of captured var 'seed'    [31 Aug]</span>\n\n<span class=\"cm\">// both: [#SendableClosureCaptures]</span>"
       },
       {
         "name": "capture a non-Sendable class",

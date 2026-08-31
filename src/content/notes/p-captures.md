@@ -33,4 +33,9 @@ title: 'Proving which rule rejected the capture'
 <p>The diagnostic name is the fastest way to tell them apart — <code>#SendableClosureCaptures</code> is the capture rule; anything reading <em>main actor-isolated</em> is isolation checking. Look it up with:</p>
 <pre>swiftc -print-diagnostic-groups -swift-version 6 case.swift</pre>
 
-<p>Note the wording in A: <b>reference</b>, not mutation. A captured <code>var</code> is boxed and captured by reference, so a read can tear against a concurrent write. Capturing a <code>let</code>, or writing <code>{ [seed] in seed }</code> to force an immutable copy, both compile — and having to write the capture list out is itself the proof that by-value was never the default.</p>
+<p>Note the wording in A: <b>reference</b>, not mutation — a <em>read</em> is enough to be rejected, because a captured <code>var</code> is boxed and shared, so the read can tear against a concurrent write.</p>
+<p><span class="resolved">case B measured 31 Aug</span> Writing is rejected too, with the other wording under the same diagnostic category:</p>
+<pre>error: mutation of captured var 'count' in concurrently-executing code
+       [#SendableClosureCaptures]</pre>
+<p>So it is <b>one rule with two messages</b>, and the message only reports which way you tripped it. Reading either diagnostic as the whole rule is what went wrong on 27 Aug, in both directions at once.</p>
+<p>Capturing a <code>let</code>, or writing <code>{ [seed] in seed }</code> to force an immutable copy, both compile — and having to write the capture list out is itself the proof that by-value was never the default.</p>

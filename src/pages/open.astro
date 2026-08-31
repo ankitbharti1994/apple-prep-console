@@ -25,6 +25,8 @@ const setup = pages.find((p) => p.id === 'session-setup');
 const SetupContent = setup ? (await render(setup)).Content : null;
 const backlogNote = pages.find((p) => p.id === 'backlog-note');
 const BacklogNote = backlogNote ? (await render(backlogNote)).Content : null;
+const testing = pages.find((p) => p.id === 'writing-tests-that-can-fail');
+const Testing = testing ? (await render(testing)).Content : null;
 
 const word = (n: number) =>
   ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][n] ?? String(n);
@@ -53,6 +55,17 @@ const word = (n: number) =>
         </p>
       </div>
       {backlog.map((item) => <OpenItemCard item={item} />)}
+    </>
+  )}
+
+  {Testing && (
+    <>
+      <h2 class="sec">How to write tests that can fail</h2>
+      <p class="sec-sub">
+        A standing reference rather than a session entry — requested on 31 Aug, and built from this
+        console's own record rather than from general testing advice.
+      </p>
+      <div class="rev" style="border-left-color:var(--accent);padding:20px 22px"><Testing /></div>
     </>
   )}
 

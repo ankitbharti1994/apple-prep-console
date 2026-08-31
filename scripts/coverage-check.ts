@@ -47,7 +47,7 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
    * lab quotes each of them and says what replaced it.                    */
   {
     match: /captures are by value|can not be mutated|cannot be mutated/i,
-    why: 'FACTUALLY WRONG, corrected 27 Aug. A captured var is boxed and captured by reference, so the ban covers reference rather than mutation — measured as "reference to captured var \'seed\' in concurrently-executing code [#SendableClosureCaptures]". Quoted and replaced in labs/12-sendable-what-the-compiler-said.',
+    why: 'HALF WRONG, and the correction itself was refined on 31 Aug. "Captures are by value" is false — a captured var is boxed and captured by reference. But "cannot be mutated" was merely INCOMPLETE rather than wrong: case B measured "mutation of captured var" on 31 Aug, so reading and writing are both rejected. One rule, two wordings, both under [#SendableClosureCaptures]. The 27 Aug entry here claimed the ban covered reference RATHER THAN mutation, which overreached; see labs/12-sendable-what-the-compiler-said.',
   },
   {
     match: /^Parameters and return type are already visible in the signature/,

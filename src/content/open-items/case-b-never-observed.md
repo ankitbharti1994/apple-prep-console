@@ -1,16 +1,22 @@
 ---
-title: Case B — the mutation diagnostic was never actually seen
+title: Case B — measured, and the lab string was right all along
 kind: gap
-status: open
+status: closed
 opened: 2026-08-27
+closed: 2026-08-31
 order: 10
 labs: ['12-sendable-what-the-compiler-said']
 notes: ['p-captures']
 ---
 
-<p>The three-case experiment ran A, C and D. Case B — <code>return { count += 1 }</code>, the mutation rather than the read — was written but its diagnostic never appeared in any output that was looked at.</p>
+<p><span class="resolved">measured 31 Aug</span></p>
+<p>Run in isolation at last, one file and one difference:</p>
+<pre>error: mutation of captured var 'count' in concurrently-executing code
+       [#SendableClosureCaptures]</pre>
+
 <ul>
-  <li>It is almost certainly <code>#SendableClosureCaptures</code> as well, but "almost certainly" is the exact standard this console exists to reject. Recorded as <b>unrun</b>, not as a result.</li>
-  <li>Worth running because it tests whether the reference ban and the mutation ban are one rule or two. If both produce the same diagnostic, the rule is about reference and mutation is merely a special case of it — which is the sentence now in the record.</li>
-  <li>Isolate it the way case C was isolated: one file, one difference, nothing else live.</li>
+  <li><b>The day-3 lab had been displaying exactly this string, unverified, since it was written. It is correct.</b> The "unconfirmed" flag is dropped.</li>
+  <li>It also <em>softens the 27 Aug correction</em>. "The ban covers reference, not mutation" was too strong — it covers both. One rule, two wordings, one diagnostic category; the message reports which way you tripped it.</li>
+  <li>The mechanism is unchanged and is the part that matters: the box is shared either way.</li>
+  <li>Worth keeping as an entry in its own right, because it is the week's first finding that ran <b>against</b> the direction of travel. A correction can itself overreach, and this one did.</li>
 </ul>

@@ -37,11 +37,11 @@ error: main actor-isolated synchronous global function 'stillOnMain()'
   <tr><th>Claim</th><th>Verdict</th></tr>
   <tr><td>A captured <code>var</code> cannot be read inside a <code>@Sendable</code> closure</td><td><b>Correct</b> — and the assistant said reads were fine. They are not.</td></tr>
   <tr><td>The <code>main actor-isolated var</code> error is what enforces it</td><td><b>Wrong.</b> That is actor isolation checking. Case C proves it.</td></tr>
-  <tr><td>Captures are by value, so only mutation is banned</td><td><b>Wrong.</b> A captured <code>var</code> is boxed and captured <em>by reference</em>. That is why the ban covers reference, not mutation — a read can tear against a concurrent write.</td></tr>
+  <tr><td>Captures are by value, so only mutation is banned</td><td><b>Half wrong.</b> "By value" is false — a captured <code>var</code> is boxed and captured <em>by reference</em>. But mutation <em>is</em> banned; so is reading. See the correction below.</td></tr>
 </table>
 
 <h3>The correction to the day-3 record</h3>
-<p>Day 3 recorded the target sentence as <em>"captured vars cannot be mutated — captures are by value."</em> Both halves are wrong. It now reads:</p>
+<p>Day 3 recorded the target sentence as <em>"captured vars cannot be mutated — captures are by value."</em> One half is false and the other incomplete: "by value" is simply wrong, and mutation is banned but so is reading. It now reads:</p>
 
 <div class="say">
   <div class="say-h">Say it out loud</div>
@@ -61,6 +61,19 @@ error: main actor-isolated synchronous global function 'stillOnMain()'
 
 <h3>@MainActor and @Sendable together</h3>
 <p>A synchronous global-actor-isolated function <b>cannot</b> be <code>@Sendable</code>; the two contradict each other and there is no hop available to reconcile them. Making it <code>async</code> resolves it, and the resulting function <em>still runs on the main actor</em>. <code>@Sendable</code> schedules nothing.</p>
+
+<h3>Corrected again on 31 Aug — this section overreached</h3>
+<p>Case B was finally run in isolation, and the day-3 lab string it had been displaying unverified turns out to be <b>right</b>:</p>
+<pre><span class="cm">// B — mutating a captured var</span>
+error: mutation of captured var 'count' in concurrently-executing code
+       [#SendableClosureCaptures]</pre>
+<p>So "the ban covers reference, <em>not</em> mutation" was too strong. It covers <b>both</b>. One rule with two wordings under a single diagnostic category — the message only reports which way you tripped it:</p>
+<table>
+  <tr><th>What the closure does with the captured <code>var</code></th><th>Diagnostic</th><th>Measured</th></tr>
+  <tr><td>Reads it</td><td><code>reference to captured var</code></td><td>27 Aug, case A</td></tr>
+  <tr><td>Writes it</td><td><code>mutation of captured var</code></td><td>31 Aug, case B</td></tr>
+</table>
+<p>The mechanism is unchanged and is what actually matters: the box is shared either way, so the closure holds the storage rather than a copy. On 27 Aug each side had seen one of the two diagnostics and mistook it for the whole rule — which is the same error in a smaller place.</p>
 
 <div class="proofbar">
   <span class="pl">SDK note</span>

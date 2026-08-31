@@ -19,18 +19,25 @@ intro: New ground. Five prompts, two wrong — and the second wrong answer is wr
   <tr><td>What cancelling a <code>Task</code> does</td><td><b>Wrong</b>, and in the expensive direction.</td></tr>
 </table>
 
-<h3>The prediction exercise — predicted, not yet measured</h3>
+<h3>The prediction exercise</h3>
 <p>A five-iteration loop sleeping 100ms per tick, cancelled at 250ms, with <code>try?</code> on the sleep:</p>
 <ul>
   <li><b>Correctly predicted all five ticks print.</b> <code>Task.isCancelled</code> is a read rather than control flow, and <code>try?</code> discards the only thing that could have exited the loop.</li>
-  <li><b>Timing consequence not yet observed.</b> After cancellation <code>Task.sleep</code> throws immediately instead of sleeping, so ticks 3–5 should fire back-to-back and the task should finish near 250ms rather than 500ms. Cancellation stopped the <em>waiting</em>, not the loop.</li>
+  <li><b>Timing consequence, predicted at the time:</b> After cancellation <code>Task.sleep</code> throws immediately instead of sleeping, so ticks 3–5 should fire back-to-back and the task should finish near 250ms rather than 500ms. Cancellation stopped the <em>waiting</em>, not the loop.</li>
   <li>The fix is one character — drop the <code>?</code> so the throw propagates, or add an explicit <code>if Task.isCancelled { return }</code>.</li>
 </ul>
 
-<div class="proofbar" style="margin-bottom:16px">
-  <span class="pl">Owed</span>
-  <span>Run it and record the wall-clock result. The gap between "the flag changed" and "the work stopped" is the whole cooperative model, and it is currently reasoned rather than seen.</span>
-</div>
+<h3>Measured on 31 Aug — the prediction held</h3>
+<pre>   106ms  tick 1 — isCancelled: false
+   214ms  tick 2 — isCancelled: false
+   266ms  cancel() returned
+   266ms  tick 3 — isCancelled: true
+   266ms  tick 4 — isCancelled: true
+   266ms  tick 5 — isCancelled: true
+   266ms  body finished, never threw</pre>
+<p>All five ticks print, and the task ends at <b>266ms</b> rather than ~500ms with the last four lines on the same millisecond. <code>Task.sleep</code> throws the instant the flag is set, <code>try?</code> swallows it, and nothing else checks — so the remaining iterations cost nothing and complete.</p>
+<p><b>Cancellation stopped the waiting, not the work.</b> The timestamp column is the cooperative model as an artifact rather than an argument.</p>
+<p>And the case with <em>no suspension point at all</em> is worse: a loop doing arithmetic keeps its thread and runs to completion at full speed, because there is nothing for the flag to interrupt.</p>
 
 <h3>The pattern, now three sessions old</h3>
 <p>Both wrong answers attributed <b>enforcement</b> to something that only records or informs:</p>

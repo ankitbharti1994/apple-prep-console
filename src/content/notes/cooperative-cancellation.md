@@ -24,7 +24,13 @@ t.cancel()</pre>
     print(tick)                <span class="cm">// all five print, even if cancelled at 250ms</span>
 }</pre>
 
-<p>What <em>does</em> change is the timing: after cancellation the sleep throws immediately instead of waiting, so the remaining ticks fire back-to-back and the loop finishes early. Cancellation stopped the waiting, not the work — which is the whole cooperative model in one observation.</p>
+<p>What <em>does</em> change is the timing, and this was measured on 31 Aug rather than reasoned:</p>
+<pre>   214ms  tick 2 — isCancelled: false
+   266ms  cancel() returned
+   266ms  tick 3 — isCancelled: true
+   266ms  tick 4 — isCancelled: true
+   266ms  tick 5 — isCancelled: true</pre>
+<p>The sleep throws the instant the flag is set, so the remaining ticks fire back-to-back and the loop finishes at 266ms instead of ~500ms. Cancellation stopped the waiting, not the work — the whole cooperative model in one column of timestamps.</p>
 
 <p>The fix is one character. Drop the <code>?</code> so the throw propagates, or check explicitly:</p>
 <pre><span class="kw">if</span> <span class="ty">Task</span>.isCancelled { <span class="kw">return</span> }</pre>
