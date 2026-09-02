@@ -4,12 +4,12 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17, 18]
+problems: [13, 14, 15, 16, 17, 18, 19]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
 notes: ['p-hash', 'p-captures']
 ---
 
-<p>One technique, six instances now — not six separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
+<p>One technique, seven instances now — not seven separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
 
 <table>
   <tr><th>Date</th><th>The cheapest wrong thing</th><th>The distinguishing input</th></tr>
@@ -43,6 +43,11 @@ notes: ['p-hash', 'p-captures']
     <td><code>(counts.max() ?? 0) + k</code> — global counts, ignoring whether those characters are reachable inside one window</td>
     <td><code>("ABACADA", 1)</code> returns 5 against a real answer of 3. Second break, added unprompted: the fake can exceed the string — <code>("AAA", 10)</code> returns 13. A second fake was targeted too — <code>&gt;=</code> instead of <code>&gt;</code> in the shrink condition, killed by <code>("ABAB", 2)</code>.</td>
   </tr>
+  <tr>
+    <td>2 Sep</td>
+    <td>Character-frequency parity — every character appearing an even number of times. <b>Generated unprompted, and the flaw named in the same breath.</b></td>
+    <td><code>("abab", false)</code>. Identical counts to <code>"abba"</code>, opposite answers, because parity ignores position entirely.</td>
+  </tr>
 </table>
 
 <h4>What day 5 changes about this item</h4>
@@ -61,7 +66,15 @@ notes: ['p-hash', 'p-captures']
   <li>The step that has <em>still</em> never happened unprompted is <b>naming the fake</b>. It was asked for twice on 31 Aug and returned as a question both times. That is the one thing left in this item.</li>
 </ul>
 
-<h4>1 Sep — the gap is now specific</h4>
+<h4>2 Sep — the missing step happened</h4>
+<p><span class="resolved">status changed</span> For six instances across five sessions the line here read <em>"naming the fake from scratch remains the missing step."</em> On 2 Sep it did not: character-frequency parity was proposed <b>before the code and without prompting</b>, and its flaw — that it ignores position — was named in the same breath.</p>
+<ul>
+  <li><b>One instance is not a habit.</b> The item stays open for that reason alone. What changes is that its description was out of date and is now rewritten rather than left standing.</li>
+  <li>The shape was right, which is the part that matters. Parity is a genuinely cheap wrong implementation someone could plausibly write — not the correct strategy in disguise, and not too vague to be an artifact. Both of those were the failure modes on 1 Sep.</li>
+  <li>What to watch on the next problem: whether it happens again unasked, and whether the fake is still <em>cheap</em>. Closes on a second and third unprompted instance, not on this one.</li>
+</ul>
+
+<h4>1 Sep — where the gap was, before it moved</h4>
 <ul>
   <li>Naming was attempted first, as agreed, and <b>neither attempt was a fake</b>. "Replace the k characters with the most frequent one" is the <em>correct strategy</em>, not a wrong implementation; "not having check of endIndex" was too vague to be an artifact. The fake had to be supplied as code.</li>
   <li>But once the artifact existed, it was broken <b>unprompted and correctly</b> — and the reachability argument for <code>"ABACADA"</code> is the sharpest reasoning about a fake anywhere in this record. A second break was then added without prompting: the fake can exceed the string's own length.</li>

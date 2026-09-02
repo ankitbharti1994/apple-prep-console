@@ -122,9 +122,24 @@ for (const [n, old] of [...byNumber].sort((a, b) => a[0] - b[0])) {
   if (next.lc !== old.lc) problems_.push(`lc: ${next.lc} ≠ ${old.lc}`);
   if (next.complexity !== old.cx) problems_.push(`complexity differs`);
   if (next.code.trim() !== old.code.trim()) problems_.push(`Swift source differs`);
+  // Notes may be APPENDED to (a cross-reference, a link to an artifact) the
+  // same way codeLines is additive. What must not happen is a note being
+  // dropped or reworded, so check the original's notes survive in order.
   const oldNotes = old.notes ?? [];
   const newNotes = next.notes ?? [];
-  if (JSON.stringify(newNotes) !== JSON.stringify(oldNotes)) problems_.push(`notes differ`);
+  let cursor = 0;
+  const lost: string[] = [];
+  for (const note of oldNotes) {
+    const at = newNotes.indexOf(note, cursor);
+    if (at < 0) lost.push(note.replace(/<[^>]+>/g, '').slice(0, 60));
+    else cursor = at + 1;
+  }
+  if (lost.length) {
+    problems_.push(
+      `${lost.length} note${lost.length > 1 ? 's' : ''} dropped or reworded:\n      ` +
+        lost.map((n) => `· ${n}…`).join('\n      '),
+    );
+  }
 
   const a = old.trace().map(normalise);
   const b = next.trace().map(normalise);

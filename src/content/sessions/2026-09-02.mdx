@@ -1,0 +1,66 @@
+---
+date: 2026-09-02
+headline: The check passed,<br />and the <em>fake arrived on its own</em>.
+lede: >-
+  Opened with a five-minute cold-recall check on material from two days earlier, and it came back
+  exactly right — which validates the method decided on 1 Sep and closes that item. Then the
+  concurrency remainder cleared in one block, including the in-flight dedup pattern that had been
+  unbuilt since day 2. And on a twenty-minute coding half, the fake was generated unprompted for the
+  first time in six attempts.
+blocks:
+  - track: internals
+    time: 6:00 — 6:05
+    title: Cold-recall check — passed
+    href: /open#recall-over-volume
+    bullets:
+      - 'Blank editor, no scrollback, on 424 from two days earlier. The shrink condition came back exactly right'
+      - 'Partial on the follow-up: <em>why</em> stale <code>maxFreq</code> is safe was answered as <em>where</em> it is recomputed. The mechanism is cold, the argument is not'
+  - track: internals
+    time: 6:05 — 7:10
+    title: AsyncSequence, detached tasks, in-flight dedup
+    href: /internals#day-2026-09-02
+    bullets:
+      - 'The difference is <b>where the waiting happens</b> — awaiting work on elements that exist, against awaiting the arrival of ones that do not'
+      - 'Measured: <code>@TaskLocal</code> silently reverts to its default inside <code>Task.detached</code>. No error, no warning — logs just stop carrying the request ID'
+      - 'Dedup built after answering four questions and getting three wrong. Storing the <em>task</em> gives you something to find between "started" and "finished"'
+      - '<b>Actor isolation is not a lock.</b> Isolation is preserved across an await; state is not'
+  - track: coding
+    time: 7:10 — 7:30
+    title: Valid Palindrome, and a fake that arrived on its own
+    href: /coding/19
+    bullets:
+      - 'Sized to the time left rather than starting 3Sum and abandoning it'
+      - 'Character-frequency parity proposed <b>before the code and unprompted</b> — the step that had failed six times'
+      - 'Correct first attempt, including the lowercasing and filtering that <a href="/coding/5">question 5</a> missed nine days ago'
+      - 'Four cleanups, all style: a stray statement and a debug print, <code>.map</code> used as a loop, <code>&lt;=</code> narrowed to <code>&lt;</code>, a redundant guard'
+problems: [19]
+labs: ['16-asyncsequence-detached-tasks-in-flight-dedup']
+openItems:
+  - recall-over-volume
+  - concurrency-questions-parked
+  - distinguishing-input
+  - q9-longest-substring-regression
+carriesForwardNote: Two items closed by evidence rather than by effort, and one long-standing description finally out of date.
+carriesForward:
+  - from: Trace by hand, then rewrite cold — decided 1 Sep
+    to: <b>Validated 2 Sep.</b> Two days and an interruption later, the shrink condition came back exactly. The decision closes and becomes the default
+  - from: '"Naming the fake from scratch remains the missing step"'
+    to: It stopped being missing. Parity, proposed before the code and unprompted — <em>one instance, not yet a habit</em>, but the description had to be rewritten rather than left standing
+  - from: The in-flight-<code>Task</code> dedup pattern, raised day 2 and never built
+    to: Built — after three of four questions came out wrong. The misreadings are recorded because they are more useful than the finished code
+  - from: Actors eliminate data races, not race conditions
+    to: The same fact from the other side. Isolation is <em>not</em> a lock, and here that is the feature — it is why caller two finds an in-flight task instead of starting a second download
+note: >-
+  90 minutes, internals first by choice, a break leaving ~20 minutes for coding. Four internals items
+  closed. Coding has now run in 5 of 8 sessions, and the streak is unbroken at 8.
+---
+
+## The thing the report did not claim
+
+Question 19 is the **same LeetCode problem as question 5**, nine days apart. The day-1 record says
+the two-pointer version *"missed lowercasing and filtering non-alphanumerics"*. Today both were
+present, unprompted, on the first attempt.
+
+That is a second piece of evidence for the method decision, and a stronger one than the 424 check —
+nine days rather than two, and nobody set it up as a test. It is recorded on
+[the method item](/open#recall-over-volume) alongside the check itself.

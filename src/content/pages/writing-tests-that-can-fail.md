@@ -2,7 +2,7 @@
 title: How to write tests that can fail
 ---
 
-<p class="intro">Requested mid-session on 31 Aug. Deliberately <b>not</b> generic testing advice — none of the usual advice would have caught any of the six misses below. This is derived from this console's own record.</p>
+<p class="intro">Requested mid-session on 31 Aug. Deliberately <b>not</b> generic testing advice — none of the usual advice would have caught any of the seven misses below. This is derived from this console's own record.</p>
 
 <h3>The method, in one move</h3>
 <div class="say" style="margin:0 0 16px">
@@ -29,7 +29,7 @@ title: How to write tests that can fail
 <p>The working motion is <em>adversarial</em>: assume the code is wrong, find the wrong version that survives your suite, target it. A different mental operation, and the one that code review and interviews reward.</p>
 <p>A categories checklist — positive, negative, edge — is a starting heuristic, not the instrument. Q16's nine cases had all three categories and still passed the adjacent-only fake, because categories describe the <em>input's shape</em> rather than what distinguishes a right implementation from a wrong one.</p>
 
-<h3>The record — six instances</h3>
+<h3>The record — seven instances</h3>
 <table class="ptable">
   <thead><tr><th>Date</th><th>The fake that survived</th><th>What killed it</th></tr></thead>
   <tbody>
@@ -40,20 +40,27 @@ title: How to write tests that can fail
     <tr><td>31 Aug · Q16</td><td><code>nums[0] == nums[1]</code>, then adjacent-only</td><td><code>[1,2,3]</code>, then <code>[1,2,1]</code></td></tr>
     <tr><td>1 Sep · Q18</td><td><code>(counts.max() ?? 0) + k</code> — global counts, ignoring reachability</td><td><code>("ABACADA",1)</code> → 5 vs 3</td></tr>
     <tr><td>1 Sep · Q18</td><td><code>&gt;=</code> instead of <code>&gt;</code> in the shrink condition — one character</td><td><code>("ABAB",2)</code> → 3 vs 4</td></tr>
+    <tr><td>2 Sep · Q19</td><td>character-frequency parity — ignores position. <b>Generated unprompted</b></td><td><code>("abab",false)</code> — same counts as <code>"abba"</code></td></tr>
   </tbody>
 </table>
 
-<h3>Where the gap actually is — narrowed 1 Sep</h3>
-<p>Earlier this was written down as "naming the fake has never happened unprompted". Day 7 splits that in two, and only one half is still true:</p>
+<h3>Where the gap was, and where it is now</h3>
 <table class="ptable">
-  <thead><tr><th>Step</th><th>Status</th></tr></thead>
+  <thead><tr><th>Step</th><th>1 Sep</th><th>2 Sep</th></tr></thead>
   <tbody>
-    <tr><td><b>Generating</b> a wrong implementation from scratch</td><td>Still not landing. Two attempts on 1 Sep, neither a fake — one was the <em>correct strategy</em>, the other too vague to be an artifact.</td></tr>
-    <tr><td><b>Analysing</b> a fake once it exists</td><td><b>Strong.</b> The reachability break for <code>("ABACADA",1)</code> was unprompted and is the sharpest reasoning about a fake in this record. A second break was then volunteered.</td></tr>
+    <tr>
+      <td><b>Generating</b> a wrong implementation</td>
+      <td>Not landing. Two attempts, neither a fake — one was the <em>correct strategy</em>, the other too vague to be an artifact.</td>
+      <td><b>Landed.</b> Parity proposed before the code, unprompted, with its flaw named in the same breath.</td>
+    </tr>
+    <tr>
+      <td><b>Analysing</b> a fake once it exists</td>
+      <td colspan="2"><b>Strong for a week.</b> The reachability break for <code>("ABACADA",1)</code> was unprompted and remains the sharpest reasoning in this record.</td>
+    </tr>
   </tbody>
 </table>
-<p>That is a narrower and more workable problem than "the testing habit". The thing to practise is production, not analysis.</p>
-<p>Worth trying, since the abstract request keeps failing: instead of <em>"name a fake"</em>, ask <b>"what is the laziest thing that passes the examples in the problem statement?"</b> Generation may come more easily from that angle.</p>
+<p><b>One instance is not a habit</b>, and this stays on the open list for exactly that reason. But it is the step that had not happened once in six previous tries, so it is worth marking rather than absorbing.</p>
+<p>What made it work is worth noting: parity is <em>cheap</em>. It is a thing someone would plausibly write, it is quick to state, and it is wrong for one clean reason. That is the bar — not a strawman, and not the real strategy wearing a hat.</p>
 
 <h3>What a finished suite looks like</h3>
 <p><a href="/coding/18">Q18</a> is the first suite here written against <b>two</b> named fakes, and every case earns its place against one of them:</p>
