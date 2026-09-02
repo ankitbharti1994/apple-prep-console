@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sliding window — longest repeating character replacement</title>
+<style>
+  :root{
+    --paper:#faf9f7;
+    --ink:#1c1b1a;
+    --ink-2:#57534e;
+    --muted:#8a847d;
+    --rule:#e3dfd9;
+    --window:#2f6f5e;
+    --window-soft:#e6f0ec;
+    --shrink:#a13d2d;
+    --shrink-soft:#f6e7e3;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:34px 22px 60px;background:var(--paper);color:var(--ink);
+    font:15px/1.55 ui-sans-serif,-apple-system,"Segoe UI",sans-serif;
+  }
+  .wrap{max-width:640px;margin:0 auto}
+  h1{font-size:19px;font-weight:600;margin:0 0 14px;letter-spacing:-.01em}
+
+  .krow{display:flex;align-items:center;gap:9px;margin:0 0 24px;flex-wrap:wrap}
+  .krow .lbl{font-family:var(--mono);font-size:12px;color:var(--muted)}
+  .kbtn{
+    font:inherit;font-family:var(--mono);font-size:13px;padding:4px 12px;
+    border:1px solid var(--rule);background:#fff;color:var(--ink-2);
+    border-radius:2px;cursor:pointer;
+  }
+  .kbtn.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+  .kbtn:focus-visible{outline:2px solid var(--window);outline-offset:2px}
+  .ans{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:4px}
+
+  .tape{display:flex;gap:5px;margin:0 0 6px}
+  .cell{
+    width:44px;height:52px;border:1px solid var(--rule);border-radius:2px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:19px;background:#fff;color:var(--muted);
+    transition:background .18s,border-color .18s,color .18s;
+  }
+  .cell.in{background:var(--window-soft);border-color:var(--window);color:var(--window);font-weight:600}
+  .cell.drop{background:var(--shrink-soft);border-color:var(--shrink);color:var(--shrink)}
+  .idx{display:flex;gap:5px;margin:0 0 4px}
+  .idx span{width:44px;text-align:center;font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .ptr{display:flex;gap:5px;height:18px;margin:0 0 22px}
+  .ptr span{width:44px;text-align:center;font-family:var(--mono);font-size:10.5px;color:var(--window)}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:0 0 20px}
+  .stat{background:var(--paper);padding:9px 11px}
+  .stat .l{font-family:var(--mono);font-size:10px;color:var(--muted);display:block;margin-bottom:2px}
+  .stat .v{font-family:var(--mono);font-size:17px}
+  .stat.bad .v{color:var(--shrink)}
+  .stat.good .v{color:var(--window)}
+
+  .ask{border-left:2px solid var(--ink);padding:2px 0 2px 14px;margin:0 0 18px}
+  .ask p{margin:0 0 7px;font-size:14.5px}
+  .ask p:last-child{margin-bottom:0}
+  .ask .q{color:var(--ink-2)}
+
+  .reveal{border-left:2px solid var(--window);padding:2px 0 2px 14px;margin:0 0 18px}
+  .reveal.shrunk{border-left-color:var(--shrink)}
+  .reveal p{margin:0 0 7px;font-size:14.5px;color:var(--ink-2)}
+  .reveal p:last-child{margin-bottom:0}
+  .reveal b{color:var(--ink)}
+  code{font-family:var(--mono);font-size:13px;background:#efece7;padding:1px 4px;border-radius:2px}
+
+  .bar{display:flex;gap:8px;align-items:center;margin-top:26px;padding-top:18px;border-top:1px solid var(--rule)}
+  button.nav{
+    font:inherit;font-size:14px;padding:7px 15px;border:1px solid var(--ink);
+    background:var(--ink);color:var(--paper);border-radius:2px;cursor:pointer;
+  }
+  button.nav.ghost{background:transparent;color:var(--ink)}
+  button.nav:disabled{opacity:.3;cursor:default}
+  button.nav:focus-visible{outline:2px solid var(--window);outline-offset:2px}
+  .pos{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  @media (prefers-reduced-motion:reduce){.cell{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Longest repeating character replacement</h1>
+
+  <div class="krow">
+    <span class="lbl">s = "AABABBA"</span>
+    <span class="lbl">k =</span>
+    <button class="kbtn" data-k="0">0</button>
+    <button class="kbtn" data-k="1">1</button>
+    <button class="kbtn" data-k="2">2</button>
+    <button class="kbtn" data-k="3">3</button>
+    <span class="ans" id="ans"></span>
+  </div>
+
+  <div class="idx" id="idx"></div>
+  <div class="tape" id="tape"></div>
+  <div class="ptr" id="ptr"></div>
+
+  <div class="stats" id="stats"></div>
+  <div id="body"></div>
+
+  <div class="bar">
+    <button class="nav ghost" id="prev">Back</button>
+    <button class="nav" id="next">Next</button>
+    <span class="pos" id="pos"></span>
+  </div>
+</div>
+
+<script>
+const S = "AABABBA";
+const CH = [...S];
+
+// Runs the real algorithm, capturing state either side of each shrink phase.
+function simulate(s, k){
+  const chars = [...s];
+  const counts = {};
+  let left = 0, best = 0, moves = 0;
+  const steps = [];
+
+  for(let right = 0; right < chars.length; right++){
+    counts[chars[right]] = (counts[chars[right]] || 0) + 1;
+    const maxFreq = Math.max(...Object.values(counts));
+
+    const before = {
+      right, left, maxFreq, ch: chars[right],
+      len: right - left + 1,
+      counts: {...counts}
+    };
+    before.deficit = before.len - maxFreq;
+
+    const dropped = [];
+    while((right - left + 1) - maxFreq > k){
+      counts[chars[left]] -= 1;
+      dropped.push({i: left, ch: chars[left]});
+      left += 1;
+      moves += 1;
+    }
+
+    best = Math.max(best, right - left + 1);
+    steps.push({
+      before, dropped,
+      after: {left, len: right - left + 1, counts: {...counts}, best, maxFreq}
+    });
+  }
+  return {steps, best, moves};
+}
+
+let K = 1;
+let RUN = simulate(S, K);
+let i = 0, revealed = false;
+
+const fmt = c => Object.keys(c).sort().filter(x => c[x] > 0).map(x => x + ":" + c[x]).join("  ") || "—";
+
+function render(){
+  const st = RUN.steps[i];
+  const b = st.before, a = st.after;
+  const shrank = st.dropped.length > 0;
+  const left = revealed ? a.left : b.left;
+  const dropSet = new Set(st.dropped.map(d => d.i));
+
+  document.querySelectorAll(".kbtn").forEach(x =>
+    x.classList.toggle("on", Number(x.dataset.k) === K));
+  document.getElementById("ans").textContent =
+    `answer ${RUN.best}  ·  left moved ${RUN.moves}× over ${CH.length} steps`;
+
+  document.getElementById("idx").innerHTML = CH.map((_, j) => `<span>${j}</span>`).join("");
+
+  document.getElementById("tape").innerHTML = CH.map((c, j) => {
+    let cls = "cell";
+    if(j >= left && j <= b.right) cls += " in";
+    if(revealed && dropSet.has(j)) cls += " drop";
+    return `<div class="${cls}">${c}</div>`;
+  }).join("");
+
+  document.getElementById("ptr").innerHTML = CH.map((_, j) => {
+    const m = [];
+    if(j === left) m.push("left");
+    if(j === b.right) m.push("right");
+    return `<span>${m.join("/")}</span>`;
+  }).join("");
+
+  const len = revealed ? a.len : b.len;
+  const deficit = len - b.maxFreq;
+  const over = deficit > K;
+
+  document.getElementById("stats").innerHTML = `
+    <div class="stat"><span class="l">counts</span><span class="v">${fmt(revealed ? a.counts : b.counts)}</span></div>
+    <div class="stat"><span class="l">window length</span><span class="v">${len}</span></div>
+    <div class="stat ${over && !revealed ? "bad" : ""}"><span class="l">len − maxFreq</span><span class="v">${deficit} ${over && !revealed ? "> " + K : "≤ " + K}</span></div>
+    <div class="stat good"><span class="l">best so far</span><span class="v">${revealed ? a.best : "?"}</span></div>`;
+
+  const body = document.getElementById("body");
+  if(!revealed){
+    body.innerHTML = `
+      <div class="ask">
+        <p>Added <code>${b.ch}</code> at index ${b.right}. The window is <code>${S.slice(b.left, b.right + 1)}</code>, and <code>${deficit}</code> character${deficit === 1 ? "" : "s"} would need replacing against a budget of ${K}.</p>
+        <p class="q">Does <code>left</code> move this step? Decide, then reveal.</p>
+      </div>`;
+    document.getElementById("next").textContent = "Reveal";
+  } else {
+    const note = shrank
+      ? `<p><b>Yes — left moved ${st.dropped.length}×.</b> ${st.dropped.map(d => `<code>${d.ch}</code> at ${d.i}`).join(", ")} left the window, so <code>left</code> is now ${a.left}.</p>
+         <p>The window did not get shorter. It slid: one character joined on the right, one left on the left. That is why <code>best</code> holds at ${a.best} instead of dropping.</p>`
+      : `<p><b>No — the window stays.</b> ${deficit} replacement${deficit === 1 ? "" : "s"} fits inside the budget of ${K}, so the window keeps growing and <code>best</code> becomes ${a.best}.</p>`;
+    body.innerHTML = `<div class="reveal ${shrank ? "shrunk" : ""}">${note}</div>`;
+    document.getElementById("next").textContent = i === RUN.steps.length - 1 ? "Done" : "Next";
+  }
+
+  document.getElementById("pos").textContent = `right = ${b.right}  ·  step ${i + 1} of ${RUN.steps.length}`;
+  document.getElementById("prev").disabled = (i === 0 && !revealed);
+  document.getElementById("next").disabled = (i === RUN.steps.length - 1 && revealed);
+}
+
+document.getElementById("next").onclick = () => {
+  if(!revealed) revealed = true;
+  else if(i < RUN.steps.length - 1){ i++; revealed = false; }
+  render();
+};
+document.getElementById("prev").onclick = () => {
+  if(revealed) revealed = false;
+  else if(i > 0){ i--; revealed = true; }
+  render();
+};
+document.querySelectorAll(".kbtn").forEach(btn => {
+  btn.onclick = () => {
+    K = Number(btn.dataset.k);
+    RUN = simulate(S, K);
+    i = 0; revealed = false;
+    render();
+  };
+});
+
+render();
+</script>
+</body>
+</html>

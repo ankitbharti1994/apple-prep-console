@@ -4,12 +4,12 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17]
+problems: [13, 14, 15, 16, 17, 18]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
 notes: ['p-hash', 'p-captures']
 ---
 
-<p>One technique, five instances now — not five separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
+<p>One technique, six instances now — not six separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
 
 <table>
   <tr><th>Date</th><th>The cheapest wrong thing</th><th>The distinguishing input</th></tr>
@@ -38,6 +38,11 @@ notes: ['p-hash', 'p-captures']
     <td><code>nums[0] == nums[1]</code>, and then adjacent-only comparison — <b>two fakes survived two suites in one problem</b></td>
     <td><code>[1,2,3]</code>, then <code>[1,2,1]</code>. Three elements, so size was never the constraint — the duplicate simply has to sit at index 0 and index 2.</td>
   </tr>
+  <tr>
+    <td>1 Sep</td>
+    <td><code>(counts.max() ?? 0) + k</code> — global counts, ignoring whether those characters are reachable inside one window</td>
+    <td><code>("ABACADA", 1)</code> returns 5 against a real answer of 3. Second break, added unprompted: the fake can exceed the string — <code>("AAA", 10)</code> returns 13. A second fake was targeted too — <code>&gt;=</code> instead of <code>&gt;</code> in the shrink condition, killed by <code>("ABAB", 2)</code>.</td>
+  </tr>
 </table>
 
 <h4>What day 5 changes about this item</h4>
@@ -54,6 +59,14 @@ notes: ['p-hash', 'p-captures']
   <li>But the <code>[1,2,1]</code> reasoning was articulated before it was given. Second time in four days something has been closed unprompted.</li>
   <li><b>Q17 is the first suite here that needed no new case.</b> The Gauss formula appears in every case, so any error in it shifts every answer — and knowing a suite is done is as much a result as finding a gap. Only knowable by trying to break it.</li>
   <li>The step that has <em>still</em> never happened unprompted is <b>naming the fake</b>. It was asked for twice on 31 Aug and returned as a question both times. That is the one thing left in this item.</li>
+</ul>
+
+<h4>1 Sep — the gap is now specific</h4>
+<ul>
+  <li>Naming was attempted first, as agreed, and <b>neither attempt was a fake</b>. "Replace the k characters with the most frequent one" is the <em>correct strategy</em>, not a wrong implementation; "not having check of endIndex" was too vague to be an artifact. The fake had to be supplied as code.</li>
+  <li>But once the artifact existed, it was broken <b>unprompted and correctly</b> — and the reachability argument for <code>"ABACADA"</code> is the sharpest reasoning about a fake anywhere in this record. A second break was then added without prompting: the fake can exceed the string's own length.</li>
+  <li><b>So the gap is specifically <em>generating</em> a wrong implementation, not <em>analysing</em> one.</b> That is a much narrower thing than "the testing habit", and it is what remains of this item.</li>
+  <li>Worth trying next: rather than "name a fake", ask <em>what is the laziest thing that passes the examples in the problem statement?</em> Generation may be easier from that angle than from an abstract request.</li>
 </ul>
 
 <p>Written up as a standing reference — <a href="/open">how to write tests that can fail</a>, further down this page.</p>

@@ -1,0 +1,61 @@
+---
+date: 2026-09-01
+headline: One problem, worked <em>in both directions</em>.
+lede: >-
+  A full ninety-minute block that was meant to be the two-problem test and became something more
+  useful instead. Mid-session the stated aim was volume; it was pushed back on with the console's own
+  evidence, and reversed to recall. What followed — hand-trace, then an interactive stepper, then a
+  cold rewrite from scratch — produced the week's first recognise-to-produce result in a single session.
+blocks:
+  - track: coding
+    time: 6:00 — 7:30
+    title: Longest Repeating Character Replacement, both directions
+    href: /coding/18
+    bullets:
+      - 'Sliding window with a 26-slot count array. O(26n) time, O(1) space, and the 26 said out loud rather than hidden'
+      - 'The validity condition is <code>length − maxFreq &gt; k</code> — shrink because the window cannot be fixed within budget, not because it is large'
+      - '<code>maxFreq</code> is deliberately not recomputed after an eviction. Stale-high is safe: it understates the deficit, so the window stays wider and <code>best</code> can never be overstated'
+      - 'Measured: <code>left</code> moves 5, 3, 2, 0 times for k = 0…3 — never more than n in total, so the amortised claim is now a measurement rather than an argument'
+      - 'The fake was broken unprompted and correctly — <code>"ABACADA"</code>, k=1 returns 5 against a real answer of 3, because a global count ignores reachability inside one window'
+      - 'Then rewritten cold from scratch, correct first attempt. 3Sum was not started'
+problems: [18]
+labs: []
+openItems:
+  - recall-over-volume
+  - two-problems-at-ninety-minutes
+  - q9-longest-substring-regression
+  - distinguishing-input
+carriesForwardNote: The method changed mid-session, and the change is the finding.
+carriesForward:
+  - from: '@Sendable took four sessions to close'
+    to: Used as the argument <em>against</em> volume — reading it repeatedly produced recognition, and it only closed once the mechanism had to be produced from scratch
+  - from: Question 9 — solved, then did not survive a cold re-attempt
+    to: The exact failure mode today's method targets. Q9 is now the natural test of whether the method works
+  - from: Name the cheapest wrong implementation, then kill it
+    to: Sixth instance. Naming from scratch still did not land — two attempts, neither a fake — but <b>analysing</b> the supplied fake was the sharpest reasoning in the record so far
+  - from: A trace is a thing you scrub through
+    to: A trace is a thing you <em>predict</em>. The stepper commits you to whether <code>left</code> moves before it shows you
+note: >-
+  Intended as the two-problem test; ran one problem instead, worked to completion in both directions.
+  Deferred a fifth time. Coding has now run in 4 of 7 sessions.
+---
+
+## The artifact
+
+[**lc424-window.html**](/artifacts/lc424-window.html) — a standalone interactive stepper, kept in the
+repo under `public/artifacts/`. It runs the real algorithm rather than a hardcoded table, so what it
+shows is what the code does. Adjustable `k` from 0 to 3, predict-then-reveal at each step, and a
+header reporting the answer and the total `left`-movements for the selected `k` — which is where the
+amortised measurement came from.
+
+Worth generalising. The difference from a scrubbable trace is that it makes you **commit** before it
+reveals, which is the difference between clarity and recall.
+
+## The cold-recall check, before anything else next session
+
+Blank editor, five minutes: **write the shrink condition for 424, and state why `maxFreq` is not
+recomputed inside the loop.**
+
+If it comes out clean, today's method is validated and becomes the default. If it does not, the
+clarity did not convert to recall and the trace-then-rewrite loop needs another pass. Either result
+is worth having; only skipping it wastes the day.
