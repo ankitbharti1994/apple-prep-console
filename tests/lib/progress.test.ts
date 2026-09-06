@@ -13,7 +13,11 @@ import {
   phaseOfWeek,
   pct,
   standing,
+  formatLong,
+  formatShort,
+  msUntilNextMidnight,
 } from '~/lib/progress';
+import { prep } from '../../prep.config';
 
 describe('progress date helpers', () => {
   it('round-trips ISO through UTC date', () => {
@@ -111,5 +115,38 @@ describe('standing', () => {
   it('flags overrun when past planned weeks', () => {
     const s = standing(['2026-08-24'], '2026-12-07'); // week > 12
     expect(s.inOverrun).toBe(true);
+  });
+});
+
+describe('formatting', () => {
+  it('preserves the calendar date even in a western timezone', () => {
+    const original = prep.timezone;
+    try {
+      // Mutate the readonly config just for this test to prove formatters
+      // ignore prep.timezone and stick to the input calendar date.
+      (prep as any).timezone = 'America/New_York';
+      expect(formatLong('2026-09-06')).toBe('Sunday, 6 September 2026');
+      expect(formatShort('2026-09-06')).toBe('6 Sept');
+    } finally {
+      (prep as any).timezone = original;
+    }
+  });
+});
+
+describe('msUntilNextMidnight', () => {
+  it('handles a spring-forward transition night', () => {
+    // 2026-03-08 01:30 EST (06:30 UTC), before clocks jump to 03:00 EDT.
+    const now = new Date(Date.UTC(2026, 2, 8, 6, 30));
+    // Next midnight is 2026-03-09 00:00 EDT = 04:00 UTC.
+    const untilMidnight = 21.5 * 3600 * 1000;
+    expect(msUntilNextMidnight(now, 'America/New_York')).toBe(untilMidnight + 1000);
+  });
+
+  it('handles a fall-back transition night', () => {
+    // 2026-11-01 01:30 EDT (05:30 UTC), before clocks fall back to 01:00 EST.
+    const now = new Date(Date.UTC(2026, 10, 1, 5, 30));
+    // Next midnight is 2026-11-02 00:00 EST = 05:00 UTC.
+    const untilMidnight = 23.5 * 3600 * 1000;
+    expect(msUntilNextMidnight(now, 'America/New_York')).toBe(untilMidnight + 1000);
   });
 });

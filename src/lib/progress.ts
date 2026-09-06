@@ -49,15 +49,26 @@ export function weekdaysBetween(from: string, to: string): number {
   return n;
 }
 
-export const LONG_DATE = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
-});
-export const SHORT_DATE = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric', month: 'short', timeZone: 'UTC',
-});
+function ianaFor(tz: string): string {
+  if (tz === 'IST') return 'Asia/Kolkata';
+  return tz;
+}
 
-export function formatLong(iso: string): string { return LONG_DATE.format(toDate(iso)); }
-export function formatShort(iso: string): string { return SHORT_DATE.format(toDate(iso)); }
+export function formatLong(iso: string): string {
+  // Date strings are calendar dates; format them in UTC so the
+  // displayed day matches the input regardless of prep.timezone.
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    timeZone: 'UTC',
+  }).format(toDate(iso));
+}
+
+export function formatShort(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'short',
+    timeZone: 'UTC',
+  }).format(toDate(iso));
+}
 
 /* ---------- programme position ---------- */
 
@@ -152,6 +163,50 @@ export function standing(sessionDates: string[], today = todayISO()): Standing {
 }
 
 export function todayISO(): string {
-  const now = new Date();
-  return toISO(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    timeZone: ianaFor(prep.timezone),
+  }).format(new Date());
+}
+
+function dateInZone(d: Date, iana: string): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: iana,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
+function addDaysToISO(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const next = new Date(Date.UTC(y!, m! - 1, d! + days));
+  return next.toISOString().slice(0, 10);
+}
+
+/** Milliseconds until the next calendar midnight in the given timezone. */
+export function msUntilNextMidnight(now = new Date(), tz: string = prep.timezone): number {
+  const iana = ianaFor(tz);
+  const currentDate = dateInZone(now, iana);
+  const nextDate = addDaysToISO(currentDate, 1);
+
+  let lo = now.getTime();
+  // The longest day (a 25-hour fall-back day) plus a safety margin.
+  let hi = lo + 50 * 60 * 60 * 1000;
+  while (dateInZone(new Date(hi), iana) < nextDate) {
+    hi += 24 * 60 * 60 * 1000;
+  }
+
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (dateInZone(new Date(mid), iana) < nextDate) {
+      lo = mid + 1;
+    } else {
+      hi = mid;
+    }
+  }
+
+  // `lo` is the first instant whose in-zone calendar date is `nextDate`.
+  // Add a 1 s buffer so the queue flips after midnight, not on it.
+  return lo - now.getTime() + 1_000;
 }

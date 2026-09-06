@@ -1,15 +1,36 @@
-import { getCollection, type CollectionEntry } from 'astro:content';
 import { daysBetween, toDate, toISO } from './progress';
-import { problems } from '~/data/problems';
-import type { Problem } from './trace';
 
 const DAY = 86_400_000;
 
 /** Spaced-repetition intervals for problem re-attempts. */
-const PROBLEM_INTERVALS = [1, 3, 7, 14, 30, 60];
+export const PROBLEM_INTERVALS = [1, 3, 7, 14, 30, 60];
 
 /** Follow-up intervals for closed open-items. */
-const OPEN_ITEM_INTERVALS = [7, 30];
+export const OPEN_ITEM_INTERVALS = [7, 30];
+
+/** How far ahead to show upcoming items. */
+export const UPCOMING_HORIZON_DAYS = 14;
+
+export interface ReviewableProblem {
+  n: number;
+  title: string;
+  traced?: string | null;
+  href?: string;
+}
+
+export interface ReviewableOpenItem {
+  id: string;
+  title: string;
+  kind?: string;
+  status: 'open' | 'closed';
+  opened: string;
+  closed?: string;
+}
+
+export interface ReviewableNextStep {
+  title: string;
+  done: boolean;
+}
 
 export interface ReviewItem {
   kind: 'problem' | 'open' | 'next-step';
@@ -20,91 +41,7 @@ export interface ReviewItem {
   reason: string;
 }
 
-function addDays(iso: string, n: number): string {
-  return toISO(new Date(toDate(iso).getTime() + n * DAY));
-}
-
-function problemDueToday(p: Problem, today: string): ReviewItem | null {
-  if (!p.traced) return null;
-  const offset = daysBetween(p.traced, today);
-  if (offset <= 0) return null;
-  const dueInterval = PROBLEM_INTERVALS.find((d) => d === offset);
-  if (!dueInterval) return null;
-  return {
-    kind: 'problem',
-    title: `${p.n}. ${p.title}`,
-    href: `/coding/${p.n}`,
-    due: today,
-    reason: `${dueInterval} day review since ${p.traced}`,
-  };
-}
-
-function problemUpcoming(p: Problem, today: string): ReviewItem | null {
-  if (!p.traced) return null;
-  const offset = daysBetween(p.traced, today);
-  const next = PROBLEM_INTERVALS.find((d) => d > offset);
-  if (!next) return null;
-  return {
-    kind: 'problem',
-    title: `${p.n}. ${p.title}`,
-    href: `/coding/${p.n}`,
-    due: addDays(p.traced, next),
-    reason: `next review in ${next} days`,
-  };
-}
-
-function openItemReview(o: CollectionEntry<'openItems'>, today: string): ReviewItem | null {
-  const d = o.data;
-  if (d.status === 'open') {
-    return {
-      kind: 'open',
-      title: d.title,
-      href: `/open#${o.id}`,
-      due: today,
-      reason: `opened ${d.opened}${d.kind ? ` · ${d.kind}` : ''}`,
-    };
-  }
-  if (!d.closed) return null;
-  const offset = daysBetween(d.closed, today);
-  const dueInterval = OPEN_ITEM_INTERVALS.find((i) => i === offset);
-  if (!dueInterval) return null;
-  return {
-    kind: 'open',
-    title: d.title,
-    href: `/open#${o.id}`,
-    due: today,
-    reason: `${dueInterval} day follow-up since closed ${d.closed}`,
-  };
-}
-
-function openItemUpcoming(o: CollectionEntry<'openItems'>, today: string): ReviewItem | null {
-  const d = o.data;
-  if (d.status === 'open') return null;
-  if (!d.closed) return null;
-  const offset = daysBetween(d.closed, today);
-  const next = OPEN_ITEM_INTERVALS.find((i) => i > offset);
-  if (!next) return null;
-  return {
-    kind: 'open',
-    title: d.title,
-    href: `/open#${o.id}`,
-    due: addDays(d.closed, next),
-    reason: `next follow-up in ${next} days`,
-  };
-}
-
-function nextStepReview(s: CollectionEntry<'nextSteps'>): ReviewItem | null {
-  if (s.data.done) return null;
-  return {
-    kind: 'next-step',
-    title: s.data.title,
-    href: '/open#next-steps',
-    due: 'today',
-    reason: 'next step',
-  };
-}
-
-interface ReviewQueue {
+export interface ReviewQueue {
   today: string;
   due: ReviewItem[];
   upcoming: ReviewItem[];
@@ -117,59 +54,175 @@ interface ReviewQueue {
   };
 }
 
-export async function buildReviewQueue(today: string): Promise<ReviewQueue> {
-  const [openItems, nextSteps] = await Promise.all([
-    getCollection('openItems'),
-    getCollection('nextSteps'),
-  ]);
+function addDays(iso: string, n: number): string {
+  return toISO(new Date(toDate(iso).getTime() + n * DAY));
+}
+
+function daysUnit(n: number): string {
+  return `${n} day${n === 1 ? '' : 's'}`;
+}
+
+function lastDueInterval(offset: number, intervals: readonly number[]): number | null {
+  if (offset < intervals[0]!) return null;
+  let due: number = intervals[intervals.length - 1]!;
+  for (const i of intervals) {
+    if (i <= offset) due = i;
+    else break;
+  }
+  return due;
+}
+
+function nextInterval(offset: number, intervals: readonly number[]): number | null {
+  return intervals.find((i) => i > offset) ?? null;
+}
+
+function problemDue(p: ReviewableProblem, today: string): ReviewItem | null {
+  if (!p.traced) return null;
+  const offset = daysBetween(p.traced, today);
+  if (offset < PROBLEM_INTERVALS[0]!) return null;
+
+  const dueInterval = lastDueInterval(offset, PROBLEM_INTERVALS);
+  const due = addDays(p.traced, dueInterval!);
+  const overdue = offset - dueInterval!;
+  const baseReason = `${daysUnit(dueInterval!)} review since ${p.traced}`;
+  const reason = overdue > 0 ? `${baseReason} · ${daysUnit(overdue)} overdue` : baseReason;
+  return {
+    kind: 'problem',
+    title: `${p.n}. ${p.title}`,
+    href: p.href ?? `/coding/${p.n}`,
+    due,
+    reason,
+  };
+}
+
+function problemUpcoming(p: ReviewableProblem, today: string): ReviewItem | null {
+  if (!p.traced) return null;
+  const offset = daysBetween(p.traced, today);
+  const next = nextInterval(offset, PROBLEM_INTERVALS);
+  if (next === null) return null;
+
+  const due = addDays(p.traced, next);
+  const remaining = next - offset;
+  return {
+    kind: 'problem',
+    title: `${p.n}. ${p.title}`,
+    href: p.href ?? `/coding/${p.n}`,
+    due,
+    reason: `next review in ${daysUnit(remaining)}`,
+  };
+}
+
+function openItemDue(o: ReviewableOpenItem, today: string): ReviewItem | null {
+  const href = `/open#${o.id}`;
+  const kindLabel = o.kind ? ` · ${o.kind}` : '';
+
+  if (o.status === 'open') {
+    return {
+      kind: 'open',
+      title: o.title,
+      href,
+      due: today,
+      reason: `opened ${o.opened}${kindLabel}`,
+    };
+  }
+
+  if (!o.closed) return null;
+  const offset = daysBetween(o.closed, today);
+  if (offset < OPEN_ITEM_INTERVALS[0]!) return null;
+
+  const dueInterval = lastDueInterval(offset, OPEN_ITEM_INTERVALS);
+  const due = addDays(o.closed, dueInterval!);
+  const overdue = offset - dueInterval!;
+  const baseReason = `${daysUnit(dueInterval!)} follow-up since closed ${o.closed}`;
+  const reason = overdue > 0 ? `${baseReason} · ${daysUnit(overdue)} overdue` : baseReason;
+  return { kind: 'open', title: o.title, href, due, reason };
+}
+
+function openItemUpcoming(o: ReviewableOpenItem, today: string): ReviewItem | null {
+  if (o.status === 'open') return null;
+  if (!o.closed) return null;
+
+  const offset = daysBetween(o.closed, today);
+  const next = nextInterval(offset, OPEN_ITEM_INTERVALS);
+  if (next === null) return null;
+
+  const due = addDays(o.closed, next);
+  const remaining = next - offset;
+  return {
+    kind: 'open',
+    title: o.title,
+    href: `/open#${o.id}`,
+    due,
+    reason: `next follow-up in ${daysUnit(remaining)}`,
+  };
+}
+
+function nextStepDue(s: ReviewableNextStep): ReviewItem | null {
+  if (s.done) return null;
+  return {
+    kind: 'next-step',
+    title: s.title,
+    href: '/open#next-steps',
+    due: 'today',
+    reason: 'next step',
+  };
+}
+
+function kindPriority(kind: ReviewItem['kind']): number {
+  return kind === 'next-step' ? 0 : kind === 'open' ? 1 : 2;
+}
+
+export function buildReviewQueue(
+  today: string,
+  data: { problems?: ReviewableProblem[]; openItems?: ReviewableOpenItem[]; nextSteps?: ReviewableNextStep[] } = {},
+): ReviewQueue {
+  const problems = data.problems ?? [];
+  const openItems = data.openItems ?? [];
+  const nextSteps = data.nextSteps ?? [];
 
   const due: ReviewItem[] = [];
   const upcoming: ReviewItem[] = [];
-  let problemDue = 0;
-  let openDue = 0;
-  let nextStepDue = 0;
+  let problemCount = 0;
+  let openItemCount = 0;
+  let nextStepCount = 0;
 
   for (const p of problems) {
-    const d = problemDueToday(p, today);
+    const d = problemDue(p, today);
     if (d) {
       due.push(d);
-      problemDue++;
-    } else {
-      const u = problemUpcoming(p, today);
-      if (u) upcoming.push(u);
+      problemCount++;
     }
+    const u = problemUpcoming(p, today);
+    if (u) upcoming.push(u);
   }
 
   for (const o of openItems) {
-    const d = openItemReview(o, today);
+    const d = openItemDue(o, today);
     if (d) {
       due.push(d);
-      openDue++;
-    } else {
-      const u = openItemUpcoming(o, today);
-      if (u) upcoming.push(u);
+      openItemCount++;
     }
+    const u = openItemUpcoming(o, today);
+    if (u) upcoming.push(u);
   }
 
   for (const s of nextSteps) {
-    const d = nextStepReview(s);
+    const d = nextStepDue(s);
     if (d) {
       due.push(d);
-      nextStepDue++;
+      nextStepCount++;
     }
   }
 
-  // Sort next-steps to top, then by title for stable output.
   due.sort((a, b) => {
-    if (a.kind === 'next-step' && b.kind !== 'next-step') return -1;
-    if (a.kind !== 'next-step' && b.kind === 'next-step') return 1;
-    if (a.kind === 'open' && b.kind === 'problem') return -1;
-    if (a.kind === 'problem' && b.kind === 'open') return 1;
+    const pa = kindPriority(a.kind);
+    const pb = kindPriority(b.kind);
+    if (pa !== pb) return pa - pb;
+    if (a.due !== b.due) return a.due.localeCompare(b.due);
     return a.title.localeCompare(b.title);
   });
 
-  // Only show the next 14 days of upcoming items.
-  const horizon = addDays(today, 14);
+  const horizon = addDays(today, UPCOMING_HORIZON_DAYS);
   upcoming.sort((a, b) => a.due.localeCompare(b.due));
   const upcomingFiltered = upcoming.filter((u) => u.due <= horizon);
 
@@ -180,9 +233,9 @@ export async function buildReviewQueue(today: string): Promise<ReviewQueue> {
     counts: {
       due: due.length,
       upcoming: upcomingFiltered.length,
-      problems: problemDue,
-      open: openDue,
-      nextSteps: nextStepDue,
+      problems: problemCount,
+      open: openItemCount,
+      nextSteps: nextStepCount,
     },
   };
 }
