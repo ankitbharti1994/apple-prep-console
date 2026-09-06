@@ -95,9 +95,10 @@ export async function planPayload() {
   const xs = await planPhases();
   return {
     startDate: prep.startDate,
-    endDate: prep.endDate,
-    totalWeeks: prep.totalWeeks,
-    totalSessions: prep.totalSessions,
+    plannedEndDate: prep.plannedEndDate,
+    plannedWeeks: prep.plannedWeeks,
+    maxWeeks: prep.maxWeeks,
+    plannedSessions: prep.plannedSessions,
     rhythm: prep.rhythm,
     phases: xs.map((p) => p.data),
   };

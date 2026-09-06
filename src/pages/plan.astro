@@ -8,13 +8,15 @@ const phases = (await planPhases()).map((p) => p.data);
 const today = todayISO();
 const curWeek = weekOf(today);
 const started = today >= prep.startDate;
-const finished = today > prep.endDate;
+// No completion state. Past the planned 12 weeks is overrun, not done —
+// the 1 Sep revision made the date the flexible variable.
+const overrun = curWeek > prep.plannedWeeks;
 
 const inPhase = (w: number, p: { weeks: readonly [number, number] }) =>
   w >= p.weeks[0] && p.weeks[1] >= w;
 const phaseOfWeek = (w: number) => phases.find((p) => inPhase(w, p));
 const isCurrentPhase = (p: { weeks: readonly [number, number] }) =>
-  started && !finished && inPhase(curWeek, p);
+  started && inPhase(curWeek, p);
 const band = (n: number) => `var(--p${n})`;
 
 // "Where you are" — computed, not typed.
@@ -25,9 +27,9 @@ const slot = cur?.blocks[slotIndex] ?? cur?.blocks[0];
 ---
 <Shell title="Plan" track="plan" description="The twelve-week plan to the Apple loop.">
   <p class="eyebrow">
-    Track 01 · {formatShort(prep.startDate)} → {formatShort(prep.endDate)} 2026 · {prep.locations.join(', ')}
+    Track 01 · from {formatShort(prep.startDate)} 2026 · {prep.plannedWeeks}–{prep.maxWeeks} weeks · {prep.locations.join(', ')}
   </p>
-  <h1>Twelve weeks<br />to the <em>Apple</em> loop.</h1>
+  <h1>Twelve weeks,<br /><em>sixteen if needed</em>.</h1>
   <p class="lede">
     Weekday mornings 6:00–7:30, Saturday deep work, Sunday review. Four phases, each
     ramping one track while keeping the last one warm.
@@ -36,22 +38,46 @@ const slot = cur?.blocks[slotIndex] ?? cur?.blocks[0];
   <div class="sourcenote">
     <b>Where you are:</b>{' '}
     {!started && <span>The plan starts {formatShort(prep.startDate)} 2026.</span>}
-    {finished && <span>Plan complete — ended {formatShort(prep.endDate)} 2026.</span>}
-    {started && !finished && cur && slot && (
+    {started && cur && slot && (
       <span>
-        Week <b>{curWeek}</b> of {prep.totalWeeks} — phase {cur.id}, {cur.title}. Today is a{' '}
+        Week <b>{curWeek}</b> of {prep.plannedWeeks} — phase {cur.id}, {cur.title}. Today is a{' '}
         <b>{slot.name.toLowerCase()}</b> day ({slot.slot}).
+        {overrun && (
+          <> Past the planned {prep.plannedWeeks} weeks and inside the runway to {prep.maxWeeks} — that is overrun, not completion.</>
+        )}
       </span>
     )}
   </div>
 
+  <div class="rev closed" style="margin:0 0 26px">
+    <h4>Revised 1 September 2026 — the date became the flexible variable</h4>
+    <p><span class="resolved">standing change</span></p>
+    <p>
+      Twelve weeks of <em>content</em> on a runway of up to sixteen. Phase boundaries are unchanged
+      and nothing in the daily structure moves — weekday mornings 6:00–7:30, Saturday build block,
+      Sunday checkpoint.
+    </p>
+    <ul>
+      <li>First return to DSA after a long gap, and the first unbroken two-week run. Problems are
+        taking longer than the plan assumed, and that is being treated as <b>information rather than
+        failure</b>.</li>
+      <li><b>The two-problem test is retired, not deferred.</b> It measured throughput, and throughput
+        is no longer the goal — continuing to log it accumulates debt against a target no longer held.</li>
+      <li><b>The daily cold-recall check does not relax.</b> A longer runway widens the gap between
+        learning something and needing it, which makes the check more necessary, not less. Sixteen
+        weeks without it is sixteen weeks of clarity that does not survive.</li>
+      <li>The metric swap is the substantive part: <em>weeks remaining</em> counted down toward a
+        deadline, <em>days unbroken</em> counts up on the thing actually being optimised for.</li>
+    </ul>
+  </div>
+
   <div class="railhead">
     <span>Week 1 · {formatShort(prep.startDate)}</span>
-    <span>Week {prep.totalWeeks} · {formatShort(prep.endDate)}</span>
+    <span>Week {prep.plannedWeeks} · then up to {prep.maxWeeks}</span>
   </div>
 
   <div class="weeks">
-    {Array.from({ length: prep.totalWeeks }, (_, i) => i + 1).map((w) => {
+    {Array.from({ length: prep.plannedWeeks }, (_, i) => i + 1).map((w) => {
       const p = phaseOfWeek(w)!;
       return (
         <a
@@ -114,7 +140,7 @@ const slot = cur?.blocks[slotIndex] ?? cur?.blocks[0];
   </table>
 
   <div class="colophon">
-    <span>{phases.length} phases · {prep.totalWeeks} weeks · {prep.totalSessions} weekday sessions</span>
-    <span>{formatShort(prep.startDate)} — {formatShort(prep.endDate)} 2026</span>
+    <span>{phases.length} phases · {prep.plannedWeeks}–{prep.maxWeeks} weeks · {prep.plannedSessions}+ weekday sessions</span>
+    <span>from {formatShort(prep.startDate)} 2026</span>
   </div>
 </Shell>

@@ -13,7 +13,7 @@ const c = await counts();
 const s = standing(await sessionDates());
 
 const badge: Record<string, string | number> = {
-  plan: `${prep.totalWeeks}w`,
+  plan: `${prep.plannedWeeks}–${prep.maxWeeks}w`,
   coding: c.problems,
   internals: c.labs,
   open: c.openActive,
@@ -26,7 +26,7 @@ const badge: Record<string, string | number> = {
     <Logo />
     <span class="bt">
       {prep.title}
-      <em>Week {s.week} of {prep.totalWeeks} · {prep.role}</em>
+      <em>Week {s.week} · {prep.plannedWeeks}–{prep.maxWeeks} weeks · {prep.role}</em>
     </span>
   </a>
 

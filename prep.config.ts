@@ -12,18 +12,27 @@ export const prep = {
   role: 'ICT4',
   /** First day of week 1. ISO date, local. */
   startDate: '2026-08-24',
-  /** Last day of week 12. */
-  endDate: '2026-11-15',
-  totalWeeks: 12,
-  /** Weekday sessions across the whole programme (5 x 12). */
-  totalSessions: 60,
+
+  /* ---- Revised 1 Sep 2026: 12 weeks of content on a runway of up to 16. ----
+   * The date is the flexible variable; the daily session is not. Nothing here
+   * is a deadline, so nothing derived from it should ever claim completion.
+   */
+
+  /** The plan's own length. Phase boundaries are still expressed in these. */
+  plannedWeeks: 12,
+  /** The runway. Weeks past plannedWeeks are overrun, not failure. */
+  maxWeeks: 16,
+  /** Where the 12-week plan lands if nothing slips. Not a deadline. */
+  plannedEndDate: '2026-11-15',
+  /** Weekday sessions across the planned 12 weeks (5 x 12). More is fine. */
+  plannedSessions: 60,
   locations: ['US', 'Germany', 'Netherlands'],
   timezone: 'IST',
 
   /** Weekly rhythm — rendered on the plan page. */
   rhythm: [
-    { slot: 'Mon–Fri 6:00–7:30', block: 'Morning session — 90 min, split by phase', runs: 'All 12 weeks' },
-    { slot: 'Sat 9:00–11:00', block: 'Build block → system design + STAR from week 7', runs: 'All 12 weeks' },
+    { slot: 'Mon–Fri 6:00–7:30', block: 'Morning session — 90 min, split by phase', runs: 'Every week' },
+    { slot: 'Sat 9:00–11:00', block: 'Build block → system design + STAR from week 7', runs: 'Every week' },
     { slot: 'Sun 10:00–10:30', block: 'Weekly checkpoint', runs: 'Weeks 1–5' },
     { slot: 'Sun 10:00–11:30', block: 'Mock interview + review', runs: 'Weeks 6–12' },
   ],

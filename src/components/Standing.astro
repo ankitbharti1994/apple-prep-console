@@ -14,15 +14,26 @@ const topicPct = pct(c.problems, prep.currentTopic.target);
 const rows = [
   {
     label: prep.currentTopic.name,
-    value: `${c.problems} of ${prep.currentTopic.target} traced`,
+    // Past the target the "n of m" framing reads as broken rather than done.
+    value:
+      c.problems >= prep.currentTopic.target
+        ? `${c.problems} traced`
+        : `${c.problems} of ${prep.currentTopic.target} traced`,
     pct: topicPct,
-    note: topicPct >= 100 ? 'topic complete' : `${prep.currentTopic.target - c.problems} to go`,
+    note:
+      c.problems > prep.currentTopic.target
+        ? `target of ${prep.currentTopic.target} passed — topic 2 not yet set`
+        : c.problems === prep.currentTopic.target
+          ? 'target met'
+          : `${prep.currentTopic.target - c.problems} to go`,
   },
   {
-    label: `${prep.totalWeeks}-week plan`,
-    value: `day ${s.sessionOrdinal} of ${prep.totalSessions}`,
+    label: 'sessions run',
+    value: `day ${s.sessionOrdinal} of ${prep.plannedSessions}+`,
     pct: s.elapsedPct,
-    note: `week ${s.week} · ${s.weeksRemaining} remaining`,
+    note: s.inOverrun
+      ? `week ${s.week} · past the planned ${prep.plannedWeeks}, runway to ${prep.maxWeeks}`
+      : `week ${s.week} of ${prep.plannedWeeks} · runway to ${prep.maxWeeks}`,
   },
 ];
 ---

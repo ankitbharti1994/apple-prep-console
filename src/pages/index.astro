@@ -25,7 +25,7 @@ const prevDate = previous[0]?.data.date;
   {latest && (
     <>
       <p class="eyebrow">
-        {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date)} of {prep.totalSessions}
+        {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date)}
       </p>
       <h1 set:html={latest.data.headline} />
       <p class="lede" set:html={latest.data.lede} />
@@ -46,8 +46,8 @@ const prevDate = previous[0]?.data.date;
       <div class="sub">{c.openClosed} closed so far</div>
     </div>
     <div class="metric">
-      <div class="lb">Weeks remaining</div><div class="vv">{s.weeksRemaining}</div>
-      <div class="sub">mocks start week 6</div>
+      <div class="lb">Days unbroken</div><div class="vv">{s.streak}</div>
+      <div class="sub">the thing being optimised for</div>
     </div>
   </div>
 
@@ -96,9 +96,10 @@ const prevDate = previous[0]?.data.date;
   </div>
   <p class="stripnote">
     Weekday mornings 6:00–7:30 {prep.timezone} · Saturday deep-work blocks · mocks held back until week 6.
+    Twelve weeks of content on a runway of up to {prep.maxWeeks} — <a href="/plan">revised 1 Sep</a>.
   </p>
   <a class="pk" href="/plan" style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
-    See the full {prep.totalWeeks}-week plan →
+    See the full plan →
   </a>
 
   {previous.length > 0 && (
@@ -117,7 +118,7 @@ const prevDate = previous[0]?.data.date;
   )}
 
   <div class="colophon">
-    <span>Apple prep · {formatShort(prep.startDate)} — {formatShort(prep.endDate)} 2026</span>
-    <span>Session {s.sessionOrdinal} of {prep.totalSessions} · week {curWeek} of {prep.totalWeeks}</span>
+    <span>Apple prep · from {formatShort(prep.startDate)} 2026 · {prep.plannedWeeks}–{prep.maxWeeks} weeks</span>
+    <span>Session {s.sessionOrdinal} · week {curWeek} · {s.streak} unbroken</span>
   </div>
 </Shell>

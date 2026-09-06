@@ -5,7 +5,6 @@ import { render } from 'astro:content';
 import { allSessions, allLabs, allOpenItems } from '~/lib/content';
 import { problems } from '~/data/problems';
 import { formatLong, formatShort, sessionOrdinal, weekOf } from '~/lib/progress';
-import { prep } from '../../../prep.config';
 
 export async function getStaticPaths() {
   const sessions = await allSessions();
@@ -25,7 +24,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
 ---
 <Shell title={formatShort(d.date)} track="sessions" description={d.lede}>
   <p class="eyebrow">
-    {formatLong(d.date)} · session {sessionOrdinal(d.date)} of {prep.totalSessions} · week {weekOf(d.date)}
+    {formatLong(d.date)} · session {sessionOrdinal(d.date)} · week {weekOf(d.date)}
   </p>
   <h1 set:html={d.headline} />
   <p class="lede" set:html={d.lede} />

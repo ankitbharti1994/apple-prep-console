@@ -1,8 +1,9 @@
 ---
-title: Two mediums in 90 minutes — deferred twice, still untested
+title: Two mediums in 90 minutes — retired 1 Sep, not completed
 kind: parked
-status: open
+status: closed
 opened: 2026-08-26
+closed: 2026-09-01
 order: 12
 ---
 

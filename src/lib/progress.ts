@@ -61,11 +61,18 @@ export function formatShort(iso: string): string { return SHORT_DATE.format(toDa
 
 /* ---------- programme position ---------- */
 
-/** 1-based week number for a date. Clamped to [1, totalWeeks]. */
+/**
+ * 1-based week number for a date. Deliberately unclamped.
+ *
+ * This used to clamp at plannedWeeks, so week 13 reported as week 12 while the
+ * plan page announced completion. Clamping at maxWeeks instead would tell the
+ * same lie four weeks later. Callers that need a bounded index — the week rail
+ * — iterate plannedWeeks directly rather than asking this.
+ */
 export function weekOf(iso: string): number {
   const offset = daysBetween(prep.startDate, iso);
   if (offset < 0) return 1;
-  return Math.min(prep.totalWeeks, Math.floor(offset / 7) + 1);
+  return Math.floor(offset / 7) + 1;
 }
 
 /** ISO date of the Monday that starts week `n`. */
@@ -115,10 +122,12 @@ export interface Standing {
   latest: string | null;
   sessionCount: number;
   sessionOrdinal: number;
-  totalSessions: number;
+  plannedSessions: number;
   week: number;
-  totalWeeks: number;
-  weeksRemaining: number;
+  plannedWeeks: number;
+  maxWeeks: number;
+  /** True once past the planned 12 weeks — overrun, not completion. */
+  inOverrun: boolean;
   streak: number;
   elapsedPct: number;
 }
@@ -132,12 +141,13 @@ export function standing(sessionDates: string[], today = todayISO()): Standing {
     latest,
     sessionCount: sorted.length,
     sessionOrdinal: latest ? sessionOrdinal(latest) : 0,
-    totalSessions: prep.totalSessions,
+    plannedSessions: prep.plannedSessions,
     week,
-    totalWeeks: prep.totalWeeks,
-    weeksRemaining: Math.max(0, prep.totalWeeks - week),
+    plannedWeeks: prep.plannedWeeks,
+    maxWeeks: prep.maxWeeks,
+    inOverrun: week > prep.plannedWeeks,
     streak: currentStreak(sorted),
-    elapsedPct: pct(sorted.length, prep.totalSessions),
+    elapsedPct: pct(sorted.length, prep.plannedSessions),
   };
 }
 
