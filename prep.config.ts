@@ -45,6 +45,7 @@ export const prep = {
     { id: 'internals', k: '03', label: 'Internals', href: '/internals' },
     { id: 'open', k: '04', label: 'Open items', href: '/open' },
     { id: 'sessions', k: '05', label: 'Sessions', href: '/sessions' },
+    { id: 'review', k: '06', label: 'Review', href: '/review' },
   ],
 
   /** Current coding topic — shown on the rail meter. */

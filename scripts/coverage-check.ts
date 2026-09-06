@@ -13,8 +13,7 @@ import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const ORIGINAL =
-  process.env.ORIGINAL_HTML ??
-  '/Users/ankitkumarbharti/Documents/Job Prep/Practice/apple-prep-console.html';
+  process.env.ORIGINAL_HTML ?? 'fixtures/apple-prep-console.html';
 const DIST = join(process.cwd(), 'dist');
 
 /** Blocks that are deliberately gone, with the reason. Reviewed, not ignored. */

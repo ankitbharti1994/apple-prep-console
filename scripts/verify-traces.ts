@@ -30,9 +30,7 @@ async function loadProblems(): Promise<Problem[]> {
   return out.sort((a, b) => a.n - b.n);
 }
 
-const ORIGINAL =
-  process.env.ORIGINAL_HTML ??
-  '/Users/ankitkumarbharti/Documents/Job Prep/Practice/apple-prep-console.html';
+const ORIGINAL = process.env.ORIGINAL_HTML ?? 'fixtures/apple-prep-console.html';
 
 interface LegacyProblem {
   n: number;
