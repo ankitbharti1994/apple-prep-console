@@ -55,16 +55,18 @@ function ianaFor(tz: string): string {
 }
 
 export function formatLong(iso: string): string {
+  // Date strings are calendar dates; format them in UTC so the
+  // displayed day matches the input regardless of prep.timezone.
   return new Intl.DateTimeFormat('en-GB', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
-    timeZone: ianaFor(prep.timezone),
+    timeZone: 'UTC',
   }).format(toDate(iso));
 }
 
 export function formatShort(iso: string): string {
   return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric', month: 'short',
-    timeZone: ianaFor(prep.timezone),
+    timeZone: 'UTC',
   }).format(toDate(iso));
 }
 
