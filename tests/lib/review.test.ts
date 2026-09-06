@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildReviewQueue, PROBLEM_INTERVALS, OPEN_ITEM_INTERVALS } from '~/lib/review';
+import { buildReviewQueue } from '~/lib/review';
 
 describe('buildReviewQueue', () => {
   it('shows a problem as due on the exact interval day', () => {

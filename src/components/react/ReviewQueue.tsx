@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { buildReviewQueue, PROBLEM_INTERVALS, UPCOMING_HORIZON_DAYS, type ReviewableProblem, type ReviewableOpenItem, type ReviewableNextStep } from '~/lib/review';
-import { todayISO, formatShort } from '~/lib/progress';
+import { useCallback, useEffect, useState } from 'react';
+import { buildReviewQueue, PROBLEM_INTERVALS, UPCOMING_HORIZON_DAYS, type ReviewableProblem, type ReviewableOpenItem, type ReviewableNextStep, type ReviewQueue } from '~/lib/review';
+import { todayISO, formatShort, msUntilNextMidnight } from '~/lib/progress';
 import { prep } from '../../../prep.config';
 
 export interface Props {
@@ -9,13 +9,48 @@ export interface Props {
   nextSteps: ReviewableNextStep[];
 }
 
-
-
 export default function ReviewQueue({ problems, openItems, nextSteps }: Props) {
-  const queue = useMemo(() => {
-    const today = todayISO();
-    return buildReviewQueue(today, { problems, openItems, nextSteps });
+  const [queue, setQueue] = useState<ReviewQueue>(() =>
+    buildReviewQueue(todayISO(), { problems, openItems, nextSteps }),
+  );
+
+  const rebuild = useCallback(() => {
+    setQueue(buildReviewQueue(todayISO(), { problems, openItems, nextSteps }));
   }, [problems, openItems, nextSteps]);
+
+  useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    const scheduleMidnightRefresh = () => {
+      timeoutId = setTimeout(() => {
+        rebuild();
+        scheduleMidnightRefresh();
+      }, msUntilNextMidnight());
+    };
+
+    const onVisibility = () => {
+      if (document.hidden) return;
+      rebuild();
+      if (timeoutId) clearTimeout(timeoutId);
+      scheduleMidnightRefresh();
+    };
+
+    const onFocus = () => {
+      rebuild();
+      if (timeoutId) clearTimeout(timeoutId);
+      scheduleMidnightRefresh();
+    };
+
+    scheduleMidnightRefresh();
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('focus', onFocus);
+
+    return () => {
+      if (timeoutId) clearTimeout(timeoutId);
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('focus', onFocus);
+    };
+  }, [rebuild]);
 
   const { due, upcoming, counts, today } = queue;
 

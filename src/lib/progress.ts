@@ -166,3 +166,23 @@ export function todayISO(): string {
     timeZone: ianaFor(prep.timezone),
   }).format(new Date());
 }
+
+/** Milliseconds until the next midnight in the configured timezone. */
+export function msUntilNextMidnight(tz = prep.timezone): number {
+  const iana = ianaFor(tz);
+  const now = new Date();
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: iana,
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).formatToParts(now);
+  const valueOf = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
+  const h = valueOf('hour');
+  const m = valueOf('minute');
+  const s = valueOf('second');
+  const sinceMidnight = (h * 3600 + m * 60 + s) * 1000;
+  // 1 s buffer to ensure the date has actually rolled over.
+  return 86_400_000 - sinceMidnight + 1_000;
+}
