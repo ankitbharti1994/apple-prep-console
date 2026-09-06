@@ -49,15 +49,24 @@ export function weekdaysBetween(from: string, to: string): number {
   return n;
 }
 
-export const LONG_DATE = new Intl.DateTimeFormat('en-GB', {
-  weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
-});
-export const SHORT_DATE = new Intl.DateTimeFormat('en-GB', {
-  day: 'numeric', month: 'short', timeZone: 'UTC',
-});
+function ianaFor(tz: string): string {
+  if (tz === 'IST') return 'Asia/Kolkata';
+  return tz;
+}
 
-export function formatLong(iso: string): string { return LONG_DATE.format(toDate(iso)); }
-export function formatShort(iso: string): string { return SHORT_DATE.format(toDate(iso)); }
+export function formatLong(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    timeZone: ianaFor(prep.timezone),
+  }).format(toDate(iso));
+}
+
+export function formatShort(iso: string): string {
+  return new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric', month: 'short',
+    timeZone: ianaFor(prep.timezone),
+  }).format(toDate(iso));
+}
 
 /* ---------- programme position ---------- */
 
@@ -152,6 +161,8 @@ export function standing(sessionDates: string[], today = todayISO()): Standing {
 }
 
 export function todayISO(): string {
-  const now = new Date();
-  return toISO(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
+  return new Intl.DateTimeFormat('en-CA', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    timeZone: ianaFor(prep.timezone),
+  }).format(new Date());
 }
