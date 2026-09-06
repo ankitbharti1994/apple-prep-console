@@ -169,22 +169,44 @@ export function todayISO(): string {
   }).format(new Date());
 }
 
-/** Milliseconds until the next midnight in the configured timezone. */
-export function msUntilNextMidnight(tz = prep.timezone): number {
-  const iana = ianaFor(tz);
-  const now = new Date();
-  const parts = new Intl.DateTimeFormat('en-GB', {
+function dateInZone(d: Date, iana: string): string {
+  return new Intl.DateTimeFormat('en-CA', {
     timeZone: iana,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).formatToParts(now);
-  const valueOf = (type: string) => Number(parts.find((p) => p.type === type)?.value ?? 0);
-  const h = valueOf('hour');
-  const m = valueOf('minute');
-  const s = valueOf('second');
-  const sinceMidnight = (h * 3600 + m * 60 + s) * 1000;
-  // 1 s buffer to ensure the date has actually rolled over.
-  return 86_400_000 - sinceMidnight + 1_000;
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(d);
+}
+
+function addDaysToISO(iso: string, days: number): string {
+  const [y, m, d] = iso.split('-').map(Number);
+  const next = new Date(Date.UTC(y!, m! - 1, d! + days));
+  return next.toISOString().slice(0, 10);
+}
+
+/** Milliseconds until the next calendar midnight in the given timezone. */
+export function msUntilNextMidnight(now = new Date(), tz: string = prep.timezone): number {
+  const iana = ianaFor(tz);
+  const currentDate = dateInZone(now, iana);
+  const nextDate = addDaysToISO(currentDate, 1);
+
+  let lo = now.getTime();
+  // The longest day (a 25-hour fall-back day) plus a safety margin.
+  let hi = lo + 50 * 60 * 60 * 1000;
+  while (dateInZone(new Date(hi), iana) < nextDate) {
+    hi += 24 * 60 * 60 * 1000;
+  }
+
+  while (lo < hi) {
+    const mid = Math.floor((lo + hi) / 2);
+    if (dateInZone(new Date(mid), iana) < nextDate) {
+      lo = mid + 1;
+    } else {
+      hi = mid;
+    }
+  }
+
+  // `lo` is the first instant whose in-zone calendar date is `nextDate`.
+  // Add a 1 s buffer so the queue flips after midnight, not on it.
+  return lo - now.getTime() + 1_000;
 }

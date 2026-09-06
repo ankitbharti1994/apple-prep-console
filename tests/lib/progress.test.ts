@@ -15,6 +15,7 @@ import {
   standing,
   formatLong,
   formatShort,
+  msUntilNextMidnight,
 } from '~/lib/progress';
 import { prep } from '../../prep.config';
 
@@ -129,5 +130,23 @@ describe('formatting', () => {
     } finally {
       (prep as any).timezone = original;
     }
+  });
+});
+
+describe('msUntilNextMidnight', () => {
+  it('handles a spring-forward transition night', () => {
+    // 2026-03-08 01:30 EST (06:30 UTC), before clocks jump to 03:00 EDT.
+    const now = new Date(Date.UTC(2026, 2, 8, 6, 30));
+    // Next midnight is 2026-03-09 00:00 EDT = 04:00 UTC.
+    const untilMidnight = 21.5 * 3600 * 1000;
+    expect(msUntilNextMidnight(now, 'America/New_York')).toBe(untilMidnight + 1000);
+  });
+
+  it('handles a fall-back transition night', () => {
+    // 2026-11-01 01:30 EDT (05:30 UTC), before clocks fall back to 01:00 EST.
+    const now = new Date(Date.UTC(2026, 10, 1, 5, 30));
+    // Next midnight is 2026-11-02 00:00 EST = 05:00 UTC.
+    const untilMidnight = 23.5 * 3600 * 1000;
+    expect(msUntilNextMidnight(now, 'America/New_York')).toBe(untilMidnight + 1000);
   });
 });
