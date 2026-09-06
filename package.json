@@ -4,6 +4,9 @@
   "version": "1.0.0",
   "private": true,
   "description": "Apple ICT4 interview prep console — content-driven, LLM-friendly.",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -18,6 +21,8 @@
     "coverage": "tsx scripts/coverage-check.ts",
     "verify:traces": "tsx scripts/verify-traces.ts",
     "build:fast": "astro build",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "verify": "npm run verify:traces && npm run lint:traces && npm run coverage",
     "lint:traces": "tsx scripts/lint-traces.ts"
   },
@@ -38,6 +43,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",
     "pagefind": "^1.5.2",
-    "tsx": "^4.23.12"
+    "tsx": "^4.23.12",
+    "vitest": "^4.1.11"
   }
 }

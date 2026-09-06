@@ -71,8 +71,8 @@ const word = (n: number) =>
 
   {renderedSteps.length > 0 && (
     <>
-      <h2 class="sec">Next steps</h2>
-      <ol class="next">
+      <h2 class="sec" id="next-steps">Next steps</h2>
+      <ol class="next" aria-labelledby="next-steps">
         {renderedSteps.map(({ s, Content }) => (
           <li>
             <b set:html={s.data.title} />{' '}

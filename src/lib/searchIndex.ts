@@ -29,6 +29,7 @@ export async function buildIndex(): Promise<Entry[]> {
     { kind: 'page', title: 'Coding', sub: 'Traced problems', href: '/coding' },
     { kind: 'page', title: 'Internals', sub: 'Swift labs', href: '/internals' },
     { kind: 'page', title: 'Open items', sub: 'Carry-forward log', href: '/open' },
+    { kind: 'page', title: 'Review', sub: 'Daily spaced-repetition queue', href: '/review' },
     { kind: 'page', title: 'Companions', sub: 'Runnable Swift files', href: '/companions' },
 
     ...problems.map((p): Entry => ({
