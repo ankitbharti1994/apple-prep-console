@@ -9,6 +9,7 @@ import {
   weekOf,
   weekStart,
   sessionOrdinal,
+  weekdaySlot,
   currentStreak,
   phaseOfWeek,
   pct,
@@ -45,14 +46,43 @@ describe('progress date helpers', () => {
 });
 
 describe('programme position', () => {
+  // The first six weekdays, all of which ran.
+  const unbroken = [
+    '2026-08-24', '2026-08-25', '2026-08-26',
+    '2026-08-27', '2026-08-28', '2026-08-31',
+  ];
+
   it('computes week and session ordinal from start date', () => {
     expect(weekOf('2026-08-24')).toBe(1);
-    expect(sessionOrdinal('2026-08-24')).toBe(1);
+    expect(sessionOrdinal('2026-08-24', unbroken)).toBe(1);
 
     expect(weekOf('2026-08-31')).toBe(2);
-    expect(sessionOrdinal('2026-08-31')).toBe(6);
+    expect(sessionOrdinal('2026-08-31', unbroken)).toBe(6);
 
     expect(weekOf('2026-09-07')).toBe(3);
+  });
+
+  it('counts weekday slots separately from sessions run', () => {
+    // 24 Aug -> 7 Sep is 11 weekdays regardless of what ran.
+    expect(weekdaySlot('2026-09-07')).toBe(11);
+    expect(weekdaySlot('2026-08-31')).toBe(6);
+  });
+
+  it('does not count missed weekdays as sessions', () => {
+    // The real gap: 3 and 4 Sep were weekdays with no session.
+    const withGap = [...unbroken, '2026-09-01', '2026-09-02', '2026-09-07'];
+
+    expect(withGap).toHaveLength(9);
+    expect(sessionOrdinal('2026-09-07', withGap)).toBe(9);
+    // The bug this replaced: the 9th session reported as the 11th.
+    expect(weekdaySlot('2026-09-07')).toBe(11);
+    expect(sessionOrdinal('2026-09-07', withGap)).not.toBe(weekdaySlot('2026-09-07'));
+  });
+
+  it('counts sessions up to an unlogged date', () => {
+    const withGap = [...unbroken, '2026-09-01', '2026-09-02', '2026-09-07'];
+    // 4 Sep never ran; eight sessions precede it.
+    expect(sessionOrdinal('2026-09-04', withGap)).toBe(8);
   });
 
   it('returns week 1 before start date', () => {

@@ -15,6 +15,7 @@ export async function getStaticPaths() {
 }
 
 const { entry, newer, older } = Astro.props;
+const dates = (await allSessions()).map((x) => x.data.date);
 const d = entry.data;
 const { Content } = await render(entry);
 
@@ -24,7 +25,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
 ---
 <Shell title={formatShort(d.date)} track="sessions" description={d.lede}>
   <p class="eyebrow">
-    {formatLong(d.date)} · session {sessionOrdinal(d.date)} · week {weekOf(d.date)}
+    {formatLong(d.date)} · session {sessionOrdinal(d.date, dates)} · week {weekOf(d.date)}
   </p>
   <h1 set:html={d.headline} />
   <p class="lede" set:html={d.lede} />
