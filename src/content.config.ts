@@ -133,6 +133,10 @@ const openItems = defineCollection({
     opened: isoDate,
     /** When it was closed. Required when status is closed. */
     closed: isoDate.optional(),
+    /** When a closed item was reopened, because the close did not hold.
+     *  Distinct from `opened`: the history is the point, so a reopened item
+     *  keeps its original date rather than being raised again as a new one. */
+    reopened: isoDate.optional(),
     /** Related problem numbers / lab ids, for cross-linking. */
     problems: z.array(z.number().int().positive()).default([]),
     labs: z.array(z.string()).default([]),
@@ -144,10 +148,15 @@ const openItems = defineCollection({
     meta: z
       .array(z.object({ label: z.string(), cls: z.string().optional(), href: z.string().optional() }))
       .default([]),
-  }).refine((v) => v.status !== 'closed' || !!v.closed, {
-    message: 'A closed open-item needs a `closed:` date.',
-    path: ['closed'],
-  }),
+  })
+    .refine((v) => v.status !== 'closed' || !!v.closed, {
+      message: 'A closed open-item needs a `closed:` date.',
+      path: ['closed'],
+    })
+    .refine((v) => !v.reopened || v.status === 'open', {
+      message: 'A reopened open-item must have `status: open` — drop the `closed:` date.',
+      path: ['reopened'],
+    }),
 });
 
 /* ------------------------------------------------------------------ *
