@@ -91,9 +91,29 @@ export function weekStart(n: number): string {
   return toISO(new Date(toDate(prep.startDate).getTime() + (n - 1) * 7 * DAY));
 }
 
-/** 1-based ordinal of a weekday session, e.g. 3 for the third weekday. */
-export function sessionOrdinal(iso: string): number {
+/**
+ * 1-based ordinal of a weekday *slot* since the start date — the 11th weekday
+ * is 11 whether or not a session ran on it. This is calendar position, not
+ * work done, so it is only what you want when talking about the schedule.
+ */
+export function weekdaySlot(iso: string): number {
   return weekdaysBetween(prep.startDate, iso);
+}
+
+/**
+ * 1-based ordinal of a session among the sessions that actually ran — the
+ * number meant by "session 9".
+ *
+ * This used to be `weekdaySlot`, which was the same number until the first
+ * missed weekday and silently wrong after it: the four-day gap before 7 Sep
+ * made the 9th session report as "day 11 of 60+" under the label "sessions
+ * run". A date with no session counts the sessions up to it, so an unlogged
+ * day still answers sensibly.
+ */
+export function sessionOrdinal(iso: string, dates: string[]): number {
+  const sorted = [...dates].sort();
+  const i = sorted.indexOf(iso);
+  return i >= 0 ? i + 1 : sorted.filter((d) => d <= iso).length;
 }
 
 export function phaseOfWeek(week: number, phases: Array<{ weeks: readonly [number, number] }>): number {
@@ -151,7 +171,7 @@ export function standing(sessionDates: string[], today = todayISO()): Standing {
     today,
     latest,
     sessionCount: sorted.length,
-    sessionOrdinal: latest ? sessionOrdinal(latest) : 0,
+    sessionOrdinal: latest ? sessionOrdinal(latest, sorted) : 0,
     plannedSessions: prep.plannedSessions,
     week,
     plannedWeeks: prep.plannedWeeks,

@@ -1,0 +1,100 @@
+---
+date: 2026-09-07
+headline: One of four held,<br />and <em>the disciplines did not run</em>.
+lede: >-
+  First session after a four-day gap, opened cold with four recall questions. One came back
+  complete, one partial, one half, one gone — the first measurement of what a gap actually costs,
+  and more useful than the problem that followed it. Question 9 was then re-solved correctly and
+  closes as the oldest item on the board, but none of the three disciplines it exists to test were
+  applied to it.
+blocks:
+  - track: internals
+    time: 6:00 — 6:35
+    title: Cold recall after four days away — one clean of four
+    href: /open#sendable-stated-backwards
+    bullets:
+      - '<b>Clean:</b> what <code>cancel()</code> does. Full model, a week old, no decay — "marks it cancelled, the task must check and stop itself"'
+      - '<b>Partial:</b> <code>@Sendable</code> captures. "var is mutable" — right word, wrong reason. The <em>boxing</em> faded, and it was cold and correct on 31 Aug'
+      - '<b>Half:</b> in-flight dedup. Goal right, mechanism missing — the task exists in the window between started and finished, and that window is the whole trick'
+      - '<b>Gone:</b> why stale <code>maxFreq</code> is safe. Third failed attempt, now parked rather than re-asked'
+  - track: coding
+    time: 6:35 — 7:30
+    title: Longest Substring re-solve — correct, and the better variant
+    href: /coding/20
+    bullets:
+      - 'Index-jump rather than shrink-one-at-a-time, with the <code>lastSeenIndex &gt;= leftPointer</code> guard the 24 Aug attempt dropped'
+      - 'Fourteen days from regression to re-solve. The oldest item on the board closes'
+      - '<b>No timer, no narration, no tests</b> — on the problem specifically chosen to exercise all three'
+      - 'Minor: <code>text.count</code> is O(n); <code>textArray.count</code> is O(1) and is what you want when indexing the array anyway'
+problems: [20]
+openItems:
+  - q9-longest-substring-regression
+  - sendable-stated-backwards
+  - the-424-stale-maxfreq-safety-argument
+  - timed-and-narrated-committed-day-one-never-once-done
+  - distinguishing-input
+carriesForwardNote: A gap measured for the first time, and a close that did not survive it.
+carriesForward:
+  - from: '"What landed is the mechanism rather than a memorised sentence. That version survives a follow-up question" — closed 31 Aug'
+    to: <b>Falsified by four days off.</b> The mechanism decayed to a memorised-sounding word. The item reopens, and the lesson is that "it came out cold" is evidence it landed <em>today</em>, not that it will keep
+  - from: Trace by hand, then rewrite cold — validated 2 Sep over two days
+    to: Two days is not four. The method held for 424 across a weekend and did not hold for <code>@Sendable</code> across this gap — the first evidence about its <em>range</em> rather than whether it works
+  - from: The fake arrived unprompted, 2 Sep — one instance, not yet a habit
+    to: One instance, then <b>one skip</b>, on the very next problem and the one chosen to test it. The counter did not reset; it did not advance either
+  - from: The two-problem test — retired 1 Sep because it was carried without earning its place
+    to: The same reasoning applied to the 424 safety argument, which is now <em>parked</em>. But it does <b>not</b> apply to timing and narration — those are the phase-1 exit question and cannot be dropped
+note: >-
+  Ninety minutes after a four-day gap. Recall first by design, which is why the gap is measured at
+  all. Coding has now run in 6 of 9 sessions. Internals unchanged — no new lab; the block was a
+  recall pass over existing material, not new ground.
+---
+
+## What a four-day gap costs
+
+The first data on this, and the reason the recall pass leads rather than fills time. Four questions,
+blank editor, no scrollback:
+
+| Asked | Age | Result |
+|---|---|---|
+| What `cancel()` actually does | 1 week | **Clean** — full model, no decay |
+| `@Sendable` captures — why a `var` is rejected | 1 week | **Partial** — right word, wrong reason |
+| In-flight dedup — why store the *task* | 5 days | **Half** — goal right, mechanism missing |
+| 424 stale `maxFreq` — why it is safe | 6 days | **Gone** — third attempt |
+
+The pattern is not about age. `cancel()` and `@Sendable` are the same week old and came back
+differently, and the difference is what kind of thing they are: **cancel() is a rule, and the
+`@Sendable` answer is a mechanism with a moving part.** The rule survived the gap. The mechanism
+lost its middle step — that a captured `var` is held *by reference*, which is the reason a read is
+rejected and not just a write.
+
+That is worth more than the problem that followed it, because it says what to re-pass and what to
+leave alone.
+
+## The branch that fired
+
+The week-3 plan carried a condition: **if two or more recall answers came back broken, Wednesday
+switches from the heap build to a re-pass.** Two came back broken, so it switched — Wednesday is
+now `@Sendable` boxing and the dedup mechanism, roughly thirty minutes, and the heap moves to
+Friday.
+
+Worth noting that the branch existed at all. It is the first time a contingency written in advance
+has been triggered by a measurement rather than by how the morning felt.
+
+| Day | Item | Change |
+|---|---|---|
+| Tue 8 Sep | 3Sum — timed, narrated, fake first | was Q9; Q9 came forward |
+| Wed 9 Sep | Re-pass: `@Sendable` boxing, dedup mechanism | **branch fired** — was the heap build |
+| Thu 10 Sep | Open | 3Sum moved to Tuesday |
+| Fri 11 Sep | Heap build → Q13 re-attempt | moved from Wednesday |
+| Sat 12 Sep | First build block — Swift 6 on a real target | unchanged |
+| Sun 13 Sep | Phase 1 checkpoint and the exit question | unchanged |
+
+## The problem that closed without testing the thing it was for
+
+Question 9 has been open since day one: a correct solution that did not survive a cold re-attempt.
+It is re-solved, correctly, with the stronger variant — and **the closure rests on the solution
+alone**. No timer, no narration, no tests, on the problem chosen to exercise exactly those.
+
+They cost no extra time, which rules out the schedule as the explanation. The phase-1 exit question
+is *"a random medium in 25 minutes, narrated"*, phase 1 ends on 13 Sep, and the count is
+[0 of 20 timed and 0 of 20 narrated](/open#timed-and-narrated-committed-day-one-never-once-done).

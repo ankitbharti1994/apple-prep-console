@@ -18,10 +18,11 @@ export const json = (data: unknown) =>
 
 export async function sessionsPayload() {
   const xs = await allSessions();
+  const dates = xs.map((x) => x.data.date);
   return xs.map((s) => ({
     id: s.id,
     date: s.data.date,
-    ordinal: sessionOrdinal(s.data.date),
+    ordinal: sessionOrdinal(s.data.date, dates),
     week: weekOf(s.data.date),
     headline: s.data.headline,
     lede: s.data.lede,

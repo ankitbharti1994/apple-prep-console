@@ -25,7 +25,13 @@ const closedCls = d.status === 'closed';
       {d.closed && <span class="resolved">closed {formatShort(d.closed)}</span>}
     </p>
   )}
-  {d.status === 'open' && d.kind === 'correction' && (
+  {d.status === 'open' && d.reopened && (
+    <p>
+      <span class="corrected">found {formatShort(d.opened)}</span>
+      <span class="kindtag">reopened {formatShort(d.reopened)}</span>
+    </p>
+  )}
+  {d.status === 'open' && !d.reopened && d.kind === 'correction' && (
     <p><span class="corrected">{formatShort(d.opened)}</span></p>
   )}
 

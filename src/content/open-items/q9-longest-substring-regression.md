@@ -1,10 +1,11 @@
 ---
-title: Question 9 — regression on re-attempt
+title: Question 9 — regression on re-attempt, closed 7 Sep
 kind: regression
-status: open
+status: closed
 opened: 2026-08-24
+closed: 2026-09-07
 order: 1
-problems: [9, 18]
+problems: [9, 18, 20]
 ---
 
 <p>Re-attempted cold on 24 Aug. The new attempt dropped the <code>lastSeenIndex &gt;= leftPointer</code> guard and reset the window start unconditionally, letting the left pointer move <em>backwards</em> into characters already discarded.</p>
@@ -28,3 +29,19 @@ problems: [9, 18]
   <li>Run it the way the method says: trace by hand first, then rewrite cold with no scrollback. Not "attempt it again".</li>
   <li>It is now the <b>oldest thing on the board</b> and the only open item that is a plain piece of owed work rather than a habit being tracked.</li>
 </ul>
+
+<p><span class="resolved">closed 7 Sep — re-solved correctly, fourteen days later</span></p>
+<p>Re-solved as <a href="/coding/20">question 20</a> after a four-day gap. Correct, and <b>the better variant</b> — index-jump rather than shrink-one-character-at-a-time. The guard whose absence opened this item was present:</p>
+<pre>if let lastSeenIndex = characterInfo[currentCharacter],
+   lastSeenIndex &gt;= leftPointer {
+    leftPointer = lastSeenIndex + 1
+}</pre>
+<ul>
+  <li>The invariant this item asked for held: <b>the left pointer never retreats.</b> On <code>"abba"</code> the map still holds <code>a→0</code> at the final character, and the guard refuses the backwards jump that would have returned 3.</li>
+  <li>Fourteen days from regression to re-solve, and the oldest item on the board clears.</li>
+</ul>
+
+<div class="myth" style="margin-top:14px">
+  <b>What the closure does not cover</b>
+  This item existed because <em>a correct solution on day 1 did not survive to a re-attempt</em>. Timing and narration are the practices adopted to change that, and <b>neither was exercised on the problem chosen to test them</b> — no timer, no narration, no tests. The code is correct and better than before, so the item closes; but it closes <b>on the solution alone</b>, and the question this item was really about — whether it survives the next gap — is not answered by re-solving it once. See <a href="/open#timed-and-narrated-committed-day-one-never-once-done">timed and narrated</a>.
+</div>

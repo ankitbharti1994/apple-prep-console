@@ -7,7 +7,8 @@ import { prep } from '../../../prep.config';
 
 const sessions = await allSessions();
 const c = await counts();
-const s = standing(sessions.map((x) => x.data.date));
+const dates = sessions.map((x) => x.data.date);
+const s = standing(dates);
 ---
 <Shell title="Sessions" track="sessions" description="Every session, newest first.">
   <p class="eyebrow">Track 05 · the log</p>
@@ -30,7 +31,7 @@ const s = standing(sessions.map((x) => x.data.date));
     return (
       <article class="rev" style="border-left-color:var(--accent)" id={d.date}>
         <p class="tm" style="font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 4px">
-          {formatLong(d.date)} · session {sessionOrdinal(d.date)} · week {weekOf(d.date)}
+          {formatLong(d.date)} · session {sessionOrdinal(d.date, dates)} · week {weekOf(d.date)}
         </p>
         <h4><a href={`/sessions/${d.date}`} set:html={d.headline.replace(/<br\s*\/?>/g, ' ')} /></h4>
         <p set:html={d.lede} />

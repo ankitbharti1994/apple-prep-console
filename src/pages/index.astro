@@ -9,7 +9,8 @@ import { prep } from '../../prep.config';
 
 const sessions = await allSessions();          // newest first
 const c = await counts();
-const s = standing(await sessionDates());
+const dates = await sessionDates();
+const s = standing(dates);
 const phases = (await planPhases()).map((p) => p.data);
 
 const latest = sessions[0];
@@ -25,7 +26,7 @@ const prevDate = previous[0]?.data.date;
   {latest && (
     <>
       <p class="eyebrow">
-        {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date)}
+        {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date, dates)}
       </p>
       <h1 set:html={latest.data.headline} />
       <p class="lede" set:html={latest.data.lede} />

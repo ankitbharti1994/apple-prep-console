@@ -2,10 +2,11 @@
 import Shell from '~/layouts/Shell.astro';
 import NoteStore from '~/components/NoteStore.astro';
 import LabSection from '~/components/LabSection.astro';
-import { labsByDay, allLabs } from '~/lib/content';
+import { labsByDay, allLabs, sessionDates } from '~/lib/content';
 import { formatShort, sessionOrdinal } from '~/lib/progress';
 
 const days = await labsByDay();
+const dates = await sessionDates();
 const all = await allLabs();
 // Section numbers run continuously across days, exactly as the original did.
 const numberOf = new Map(all.map((l, i) => [l.id, i + 1]));
@@ -35,7 +36,7 @@ const DAY_TITLE: Record<string, string> = {
   <div class="dayswitch" id="dayswitch">
     {days.map(({ day }, i) => (
       <a href={`#day-${day}`} data-day={day} class={i === 0 ? 'on' : ''}>
-        <span class="dt">{formatShort(day)} · day {sessionOrdinal(day)}</span>
+        <span class="dt">{formatShort(day)} · day {sessionOrdinal(day, dates)}</span>
         {DAY_TITLE[day] ?? 'Session'}
       </a>
     ))}
