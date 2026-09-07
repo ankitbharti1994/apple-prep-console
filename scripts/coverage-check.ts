@@ -39,6 +39,12 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'unreachable in both versions — problem 6\'s sample input never enters the leftover loop, so this frame was never rendered in the original either (verify-traces confirms the two traces are frame-for-frame identical)',
   },
 
+  /* --- completed on 7 Sep, day 9 -------------------------------------- */
+  {
+    match: /^Question 9 is the natural next thing\./,
+    why: 'the next-step was done: Q9 was re-solved on 7 Sep as problem 20 and the open item closed, so the step was removed rather than left standing. The regression, the re-solve and the guard that fixed it are all preserved on the open item and on /coding/20.',
+  },
+
   /* --- superseded on 27 Aug, day 4 ------------------------------------ *
    * The original was wrong about how @Sendable rejects a captured var, and
    * running the three cases separately settled it. These strings are gone

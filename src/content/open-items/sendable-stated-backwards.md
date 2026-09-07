@@ -1,10 +1,10 @@
 ---
-title: '@Sendable — stated backwards'
+title: '@Sendable — stated backwards, and reopened 7 Sep'
 kind: correction
-status: closed
+status: open
 opened: 2026-08-26
-closed: 2026-08-31
-order: 6
+reopened: 2026-09-07
+order: 1
 labs: ['10-sendable-is-about-captures', '12-sendable-what-the-compiler-said']
 notes: ['p-sendfn', 'p-captures']
 ---
@@ -41,3 +41,17 @@ notes: ['p-sendfn', 'p-captures']
   <li><code>{ [seed] in seed }</code> was given unprompted, and correctly identified as the fix that proves by-value capture is not the default. The <code>let</code>-binding fix needed supplying.</li>
   <li>Four sessions, but what landed is the mechanism rather than a memorised sentence. That version survives a follow-up question; the memorised one would not have.</li>
 </ul>
+
+<p><span class="kindtag" style="margin-left:0">reopened 7 Sep — the mechanism faded across a four-day gap</span></p>
+<p>Asked cold after four days away. What came back was <b>"a captured <code>var</code> is mutable"</b> — the right word attached to the wrong reason, and the item is reopened on it.</p>
+<ul>
+  <li><b>Mutability is not the reason.</b> A <code>let</code> copy of a mutable type is fine. What faded is the <b>boxing</b>: a captured <code>var</code> is held <em>by reference</em>, so the closure shares storage with the enclosing scope. That is why even a <em>read</em> is rejected, not just a write.</li>
+  <li>That distinction is the entire content of this item, and it was cold and correct on 31 Aug.</li>
+</ul>
+
+<div class="myth" style="margin-top:14px">
+  <b>The claim this reopening corrects</b>
+  The 31 Aug close reads: <em>"what landed is the mechanism rather than a memorised sentence. That version survives a follow-up question; the memorised one would not have."</em> The first half was true and is left standing. <b>The second half was a prediction, and four days off falsified it</b> — the mechanism decayed to a memorised-sounding word in under a week. Left in place above rather than rewritten, because a close that did not hold is more useful than a close quietly edited.
+</div>
+
+<p>The lesson generalises past this item: <em>"the mechanism came out rather than the sentence"</em> is evidence that it landed <b>today</b>, not evidence that it will keep. Only a gap tests that, and this is the first gap that has been measured. Scheduled for a re-pass on Wed 9 Sep alongside the in-flight dedup rationale.</p>

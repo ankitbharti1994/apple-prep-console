@@ -44,3 +44,5 @@ labs: ['12-sendable-what-the-compiler-said']
   <b>Still owed — the safety argument</b>
   Asked <em>why</em> skipping the recomputation is safe, the answer described <em>where</em> it happens: "recompute only when adding a new char." The mechanism is cold; the argument is not. It is that the error is <b>one-directional</b> — a stale-high maxFreq understates the deficit and exits early, which cannot inflate best, whereas a stale-low one would over-shrink and lose valid answers. Re-ask in a few days.
 </div>
+
+<p><span class="kindtag" style="margin-left:0">7 Sep — asked a third time, then parked</span> Re-asked after four days, guided and in three parts. The answer was the mechanism again, not the argument. It has been <b>split out into its own item and parked</b> rather than re-asked a fourth time — nothing is blocked on it, and the mechanism itself came back cold. See <a href="/open#the-424-stale-maxfreq-safety-argument">why stale maxFreq is safe</a>, where the argument is now written down.</p>

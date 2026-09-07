@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17, 18, 19]
+problems: [13, 14, 15, 16, 17, 18, 19, 20]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
 notes: ['p-hash', 'p-captures']
 ---
@@ -80,6 +80,15 @@ notes: ['p-hash', 'p-captures']
   <li>But once the artifact existed, it was broken <b>unprompted and correctly</b> — and the reachability argument for <code>"ABACADA"</code> is the sharpest reasoning about a fake anywhere in this record. A second break was then added without prompting: the fake can exceed the string's own length.</li>
   <li><b>So the gap is specifically <em>generating</em> a wrong implementation, not <em>analysing</em> one.</b> That is a much narrower thing than "the testing habit", and it is what remains of this item.</li>
   <li>Worth trying next: rather than "name a fake", ask <em>what is the laziest thing that passes the examples in the problem statement?</em> Generation may be easier from that angle than from an abstract request.</li>
+</ul>
+
+<h4>7 Sep — the first skip after the first success</h4>
+<p><span class="kindtag" style="margin-left:0">one instance, then one skip</span> <a href="/coding/20">Question 20</a> was the next problem after parity arrived unprompted, and it was the problem <b>chosen</b> to exercise this. No fake was named, because <b>no tests were written at all</b>.</p>
+<ul>
+  <li>That is the honest state: <b>one instance, one skip.</b> The 2 Sep entry is not withdrawn — it happened, and the shape was right — but a single success followed immediately by a miss is not yet the habit this item is waiting for.</li>
+  <li>It was not a time problem. The block had room; the step was simply not reached, which is the same failure mode as the six prompted misses before it, minus the prompt.</li>
+  <li>What the same session proposed: <b>treat the fake as part of the solution rather than a step after it.</b> The tell — the moment the solution compiles and the hand reaches for the test array — has been named for a week and has not yet interrupted anything.</li>
+  <li>Next real check is 3Sum on 8 Sep. Two more unprompted instances still close this; the counter did not reset, but it did not advance either.</li>
 </ul>
 
 <p>Written up as a standing reference — <a href="/open">how to write tests that can fail</a>, further down this page.</p>
