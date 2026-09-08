@@ -4,7 +4,8 @@ kind: gap
 status: open
 opened: 2026-09-07
 order: 0
-problems: [20]
+problems: [20, 21]
+counter: disciplines
 ---
 
 <p>Two of the three session disciplines have <b>never been exercised, not once, across twenty problems</b>. This is not a new intention that slipped. The <a href="/plan">plan</a> has carried both since the first morning:</p>
@@ -17,10 +18,22 @@ problems: [20]
   <tr><td><b>Phase 1 exit question</b></td><td><em>"Can you finish a random medium in 25 minutes, narrated?"</em></td></tr>
 </table>
 
-<div class="proofbar">
-  <span class="pl">The count</span>
-  <span>0 of 20 timed · 0 of 20 narrated · phase 1 ends 13 Sep</span>
-</div>
+
+
+<h4>8 Sep — the timer ran, and it was the mechanism that did it</h4>
+<p><span class="resolved">half closed — timing adopted 8 Sep</span> <b>The timer was started before reading the problem</b>, which is the mechanism proposed on 7 Sep precisely because starting it <em>afterwards</em> is how it kept not happening. It worked on the first attempt, and it produced the first pace data anywhere in this record — see <a href="/coding/21">question 21</a>, where it is recorded on the problem rather than written down here.</p>
+<ul>
+  <li><b>The reaction matters more than the numbers.</b> Bounding the session by time was <em>enjoyable</em>. A discipline experienced as a constraint gets skipped; one experienced as a game does not — which is a better predictor of tomorrow than any single measurement.</li>
+  <li><b>The obstacle was the mechanism, exactly as this item predicted.</b> Twenty-one problems of stated intention moved nothing; one change to <em>when</em> the step happens moved it immediately. That is now evidence rather than a hypothesis, and it is the evidence narration still needs.</li>
+  <li>What the numbers say about 13 Sep: fourteen minutes to correct-but-too-slow is a defensible position in a real round — <b>provided it is announced as too slow and the optimisation follows</b>. Silently submitting an O(n³) loses the round, and that is a <em>narration</em> failure rather than a speed failure. The two halves of this item are not independent.</li>
+</ul>
+
+<h4>Narration, and the mechanism it has never been given</h4>
+<p>Two sessions running now: the timer happened and the talking did not. Timing was adopted the moment it was given a mechanism. <b>Narration has not been given one</b> — it is still carried as an intention, which is the thing that has now failed twenty-one times.</p>
+<ul>
+  <li><b>The proposal: narrate the first five minutes only, out loud, then stop.</b> A bounded version is likelier to start than an open-ended commitment, and starting is the entire problem — the timer proved that.</li>
+  <li>Five days to the checkpoint, which asks for a medium <em>narrated</em> in 25 minutes. The timed half of that question can now be attempted; the narrated half still cannot.</li>
+</ul>
 
 <h4>Why 7 Sep is the instance worth recording</h4>
 <p><a href="/coding/20">Question 20</a> was the problem <b>specifically chosen</b> to exercise all three, on the session immediately after the third was adopted. None of them ran:</p>
@@ -41,6 +54,6 @@ problems: [20]
   <li><b>Start the timer before reading the problem</b>, so it is not a step that can be reached and skipped.</li>
   <li><b>Treat the fake as part of the solution</b> rather than a step after it.</li>
 </ul>
-<p>Closes on <b>one problem that is timed and narrated end to end</b> — not on the intention being restated. If 3Sum on 8 Sep also runs untimed and silent, the mechanism is the problem, not the discipline.</p>
+<p>Closes on <b>one problem that is timed and narrated end to end</b> — unchanged, and now half met. The prediction written here on 7 Sep was that if 3Sum also ran untimed and silent, the mechanism was the problem rather than the discipline. <b>It ran timed.</b> So the mechanism was the problem, it was fixable, and the same fix has not yet been applied to the half that is still missing.</p>
 
 <p>Recorded here rather than absorbed into the session note, because the phase-1 exit question is six days out and currently unanswerable.</p>
