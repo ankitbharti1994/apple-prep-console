@@ -34,3 +34,14 @@ order: 3
 </ul>
 
 <p>Closes when the choice is made. Until then the plan is honest about being twelve weeks of content, and silent about when it ends.</p>
+
+<h4>8 Sep — the phases were edited, and this decision is still open</h4>
+
+<p><span class="kindtag" style="margin-left:0">amended 8 Sep</span> The line above said <em>"<code>PHASES</code> is deliberately untouched"</em>. It no longer is: the <a href="/plan">phase revision</a> rewrote phase 2 and amended phase 3. <b>The distinction that keeps both statements true is contents versus boundaries.</b></p>
+
+<ul>
+  <li><b>What changed:</b> what happens inside weeks 4–6 and 7–9 — a coding breadth track, a DP block on Saturday, two dependency lines in phase 3.</li>
+  <li><b>What did not:</b> every <code>weeks:</code> tuple. Phases still run 1–3, 4–6, 7–9, 10–12, and the plan still asserts no end date.</li>
+</ul>
+
+<p>So the reasoning above survives intact — it was about not <em>redistributing weeks</em> before knowing what the extra four contain, and no weeks were redistributed. Stretch versus buffer is still unanswered, and the 8 Sep revision neither settles it nor depends on it.</p>

@@ -8,15 +8,17 @@ problems: [20, 21]
 counter: disciplines
 ---
 
-<p>Two of the three session disciplines have <b>never been exercised, not once, across twenty problems</b>. This is not a new intention that slipped. The <a href="/plan">plan</a> has carried both since the first morning:</p>
+<p>Two of the three session disciplines have <b>never once been exercised — on any problem on the board</b>, as the count above says. This is not a new intention that slipped. The <a href="/plan">plan</a> has carried both since the first morning:</p>
 
 <table>
   <tr><th>Where it is written</th><th>What it says</th></tr>
   <tr><td>Phase 1 · coding ramp</td><td><em>"Two mediums a day — untimed at first, then timed"</em></td></tr>
   <tr><td>Phase 1 · coding ramp</td><td><em>"Narrate out loud from day one"</em></td></tr>
-  <tr><td>Phase 2 · keep coding warm</td><td><em>"one medium a day, timed to 25 min, narrated"</em></td></tr>
+  <tr><td>Phase 2 · coding breadth <span class="kindtag">rewritten 8 Sep</span></td><td><em>"One medium a day, 25-min timebox, narrated — timer started before reading"</em><br />was <em>"Keep coding warm: one medium a day, timed to 25 min, narrated"</em></td></tr>
   <tr><td><b>Phase 1 exit question</b></td><td><em>"Can you finish a random medium in 25 minutes, narrated?"</em></td></tr>
 </table>
+
+<p><b>The 8 Sep rewrite is the fourth time this has been written down, and the first time half of it arrived with a mechanism attached.</b> The phase 2 line now carries <em>"timer started before reading"</em> — the reordering that worked — inside the plan rather than as a resolution made afterwards. <b>Narration is still written the same way it has always been written: as a word in a list.</b> That is the whole finding. Phase 2's coding items say "narrated" and so did phase 1's, and writing it into a plan has not once caused it to happen.</p>
 
 
 
