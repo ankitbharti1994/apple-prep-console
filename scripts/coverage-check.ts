@@ -39,6 +39,19 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'unreachable in both versions — problem 6\'s sample input never enters the leftover loop, so this frame was never rendered in the original either (verify-traces confirms the two traces are frame-for-frame identical)',
   },
 
+  /* --- reworded on 8 Sep, the phase revision --------------------------- *
+   * The revision itself is ported verbatim into src/content/plan/phases.json.
+   * These two are the only strings from it that are deliberately NOT copied,
+   * both because they hard-code something this site derives.               */
+  {
+    match: /^Audited: twenty problems, all inside topic 1/,
+    why: 'the problem count is derived from src/data/problems, and "twenty" is already stale — the Q9 re-solve and 3Sum are separate files here, so the audit covers twenty-one. The 8 Sep carry-forward row says "every problem on the board sits inside topic 1" instead, and the per-shape breakdown is kept in full on open-items/coverage-every-problem-inside-topic-1.',
+  },
+  {
+    match: /^Past the original 12-week plan/,
+    why: 'the overrun message on /plan is built from prep.plannedWeeks and prep.maxWeeks rather than typed, so it reads "Past the planned 12 weeks and inside the runway to 16 — that is overrun, not completion." Same claim, no hard-coded numbers. It also only renders past week 12, so it is absent from the built HTML until then; see open-items/stretch-or-buffer, which records the original "Plan complete" bug this replaced.',
+  },
+
   /* --- completed on 7 Sep, day 9 -------------------------------------- */
   {
     match: /^Question 9 is the natural next thing\./,

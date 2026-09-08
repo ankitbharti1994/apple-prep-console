@@ -64,13 +64,22 @@
     "id": 2,
     "band": 2,
     "weeks": [4, 6],
-    "title": "UIKit/SwiftUI internals + Instruments",
+    "title": "DSA breadth + UIKit/SwiftUI internals",
     "dates": "14 Sep – 4 Oct",
     "blocks": [
       {
         "slot": "Mon–Fri · 6:00–7:30",
         "name": "Morning session",
         "groups": [
+          {
+            "lead": "Coding — breadth, not maintenance",
+            "items": [
+              "Week 4: linked lists ×3, stacks & monotonic stack ×2",
+              "Week 5: binary search ×2, trees — traversal, depth, validate BST ×3",
+              "Week 6: heaps ×1, graphs BFS/DFS ×3, backtracking ×1",
+              "One medium a day, 25-min timebox, narrated — timer started before reading"
+            ]
+          },
           {
             "lead": "Internals — platform + Instruments",
             "items": [
@@ -81,21 +90,31 @@
             ]
           }
         ],
-        "note": "Keep coding warm: one medium a day, timed to 25 min, narrated."
+        "note": "Revised 8 Sep — split is now 40 min coding / 50 min internals. Phase 1 produced depth in arrays and strings but no breadth, and phase 3 assumes breadth already exists. Coding here is a first-class track, not a warm-up."
       },
       {
-        "slot": "Sat · 9:00–11:00",
-        "name": "Showcase project",
+        "slot": "Sat · 9:00–11:30",
+        "name": "DP block + showcase project",
         "groups": [
           {
-            "lead": "Small app, component architecture",
+            "lead": "Dynamic programming — first hour",
+            "items": [
+              "Wk4: climbing stairs, house robber — 1D, the recurrence written before any code",
+              "Wk5: coin change, longest increasing subsequence — memo vs tabulation",
+              "Wk6: unique paths, edit distance — 2D grids",
+              "Say the recurrence out loud before writing it. DP is a narration problem more than a coding one."
+            ]
+          },
+          {
+            "lead": "Showcase project — remaining time",
             "items": [
               "Design tokens, theming, versioning, snapshot tests",
               "Accessibility built in, not bolted on",
               "README written as if onboarding another team"
             ]
           }
-        ]
+        ],
+        "note": "Revised 8 Sep — DP was cut from the weekday breadth list and lives here instead. This slot has never run: no Saturday block happened in phase 1. Committing it is the whole bet."
       },
       {
         "slot": "Sun",
@@ -126,7 +145,8 @@
           {
             "lead": "Coding — selective hard",
             "items": [
-              "Hard problems only in high-frequency patterns",
+              "Hard problems only in high-frequency patterns — assumes phase 2 breadth landed",
+              "DP moved to phase 2 Saturdays on 8 Sep — if those blocks did not run, it lands here unprepared",
               "Data-structure design with concurrency follow-ups (LRU → thread-safe)",
               "Practise recovering out loud when stuck",
               "Strict 25-min timebox, review every miss"

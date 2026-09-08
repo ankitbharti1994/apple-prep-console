@@ -32,7 +32,8 @@ export const prep = {
   /** Weekly rhythm — rendered on the plan page. */
   rhythm: [
     { slot: 'Mon–Fri 6:00–7:30', block: 'Morning session — 90 min, split by phase', runs: 'Every week' },
-    { slot: 'Sat 9:00–11:00', block: 'Build block → system design + STAR from week 7', runs: 'Every week' },
+    // Revised 8 Sep: phase 2 Saturdays run to 11:30 to carry the DP block.
+    { slot: 'Sat 9:00–11:00', block: 'Build block → DP + showcase from week 4 (to 11:30) → system design + STAR from week 7', runs: 'Every week' },
     { slot: 'Sun 10:00–10:30', block: 'Weekly checkpoint', runs: 'Weeks 1–5' },
     { slot: 'Sun 10:00–11:30', block: 'Mock interview + review', runs: 'Weeks 6–12' },
   ],
