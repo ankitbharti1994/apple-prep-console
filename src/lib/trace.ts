@@ -53,6 +53,23 @@ export interface Frame {
 
 export type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
+/**
+ * Pace, recorded only for problems actually run against a clock.
+ *
+ * This is measured data — the one thing on this site that cannot be derived —
+ * so it lives on the problem rather than being written into prose. The
+ * "N of M timed" counters ARE derived, from the presence of this field.
+ */
+export interface Timing {
+  /** The bound the session was run against, in minutes. */
+  limit: number;
+  /** Milestones in the order they were reached. `at: null` = not reached inside the limit. */
+  milestones: Array<{ label: string; at: number | null }>;
+  /** How the timing was run, if it is worth saying. May contain inline HTML. */
+  note?: string;
+}
+
+
 export interface Problem {
   /** Stable number. Also the URL: /coding/9 */
   n: number;
@@ -74,6 +91,10 @@ export interface Problem {
   arrLabel?: string;
   /** Date first traced, ISO. Used to link problems back to sessions. */
   traced?: string;
+  /** Present when the problem was solved against a clock. Absent = untimed. */
+  timing?: Timing;
+  /** True when the solution was narrated out loud while being written. */
+  narrated?: boolean;
   trace: () => Frame[];
 }
 

@@ -492,14 +492,18 @@ sup.fn.open { background: var(--accent); color: var(--on-accent); }
 .prose p { margin: 0 0 13px; }
 .prose ul, .prose ol { margin: 0 0 15px; padding-left: 19px; color: var(--ink-2); }
 .prose li { margin-bottom: 5px; }
-.prose table {
+/* Open-item cards get the same table treatment: several of them carry a
+   two-column "said / actually" table, and unstyled they run their cells
+   together into one sentence. */
+.prose table, .rev table {
   width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; margin: 0 0 15px;
   background: var(--glass); border: 1px solid var(--glass-border); border-radius: 14px; overflow: hidden;
   backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
 }
-.prose th { text-align: left; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--muted); padding: 11px 15px; border-bottom: 1px solid var(--rule); font-weight: 400; background: var(--surface-2); }
-.prose td { padding: 11px 15px; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
-.prose tr:last-child td { border-bottom: 0; }
+.prose th, .rev th { text-align: left; font-family: var(--mono); font-size: 9.5px; letter-spacing: .11em; text-transform: uppercase; color: var(--muted); padding: 11px 15px; border-bottom: 1px solid var(--rule); font-weight: 400; background: var(--surface-2); }
+.prose td, .rev td { padding: 11px 15px; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.prose tr:last-child td, .rev tr:last-child td { border-bottom: 0; }
+.rev table { font-size: 13.5px; }
 .prose blockquote { margin: 0 0 15px; padding: 3px 0 3px 15px; border-left: 3px solid var(--accent); color: var(--ink-2); }
 
 /* labs render their tables through the same treatment */

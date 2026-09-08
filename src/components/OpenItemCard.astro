@@ -1,12 +1,34 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
-import { formatShort } from '~/lib/progress';
+import { formatShort, weekStart, toDate, toISO } from '~/lib/progress';
+import { problems } from '~/data/problems';
+import { getCollection } from 'astro:content';
 
 interface Props { item: CollectionEntry<'openItems'>; }
 const { item } = Astro.props;
 const { Content } = await render(item);
 const d = item.data;
 const closedCls = d.status === 'closed';
+
+/**
+ * The counter bar, computed rather than typed. This exists because the
+ * hand-written "0 of 20 timed · 0 of 20 narrated" in the body of the
+ * timed-and-narrated item went stale the first morning either number moved.
+ */
+let counter: string | null = null;
+if (d.counter === 'disciplines') {
+  const total = problems.length;
+  const timed = problems.filter((p) => p.timing).length;
+  const narrated = problems.filter((p) => p.narrated).length;
+  // Phase 1 is weeks 1–3, so it ends the day before week 4 starts.
+  const phase1 = (await getCollection('planPhases')).find((p) => p.data.id === 1);
+  const endsISO = phase1
+    ? toISO(new Date(toDate(weekStart(phase1.data.weeks[1] + 1)).getTime() - 86_400_000))
+    : null;
+  counter =
+    `${timed} of ${total} timed · ${narrated} of ${total} narrated` +
+    (endsISO ? ` · phase 1 ends ${formatShort(endsISO)}` : '');
+}
 ---
 <article
   class:list={['rev', { closed: closedCls, regression: d.kind === 'regression' && !closedCls, parked: d.kind === 'parked' }]}
@@ -33,6 +55,13 @@ const closedCls = d.status === 'closed';
   )}
   {d.status === 'open' && !d.reopened && d.kind === 'correction' && (
     <p><span class="corrected">{formatShort(d.opened)}</span></p>
+  )}
+
+  {counter && (
+    <div class="proofbar">
+      <span class="pl">The count</span>
+      <span>{counter}</span>
+    </div>
   )}
 
   <Content />

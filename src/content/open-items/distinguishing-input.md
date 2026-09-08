@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17, 18, 19, 20]
+problems: [13, 14, 15, 16, 17, 18, 19, 20, 21]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
 notes: ['p-hash', 'p-captures']
 ---
@@ -42,6 +42,11 @@ notes: ['p-hash', 'p-captures']
     <td>1 Sep</td>
     <td><code>(counts.max() ?? 0) + k</code> — global counts, ignoring whether those characters are reachable inside one window</td>
     <td><code>("ABACADA", 1)</code> returns 5 against a real answer of 3. Second break, added unprompted: the fake can exceed the string — <code>("AAA", 10)</code> returns 13. A second fake was targeted too — <code>&gt;=</code> instead of <code>&gt;</code> in the shrink condition, killed by <code>("ABAB", 2)</code>.</td>
+  </tr>
+  <tr>
+    <td>8 Sep</td>
+    <td>A <b>sliding window of three adjacent elements</b> for 3Sum. Named before the code, second problem running.</td>
+    <td><b>None written.</b> The break was argued rather than run: in <code>[-1,0,1,2,-1,-4]</code> the triplet <code>[-1,-1,2]</code> sits at indices 0, 4 and 3, so the window finds <code>[-1,0,1]</code> and cannot reach the other. Correct reasoning, no artifact.</td>
   </tr>
   <tr>
     <td>2 Sep</td>
@@ -89,6 +94,15 @@ notes: ['p-hash', 'p-captures']
   <li>It was not a time problem. The block had room; the step was simply not reached, which is the same failure mode as the six prompted misses before it, minus the prompt.</li>
   <li>What the same session proposed: <b>treat the fake as part of the solution rather than a step after it.</b> The tell — the moment the solution compiles and the hand reaches for the test array — has been named for a week and has not yet interrupted anything.</li>
   <li>Next real check is 3Sum on 8 Sep. Two more unprompted instances still close this; the counter did not reset, but it did not advance either.</li>
+</ul>
+
+<h4>8 Sep — the naming held, the testing did not</h4>
+<p><span class="kindtag" style="margin-left:0">two consecutive, still no suite</span> <a href="/coding/21">3Sum</a>, and the fake arrived <b>before the code and unprompted</b> for the second problem running: a sliding window over three adjacent elements. It is a good one — specific enough to write, plausible enough that someone would reach for it, and wrong for a reason that is the defining property of the problem rather than an edge case.</p>
+<ul>
+  <li><b>That is the second of the two more instances this item was waiting on.</b> The generation gap identified on 1 Sep — that producing a wrong implementation was the hard half, not analysing one — now has three unprompted successes against it and looks closed on its own terms.</li>
+  <li><b>But no tests were written, again.</b> Which splits this item cleanly in two: naming the fake is becoming a habit, and <em>turning it into an executable case</em> has never once happened unprompted. The break for the window was argued in prose and never run.</li>
+  <li>So the item does not close. The half that remains is the half it is named for — <b>the distinguishing <em>input</em></b>, written down and executed, not the distinguishing argument. An argument that is never run is the same category of thing as <a href="/open#hashable-what-a-hash-test-proves">a test that cannot fail</a>: it feels like evidence and produces none.</li>
+  <li>Worth putting beside <a href="/open#timed-and-narrated-committed-day-one-never-once-done">what happened to timing the same morning</a>. Timing had failed twenty-one times as an intention and was adopted immediately once it was given a mechanism — <em>start it before reading the problem</em>. This item has been carried as an intention for two weeks. It has never been given one.</li>
 </ul>
 
 <p>Written up as a standing reference — <a href="/open">how to write tests that can fail</a>, further down this page.</p>

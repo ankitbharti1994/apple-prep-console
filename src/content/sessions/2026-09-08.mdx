@@ -1,0 +1,95 @@
+---
+date: 2026-09-08
+headline: The timer finally ran,<br />and <em>the rule was backwards</em>.
+lede: >-
+  One coding block, all of it on 3Sum, and the first quantitative data anywhere in this record.
+  The timer was started before reading the problem — the mechanism proposed yesterday — and it
+  worked on the first attempt: fourteen minutes to a correct brute force, the optimal version not
+  reached inside twenty-five. The problem itself produced a sharper finding than the pace did. The
+  two-pointer conversion came out with the structure right and the direction rule inverted, which is
+  what pattern-matching a shape rather than reasoning about it looks like.
+blocks:
+  - track: coding
+    time: 6:00 — 7:30
+    title: 3Sum — deliberately skipped twice, given the whole block
+    href: /coding/21
+    bullets:
+      - '<b>Timer started before reading the problem.</b> Twenty-one problems at zero, then adopted on the first attempt once it stopped being a step that could be reached and skipped'
+      - '<b>14 min</b> to a correct brute force; the O(n²) version <b>not reached in 25</b>. First pace data in the record'
+      - 'The fake named before the code for the second problem running — a sliding window over three <em>adjacent</em> elements, which the answer <code>[-1,-1,2]</code> at indices 0, 4 and 3 kills outright'
+      - 'Diagnosis of the O(n³) attempt: <b>the array was sorted and the sortedness was never used</b>. The <code>contains</code> dedup was right for a good reason — sorting makes every triplet canonical — but ~27 billion iterations at n = 3000'
+      - 'Three bugs in the conversion, and <b>only the reversed pointer directions is worth tracking</b>: too-large sums moved <code>left</code> toward <em>larger</em> values. Structure right, rule inverted'
+      - '<b>Not narrated.</b> Two sessions running: the timer happened and the talking did not'
+problems: [21]
+openItems:
+  - two-pointer-directions-inverted
+  - timed-and-narrated-committed-day-one-never-once-done
+  - distinguishing-input
+carriesForwardNote: An intention that had failed twenty-one times, given a mechanism.
+carriesForward:
+  - from: '"They cost no extra time, which means the obstacle is not the schedule" — 7 Sep, on why timing kept not happening'
+    to: <b>Confirmed, and the obstacle located.</b> One change to <em>when</em> the step happens — before reading rather than after — and it ran first time. The intention was never the problem
+  - from: '"If 3Sum on 8 Sep also runs untimed and silent, the mechanism is the problem, not the discipline" — the prediction written yesterday'
+    to: It ran <b>timed</b>. So the mechanism was the problem, it was fixable in one move, and <b>the same fix has not been applied to narration</b>, which is still carried as an intention
+  - from: The fake arrived unprompted on 2 Sep, then was skipped on 7 Sep — "one instance, one skip"
+    to: '<b>Named first again, and it was a good one.</b> Two consecutive now. But still no tests written, which splits that item in two: naming is becoming a habit, <em>executing</em> the case never has'
+  - from: Q9 closed 7 Sep on the solution alone, on the problem chosen to test all three disciplines
+    to: The test it deferred actually ran, and <b>half of it passed</b>. Timing is answerable for 13 Sep; narration is not
+  - from: Topic 1 absorbed five opposite-end two-pointer problems — a coverage complaint since 24 Aug
+    to: <b>The rebalance closes, and it cost more than coverage.</b> Five passes at one shape let the rule governing it go untested, and it came out backwards the first time the direction was a real decision
+note: >-
+  Ninety minutes, coding only — no internals block, so no new lab. 3Sum had been deliberately
+  skipped twice before, at 40 and 20 minutes remaining, on the grounds that it wanted a whole block;
+  it got one. Thursday 10 Sep now falls open, having been held for this.
+---
+
+## What the timing actually produced
+
+Two measurements, and the first quantitative data anywhere in this record. They are recorded on
+[question 21](/coding/21) rather than written down here, so the "N of M timed" counter on the
+[open items page](/open#timed-and-narrated-committed-day-one-never-once-done) counts them rather
+than being maintained by hand.
+
+| Milestone | Time |
+|---|---|
+| Working brute-force solution | **14 min** |
+| Optimal O(n²) version | **not reached in 25 min** |
+
+**The reaction is worth more than the numbers.** Bounding the session by time was *enjoyable*. A
+discipline experienced as a constraint gets skipped; one experienced as a game does not — and that
+is a better predictor of tomorrow than any single measurement. The adoption problem for timing may
+now be solved.
+
+What the numbers say about the checkpoint on 13 Sep: fourteen minutes to correct-but-too-slow is a
+defensible position in a real round — *provided it is announced as too slow and the optimisation
+follows*. Silently submitting an O(n³) is where the round is lost, and **that is a narration failure
+rather than a speed failure.** The two halves of the exit question are not independent, and only one
+of them can currently be attempted.
+
+## The bug that was not an omission
+
+Three things were wrong with the two-pointer conversion. Two of them are steps not yet written —
+neither pointer moving on a match, so it hangs; no duplicate skipping, so `[-1,-1,2]` comes out
+twice. The third is a different kind of thing:
+
+> Sum too large moved `left` **right**, toward *larger* values.
+
+The anchor loop was right. `target = 0 - num1` was right. The shape was recognised and the rule
+that governs it was asserted backwards, which is what happens when a pattern is matched rather than
+reasoned about. The durable form is a sentence, not a variable name:
+
+*The sum is too big, so I need a smaller number, and the big numbers are on the right — so the right
+pointer moves.*
+
+Said that way round it cannot invert, because the direction is derived from where the values live.
+Memorising the mapping is what produced the reversal, and the mapping is the part that decays.
+
+## Where narration stands
+
+Twenty-one problems, none narrated. Timing was adopted the moment it was given a mechanism.
+Narration has never been given one — it is still an intention, and an intention is the thing that
+has now failed twenty-one times.
+
+The proposal for the next problem, and it is deliberately small: **narrate the first five minutes
+only, out loud, then stop.** A bounded version is likelier to start than an open-ended commitment,
+and starting is the entire problem. Five days to the checkpoint.
