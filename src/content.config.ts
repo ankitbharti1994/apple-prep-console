@@ -144,6 +144,12 @@ const openItems = defineCollection({
     order: z.number().int().default(0),
     /** 'log' = the carry-forward list. 'backlog' = owed work. */
     section: z.enum(['log', 'backlog']).default('log'),
+    /**
+     * Renders a derived counter bar under the title. The point is that the
+     * numbers in it are computed, never typed: the old hand-written
+     * "0 of 20 timed" went stale the first session it moved.
+     */
+    counter: z.enum(['disciplines']).optional(),
     /** Small badges under the card, e.g. difficulty + a LeetCode link. */
     meta: z
       .array(z.object({ label: z.string(), cls: z.string().optional(), href: z.string().optional() }))

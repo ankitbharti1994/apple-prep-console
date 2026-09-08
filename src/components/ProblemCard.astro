@@ -5,6 +5,9 @@ import type { Problem } from '~/lib/trace';
 interface Props { problem: Problem; isNew?: boolean; }
 const { problem: p, isNew = false } = Astro.props;
 const frames = p.trace();
+// `notes` and `timing.note` are authored as HTML — every problem file writes
+// <b>, <code> and links into them — so they are rendered with set:html.
+
 const lcHref = p.lcSlug ? `https://leetcode.com/problems/${p.lcSlug}/` : null;
 ---
 <article class="card" id={`p${p.n}`}>
@@ -23,6 +26,18 @@ const lcHref = p.lcSlug ? `https://leetcode.com/problems/${p.lcSlug}/` : null;
   </div>
 
   <TracePlayer client:load frames={frames} code={p.code} arrLabel={p.arrLabel ?? 'nums'} />
+
+  {p.timing && (
+    <div class="proofbar">
+      <span class="pl">Timed · {p.timing.limit} min</span>
+      {p.timing.milestones.map((m) => (
+        <span>
+          {m.label} — {m.at === null ? <b>not reached</b> : <b>{m.at} min</b>}
+        </span>
+      ))}
+      {p.timing.note && <span set:html={p.timing.note} />}
+    </div>
+  )}
 
   <div class="foot">
     <span class="cx">{p.complexity}</span>
