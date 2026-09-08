@@ -6,6 +6,7 @@ import { sessionDates, allOpenItems } from '~/lib/content';
 import { getCollection, render } from 'astro:content';
 import { formatShort } from '~/lib/progress';
 import { prep } from '../../../prep.config';
+import { withBase } from '~/lib/base';
 
 // "new" means "added in the most recent session" — derived, never written down.
 const latest = (await sessionDates()).sort().at(-1) ?? null;
@@ -54,7 +55,7 @@ const totalFrames = problems.reduce((a, p) => a + p.trace().length, 0);
 
   <div class="picker">
     {problems.map((p) => (
-      <a class="pk" href={`/coding/${p.n}`} title={p.title}>{String(p.n).padStart(2, '0')}</a>
+      <a class="pk" href={withBase(`/coding/${p.n}`)} title={p.title}>{String(p.n).padStart(2, '0')}</a>
     ))}
     {owed.length === 0 ? (
       <span
@@ -62,7 +63,7 @@ const totalFrames = problems.reduce((a, p) => a + p.trace().length, 0);
         title={lastCleared ? `${backlog.at(-1)?.data.title.replace(/ — cleared$/, '')} cleared ${formatShort(lastCleared)} — nothing carried` : 'nothing carried'}
       >backlog · clear</span>
     ) : (
-      <a class="pk todo" href="/open" title={`${owed.length} owed`}>backlog · {owed.length}</a>
+      <a class="pk todo" href={withBase('/open')} title={`${owed.length} owed`}>backlog · {owed.length}</a>
     )}
   </div>
 

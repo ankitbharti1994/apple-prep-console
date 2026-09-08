@@ -1,8 +1,8 @@
 name: CI
 
+# Pushes to main are checked by the deploy workflow, which runs the same gate
+# before publishing. This one covers everything on its way in.
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 

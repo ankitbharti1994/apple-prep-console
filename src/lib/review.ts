@@ -1,4 +1,5 @@
 import { daysBetween, toDate, toISO } from './progress';
+import { withBase } from './base';
 
 const DAY = 86_400_000;
 
@@ -226,10 +227,12 @@ export function buildReviewQueue(
   upcoming.sort((a, b) => a.due.localeCompare(b.due));
   const upcomingFiltered = upcoming.filter((u) => u.due <= horizon);
 
+  const based = (xs: ReviewItem[]) => xs.map((x) => ({ ...x, href: withBase(x.href) }));
+
   return {
     today,
-    due,
-    upcoming: upcomingFiltered,
+    due: based(due),
+    upcoming: based(upcomingFiltered),
     counts: {
       due: due.length,
       upcoming: upcomingFiltered.length,

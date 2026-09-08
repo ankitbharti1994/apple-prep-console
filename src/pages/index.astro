@@ -6,6 +6,7 @@ import { allSessions, counts, planPhases, sessionDates } from '~/lib/content';
 import { problems } from '~/data/problems';
 import { standing, formatLong, formatShort, sessionOrdinal } from '~/lib/progress';
 import { prep } from '../../prep.config';
+import { withBase, withBaseHtml } from '~/lib/base';
 
 const sessions = await allSessions();          // newest first
 const c = await counts();
@@ -28,8 +29,8 @@ const prevDate = previous[0]?.data.date;
       <p class="eyebrow">
         {formatLong(latest.data.date)} · session {sessionOrdinal(latest.data.date, dates)}
       </p>
-      <h1 set:html={latest.data.headline} />
-      <p class="lede" set:html={latest.data.lede} />
+      <h1 set:html={withBaseHtml(latest.data.headline)} />
+      <p class="lede" set:html={withBaseHtml(latest.data.lede)} />
     </>
   )}
 
@@ -79,7 +80,7 @@ const prevDate = previous[0]?.data.date;
         </thead>
         <tbody>
           {carries.map((r) => (
-            <tr><td set:html={r.from} /><td set:html={r.to} /></tr>
+            <tr><td set:html={withBaseHtml(r.from)} /><td set:html={withBaseHtml(r.to)} /></tr>
           ))}
         </tbody>
       </table>
@@ -89,7 +90,7 @@ const prevDate = previous[0]?.data.date;
   <h2 class="sec">The twelve weeks</h2>
   <div class="phases">
     {phases.map((p) => (
-      <a class:list={['phasecard', { now: inPhase(curWeek, p) }]} href={`/plan#phase-${p.id}`}>
+      <a class:list={['phasecard', { now: inPhase(curWeek, p) }]} href={withBase(`/plan#phase-${p.id}`)}>
         <div class="wk">W{p.weeks[0]}–{p.weeks[1]}{inPhase(curWeek, p) ? ' · now' : ''}</div>
         <div class="nm">{p.title}</div>
       </a>
@@ -97,9 +98,9 @@ const prevDate = previous[0]?.data.date;
   </div>
   <p class="stripnote">
     Weekday mornings 6:00–7:30 {prep.timezone} · Saturday deep-work blocks · mocks held back until week 6.
-    Twelve weeks of content on a runway of up to {prep.maxWeeks} — <a href="/plan">revised 1 Sep</a>.
+    Twelve weeks of content on a runway of up to {prep.maxWeeks} — <a href={withBase('/plan')}>revised 1 Sep</a>.
   </p>
-  <a class="pk" href="/plan" style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
+  <a class="pk" href={withBase('/plan')} style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
     See the full plan →
   </a>
 
@@ -111,7 +112,7 @@ const prevDate = previous[0]?.data.date;
       </p>
       <SessionCards sessions={previous} />
       <p style="margin-top:14px">
-        <a class="pk" href="/sessions" style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
+        <a class="pk" href={withBase('/sessions')} style="font-family:var(--body);font-size:13.5px;padding:6px 13px">
           Every session →
         </a>
       </p>

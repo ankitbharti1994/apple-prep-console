@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { withBase } from '~/lib/base';
 
 export interface Row {
   n: number;
@@ -63,7 +64,7 @@ export default function ProblemFilter({ rows }: { rows: Row[] }) {
             <tr key={r.n}>
               <td>{r.n}</td>
               <td>
-                <a href={`/coding/${r.n}`}>{r.title}</a>
+                <a href={withBase(`/coding/${r.n}`)}>{r.title}</a>
                 {r.isNew && <span className="tag" style={{ marginLeft: 8 }}>new</span>}
               </td>
               <td><span className={`tag ${r.difficulty.toLowerCase()}`}>{r.difficulty}</span></td>

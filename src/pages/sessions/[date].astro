@@ -5,6 +5,7 @@ import { render } from 'astro:content';
 import { allSessions, allLabs, allOpenItems } from '~/lib/content';
 import { problems } from '~/data/problems';
 import { formatLong, formatShort, sessionOrdinal, weekOf } from '~/lib/progress';
+import { withBase, withBaseHtml } from '~/lib/base';
 
 export async function getStaticPaths() {
   const sessions = await allSessions();
@@ -27,8 +28,8 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
   <p class="eyebrow">
     {formatLong(d.date)} · session {sessionOrdinal(d.date, dates)} · week {weekOf(d.date)}
   </p>
-  <h1 set:html={d.headline} />
-  <p class="lede" set:html={d.lede} />
+  <h1 set:html={withBaseHtml(d.headline)} />
+  <p class="lede" set:html={withBaseHtml(d.lede)} />
 
   <SessionCards sessions={[entry]} showDate={false} />
 
@@ -43,7 +44,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
           {traced.map((p) => (
             <tr>
               <td>{p.n}</td>
-              <td><a href={`/coding/${p.n}`}>{p.title}</a></td>
+              <td><a href={withBase(`/coding/${p.n}`)}>{p.title}</a></td>
               <td><span class:list={['tag', p.difficulty.toLowerCase()]}>{p.difficulty}</span></td>
               <td style="font-family:var(--mono);font-size:11.5px">{p.complexity}</td>
             </tr>
@@ -59,8 +60,8 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
       <ol class="next">
         {labs.map((l) => (
           <li>
-            <a href={`/internals#${l.id}`}><b set:html={l.data.title} /></a>
-            {l.data.intro && <span set:html={` — ${l.data.intro}`} />}
+            <a href={withBase(`/internals#${l.id}`)}><b set:html={l.data.title} /></a>
+            {l.data.intro && <span set:html={withBaseHtml(` — ${l.data.intro}`)} />}
           </li>
         ))}
       </ol>
@@ -73,7 +74,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
       <ol class="next">
         {open.map((o) => (
           <li>
-            <a href={`/open#${o.id}`}><b>{o.data.title}</b></a>
+            <a href={withBase(`/open#${o.id}`)}><b>{o.data.title}</b></a>
             <span class="kindtag">{o.data.kind}</span>
             <span class="kindtag">{o.data.status}</span>
           </li>
@@ -90,7 +91,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
         <thead><tr><th>{formatShort(older.data.date)}</th><th>{formatShort(d.date)}</th></tr></thead>
         <tbody>
           {d.carriesForward.map((r) => (
-            <tr><td set:html={r.from} /><td set:html={r.to} /></tr>
+            <tr><td set:html={withBaseHtml(r.from)} /><td set:html={withBaseHtml(r.to)} /></tr>
           ))}
         </tbody>
       </table>
@@ -98,7 +99,7 @@ const traced = problems.filter((p) => d.problems.includes(p.n));
   )}
 
   <div class="filterbar" style="justify-content:space-between;margin-top:24px">
-    {older ? <a class="pk" href={`/sessions/${older.data.date}`}>← {formatShort(older.data.date)}</a> : <span></span>}
-    {newer ? <a class="pk" href={`/sessions/${newer.data.date}`}>{formatShort(newer.data.date)} →</a> : <span></span>}
+    {older ? <a class="pk" href={withBase(`/sessions/${older.data.date}`)}>← {formatShort(older.data.date)}</a> : <span></span>}
+    {newer ? <a class="pk" href={withBase(`/sessions/${newer.data.date}`)}>{formatShort(newer.data.date)} →</a> : <span></span>}
   </div>
 </Shell>

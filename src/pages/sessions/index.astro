@@ -4,6 +4,7 @@ import { allSessions, counts } from '~/lib/content';
 import { problems } from '~/data/problems';
 import { formatLong, sessionOrdinal, weekOf, standing } from '~/lib/progress';
 import { prep } from '../../../prep.config';
+import { withBase, withBaseHtml } from '~/lib/base';
 
 const sessions = await allSessions();
 const c = await counts();
@@ -33,14 +34,14 @@ const s = standing(dates);
         <p class="tm" style="font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin:0 0 4px">
           {formatLong(d.date)} · session {sessionOrdinal(d.date, dates)} · week {weekOf(d.date)}
         </p>
-        <h4><a href={`/sessions/${d.date}`} set:html={d.headline.replace(/<br\s*\/?>/g, ' ')} /></h4>
-        <p set:html={d.lede} />
+        <h4><a href={withBase(`/sessions/${d.date}`)} set:html={withBaseHtml(d.headline.replace(/<br\s*\/?>/g, ' '))} /></h4>
+        <p set:html={withBaseHtml(d.lede)} />
         <div class="tags">
           {traced.map((p) => (
-            <a class="tag lc" href={`/coding/${p.n}`}>{p.n}. {p.title}</a>
+            <a class="tag lc" href={withBase(`/coding/${p.n}`)}>{p.n}. {p.title}</a>
           ))}
           {d.labs.length > 0 && (
-            <a class="tag" href={`/internals#day-${d.date}`}>{d.labs.length} lab{d.labs.length === 1 ? '' : 's'}</a>
+            <a class="tag" href={withBase(`/internals#day-${d.date}`)}>{d.labs.length} lab{d.labs.length === 1 ? '' : 's'}</a>
           )}
         </div>
       </article>

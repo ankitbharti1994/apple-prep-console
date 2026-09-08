@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { formatShort } from '~/lib/progress';
+import { withBase, withBaseHtml } from '~/lib/base';
 
 interface Props { sessions: CollectionEntry<'sessions'>[]; showDate?: boolean; }
 const { sessions, showDate = true } = Astro.props;
@@ -13,8 +14,8 @@ const { sessions, showDate = true } = Astro.props;
           {showDate ? `${formatShort(s.data.date)} · ` : ''}{b.time ? `${b.time} · ` : ''}{b.track}
         </div>
         <h3>{b.title}</h3>
-        <ul>{b.bullets.map((x) => <li set:html={x} />)}</ul>
-        {b.href && <a class="go" href={b.href}>Open →</a>}
+        <ul>{b.bullets.map((x) => <li set:html={withBaseHtml(x)} />)}</ul>
+        {b.href && <a class="go" href={withBase(b.href)}>Open →</a>}
       </div>
     )),
   )}

@@ -5,6 +5,7 @@ import PaletteButton from '~/components/react/PaletteButton';
 import { counts, sessionDates } from '~/lib/content';
 import { standing } from '~/lib/progress';
 import { prep } from '../../prep.config';
+import { withBase } from '~/lib/base';
 
 interface Props { track: string; }
 const { track } = Astro.props;
@@ -22,7 +23,7 @@ const badge: Record<string, string | number> = {
 
 ---
 <header class="topbar">
-  <a class="brand" href="/">
+  <a class="brand" href={withBase('/')}>
     <Logo />
     <span class="bt">
       {prep.title}
@@ -32,7 +33,7 @@ const badge: Record<string, string | number> = {
 
   <nav class="nav" aria-label="Tracks">
     {prep.tracks.map((t) => (
-      <a href={t.href} aria-current={t.id === track ? 'page' : undefined}>
+      <a href={withBase(t.href)} aria-current={t.id === track ? 'page' : undefined}>
         <span class="lbl">{t.label}</span>
         {badge[t.id] !== undefined && <span class="ct">{badge[t.id]}</span>}
       </a>
