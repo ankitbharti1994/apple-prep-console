@@ -27,7 +27,7 @@ const lcHref = p.lcSlug ? `https://leetcode.com/problems/${p.lcSlug}/` : null;
   <div class="foot">
     <span class="cx">{p.complexity}</span>
     {p.notes && p.notes.length > 0 && (
-      <ul>{p.notes.map((n) => <li>{n}</li>)}</ul>
+      <ul>{p.notes.map((n) => <li set:html={n} />)}</ul>
     )}
   </div>
 </article>
