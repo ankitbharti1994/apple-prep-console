@@ -31,7 +31,7 @@ counter: disciplines
 </ul>
 
 <h4>Narration, and the mechanism it has never been given</h4>
-<p>Two sessions running now: the timer happened and the talking did not. Timing was adopted the moment it was given a mechanism. <b>Narration has not been given one</b> — it is still carried as an intention, which is the thing that has now failed twenty-one times.</p>
+<p>Two sessions running now: the timer happened and the talking did not. Timing was adopted the moment it was given a mechanism. <b>Narration has not been given one</b> — it is still carried as an intention, which is the thing that has failed on every problem in the count above.</p>
 <ul>
   <li><b>The proposal: narrate the first five minutes only, out loud, then stop.</b> A bounded version is likelier to start than an open-ended commitment, and starting is the entire problem — the timer proved that.</li>
   <li>Five days to the checkpoint, which asks for a medium <em>narrated</em> in 25 minutes. The timed half of that question can now be attempted; the narrated half still cannot.</li>

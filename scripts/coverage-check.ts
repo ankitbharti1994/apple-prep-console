@@ -48,6 +48,10 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'the problem count is derived from src/data/problems, and "twenty" is already stale — the Q9 re-solve and 3Sum are separate files here, so the audit covers twenty-one. The 8 Sep carry-forward row says "every problem on the board sits inside topic 1" instead, and the per-shape breakdown is kept in full on open-items/coverage-every-problem-inside-topic-1.',
   },
   {
+    match: /^Arrow keys step the trace, space plays it\. The morning Apple block runs two easy-to-medium problems per session/,
+    why: 'the roadmap blurb asserted a target that was retired on 1 Sep — the two-problem test measured throughput, which stopped being the goal (see open-items/two-problems-at-ninety-minutes). It now states the rule actually in force, one problem per session at a 25-min timebox with the timer started before reading, and says where the topic list splits: everything through hash maps is what has been solved, linked lists onward is the phase 2 breadth track. The topic order itself is preserved except that "stacks & queues" is now "stacks & monotonic stack" and DP moved to the phase 2 Saturdays, both per the 8 Sep revision.',
+  },
+  {
     match: /^Build block → system design \+ STAR from week 7$/,
     why: 'the weekly-rhythm table had ONE Saturday row claiming 9:00–11:00 every week. The 8 Sep revision runs phase 2 Saturdays to 11:30, so a single row would have shown a slot time contradicting the phase 2 block on the same page. Split into three phase-scoped rows — Build block (weeks 1–3), DP block + showcase project (weeks 4–6, 9:00–11:30), System design + STAR stories (weeks 7–12) — which matches how the Sunday rows already scope themselves.',
   },
