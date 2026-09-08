@@ -3,6 +3,7 @@ import Shell from '~/layouts/Shell.astro';
 import ProblemCard from '~/components/ProblemCard.astro';
 import { problems } from '~/data/problems';
 import { sessionDates } from '~/lib/content';
+import { withBase } from '~/lib/base';
 
 export function getStaticPaths() {
   return problems.map((p) => ({ params: { n: String(p.n) }, props: { p } }));
@@ -21,15 +22,15 @@ const next = problems[i + 1];
 
   <div class="picker">
     {problems.map((q) => (
-      <a class:list={['pk', { on: q.n === p.n }]} href={`/coding/${q.n}`} title={q.title}>{q.n}</a>
+      <a class:list={['pk', { on: q.n === p.n }]} href={withBase(`/coding/${q.n}`)} title={q.title}>{q.n}</a>
     ))}
   </div>
 
   <ProblemCard problem={p} isNew={isNew} />
 
   <div class="filterbar" style="justify-content:space-between">
-    {prev ? <a class="pk" href={`/coding/${prev.n}`}>← {prev.n}. {prev.title}</a> : <span></span>}
-    {next ? <a class="pk" href={`/coding/${next.n}`}>{next.n}. {next.title} →</a> : <span></span>}
+    {prev ? <a class="pk" href={withBase(`/coding/${prev.n}`)}>← {prev.n}. {prev.title}</a> : <span></span>}
+    {next ? <a class="pk" href={withBase(`/coding/${next.n}`)}>{next.n}. {next.title} →</a> : <span></span>}
   </div>
 
   <div class="colophon">

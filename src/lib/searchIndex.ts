@@ -5,6 +5,7 @@
 import { allSessions, allLabs, allNotes, allOpenItems } from './content';
 import { problems } from '~/data/problems';
 import { formatShort } from './progress';
+import { withBase } from './base';
 
 export interface Entry {
   kind: 'session' | 'problem' | 'lab' | 'note' | 'open' | 'page';
@@ -23,7 +24,7 @@ export async function buildIndex(): Promise<Entry[]> {
     allOpenItems(),
   ]);
 
-  return [
+  const entries: Entry[] = [
     { kind: 'page', title: 'Overview', sub: 'Where things stand', href: '/' },
     { kind: 'page', title: 'Plan', sub: 'The twelve weeks', href: '/plan' },
     { kind: 'page', title: 'Coding', sub: 'Traced problems', href: '/coding' },
@@ -63,4 +64,8 @@ export async function buildIndex(): Promise<Entry[]> {
       href: `/open#${o.id}`,
     })),
   ];
+
+  // Hrefs are authored as logical paths; the deployment base is applied once,
+  // here, rather than at each of the twelve places above.
+  return entries.map((e) => ({ ...e, href: withBase(e.href) }));
 }

@@ -10,6 +10,7 @@ import { allSessions, allLabs, allNotes, allOpenItems, planPhases, counts } from
 import { problems } from './progress-safe';
 import { standing, sessionOrdinal, weekOf } from './progress';
 import { prep } from '../../prep.config';
+import { withBase } from './base';
 
 export const json = (data: unknown) =>
   new Response(JSON.stringify(data, null, 2), {
@@ -116,12 +117,12 @@ export async function manifest() {
     standing: s,
     counts: c,
     endpoints: {
-      sessions: '/api/v1/sessions.json',
-      problems: '/api/v1/problems.json',
-      labs: '/api/v1/labs.json',
-      notes: '/api/v1/notes.json',
-      openItems: '/api/v1/open-items.json',
-      plan: '/api/v1/plan.json',
+      sessions: withBase('/api/v1/sessions.json'),
+      problems: withBase('/api/v1/problems.json'),
+      labs: withBase('/api/v1/labs.json'),
+      notes: withBase('/api/v1/notes.json'),
+      openItems: withBase('/api/v1/open-items.json'),
+      plan: withBase('/api/v1/plan.json'),
     },
   };
 }

@@ -8,6 +8,7 @@ import CaptureLab from '~/components/react/labs/CaptureLab';
 import ReentrancyLab from '~/components/react/labs/ReentrancyLab';
 import Inspector from '~/components/react/labs/Inspector';
 import type { InspectorSpec } from '~/lib/inspector';
+import { withBaseHtml } from '~/lib/base';
 
 interface Props { lab: CollectionEntry<'labs'>; num: number; }
 const { lab, num } = Astro.props;
@@ -40,8 +41,8 @@ const inspectorId = island?.startsWith('inspector:') ? island.slice('inspector:'
   {d.myth && (
     <div class="myth"><b>The myth</b>{d.myth}</div>
   )}
-  {d.intro && <p class="intro" set:html={d.intro} />}
-  {d.preamble && <Fragment set:html={d.preamble} />}
+  {d.intro && <p class="intro" set:html={withBaseHtml(d.intro)} />}
+  {d.preamble && <Fragment set:html={withBaseHtml(d.preamble)} />}
 
   {island === 'allocation' && <AllocationLab client:idle />}
   {island === 'cow' && <CowLab client:idle />}

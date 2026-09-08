@@ -4,6 +4,7 @@ import NoteStore from '~/components/NoteStore.astro';
 import OpenItemCard from '~/components/OpenItemCard.astro';
 import { allOpenItems } from '~/lib/content';
 import { getCollection, render } from 'astro:content';
+import { withBaseHtml } from '~/lib/base';
 
 const items = await allOpenItems();
 const log = items.filter((i) => i.data.section === 'log');
@@ -75,7 +76,7 @@ const word = (n: number) =>
       <ol class="next" aria-labelledby="next-steps">
         {renderedSteps.map(({ s, Content }) => (
           <li>
-            <b set:html={s.data.title} />{' '}
+            <b set:html={withBaseHtml(s.data.title)} />{' '}
             <Content />
           </li>
         ))}

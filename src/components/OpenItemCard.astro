@@ -3,6 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import { formatShort, weekStart, toDate, toISO } from '~/lib/progress';
 import { problems } from '~/data/problems';
 import { getCollection } from 'astro:content';
+import { withBase } from '~/lib/base';
 
 interface Props { item: CollectionEntry<'openItems'>; }
 const { item } = Astro.props;
@@ -70,7 +71,7 @@ if (d.counter === 'disciplines') {
     <div class="tags" style="margin-top:10px">
       {d.meta.map((m) =>
         m.href ? (
-          <a class:list={['tag', m.cls]} href={m.href} target="_blank" rel="noopener">{m.label}</a>
+          <a class:list={['tag', m.cls]} href={withBase(m.href)} target="_blank" rel="noopener">{m.label}</a>
         ) : (
           <span class:list={[m.cls === 'resolved' ? 'resolved' : 'tag', m.cls !== 'resolved' && m.cls]}>{m.label}</span>
         ),

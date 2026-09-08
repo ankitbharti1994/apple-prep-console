@@ -173,6 +173,49 @@ npm run new:open-item -- "Task cancellation not drilled"
 `correction` (held confidently in the wrong direction) · `parked` (deliberately deferred).
 Closing one means setting `status: closed` and a `closed:` date — the schema enforces both.
 
+## Links, and the deployment base
+
+The site is published to GitHub Pages at
+`https://ankitbharti1994.github.io/apple-prep-console/`, so everything is served
+from a **sub-path**. The prefix is written down exactly once, as `base` in
+`astro.config.mjs`; everything else derives it.
+
+**Keep writing links as logical paths** — `/coding/15`, `/open#some-item`,
+`/artifacts/foo.html`. Never type the repo name into a link. The prefix is
+applied for you, in one of two places:
+
+| Where the link is written | What applies the prefix |
+|---|---|
+| a `.md` / `.mdx` body, incl. raw HTML and MDX `<a>` | `src/lib/rehype-base.mjs`, wired into `markdown.rehypePlugins` |
+| `.astro` / `.tsx` / `.ts`, and HTML in frontmatter or problem `notes` | `withBase()` / `withBaseHtml()` from `src/lib/base.ts` |
+
+So a new session, lab, problem or open item needs **nothing extra** — content
+bodies are handled by the plugin. Only new *code* needs care: an `<a href="/…">`
+written in a component must be `href={withBase('/…')}`, and authored HTML passed
+to `set:html` must go through `withBaseHtml()`.
+
+Both helpers are idempotent and leave external, protocol-relative and
+fragment-only URLs alone, so double-applying them is harmless — Pagefind, for
+instance, already returns based URLs and they pass straight through.
+
+To confirm nothing leaks after a change, build and look for a root-absolute link
+that is not under the base:
+
+```bash
+npm run build && grep -rhoE '(href|src)="/[^"]*"' dist --include=*.html | grep -v '"/apple-prep-console'
+```
+
+Silence is the pass.
+
+## Deploying
+
+`.github/workflows/deploy.yml` publishes every push to `main`: it runs the same
+gate as CI (`check`, `test`, `lint:traces`), builds, and uploads the artifact to
+Pages. There is no `gh-pages` branch — Pages is set to **Source: GitHub Actions**.
+The workflow passes `BASE_PATH` and `SITE_URL` from `actions/configure-pages`
+rather than hard-coding them, so renaming the repo moves the site without an edit.
+`ci.yml` now covers pull requests only, since the deploy workflow gates `main`.
+
 ## Where everything lives
 
 | What | Where |
@@ -182,6 +225,8 @@ Closing one means setting `status: closed` and a `closed:` date — the schema e
 | Derived numbers | `src/lib/progress.ts` |
 | Cross-file id checks | `src/lib/validate.ts` |
 | Trace types and the `frame()` / `cells()` DSL | `src/lib/trace.ts` |
+| Deployment base (the only literal) | `astro.config.mjs` |
+| Link-base helpers | `src/lib/base.ts`, `src/lib/rehype-base.mjs` |
 | Design tokens, light and dark | `src/styles/tokens.css` |
 | Runnable Swift companions | `companions/` |
 
@@ -198,6 +243,9 @@ runs the migration coverage report. Both should stay green.
 ## Things that will bite you
 
 - **Lab and note bodies are `.md`, not `.mdx`.** Braces in Swift code break MDX.
+- **Never type the repo name into a link.** Write `/coding/15`; the base is applied for you.
+  A hand-written `/apple-prep-console/coding/15` still works — the helpers are idempotent — but it
+  breaks the day the repo is renamed.
 - **Lab ids include the number prefix** — `09-unchecked-under-tsan`, not `unchecked-under-tsan`.
 - **Islands inside the day switcher use `client:idle`, not `client:visible`.** Day 2 and 3
   start inside a `display:none` panel, where an IntersectionObserver never fires.
