@@ -8,7 +8,7 @@ problems: [20, 21]
 counter: disciplines
 ---
 
-<p>Two of the three session disciplines have <b>never been exercised, not once, across twenty problems</b>. This is not a new intention that slipped. The <a href="/plan">plan</a> has carried both since the first morning:</p>
+<p>Two of the three session disciplines have <b>never once been exercised — on any problem on the board</b>, as the count above says. This is not a new intention that slipped. The <a href="/plan">plan</a> has carried both since the first morning:</p>
 
 <table>
   <tr><th>Where it is written</th><th>What it says</th></tr>

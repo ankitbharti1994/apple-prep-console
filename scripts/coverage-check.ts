@@ -48,6 +48,10 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'the problem count is derived from src/data/problems, and "twenty" is already stale — the Q9 re-solve and 3Sum are separate files here, so the audit covers twenty-one. The 8 Sep carry-forward row says "every problem on the board sits inside topic 1" instead, and the per-shape breakdown is kept in full on open-items/coverage-every-problem-inside-topic-1.',
   },
   {
+    match: /^Build block → system design \+ STAR from week 7$/,
+    why: 'the weekly-rhythm table had ONE Saturday row claiming 9:00–11:00 every week. The 8 Sep revision runs phase 2 Saturdays to 11:30, so a single row would have shown a slot time contradicting the phase 2 block on the same page. Split into three phase-scoped rows — Build block (weeks 1–3), DP block + showcase project (weeks 4–6, 9:00–11:30), System design + STAR stories (weeks 7–12) — which matches how the Sunday rows already scope themselves.',
+  },
+  {
     match: /^Past the original 12-week plan/,
     why: 'the overrun message on /plan is built from prep.plannedWeeks and prep.maxWeeks rather than typed, so it reads "Past the planned 12 weeks and inside the runway to 16 — that is overrun, not completion." Same claim, no hard-coded numbers. It also only renders past week 12, so it is absent from the built HTML until then; see open-items/stretch-or-buffer, which records the original "Plan complete" bug this replaced.',
   },

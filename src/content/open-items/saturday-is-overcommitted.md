@@ -36,7 +36,7 @@ order: 13
 </table>
 
 <ul>
-  <li><b>Three weeks, three scheduled blocks, zero completed.</b> The plan now depends on a commitment with a 0-for-3 record, which is worth knowing before 14 Sep rather than after.</li>
+  <li><b>Two blocks have come and gone, and neither ran.</b> The plan now depends on a commitment with a 0-for-2 record and its third attempt still ahead of it, which is worth knowing before 14 Sep rather than after. The record updates on 12 Sep, not before.</li>
   <li><b>Why the extra thirty minutes went here rather than to weekdays.</b> Weeks 1–3 say block length was never the constraint: sessions ran 90, 60, 20 and zero minutes, days were missed, and <a href="/open#two-problems-at-ninety-minutes">the two-problem test</a> was retired precisely because throughput was not the bottleneck — consistency was. A 120-minute weekday block that sometimes does not happen yields less than a 90-minute one that reliably does. Saturday was already allocated and already unused, so committing it fixes a phase-1 failure instead of adding a new obligation.</li>
-  <li><b>The test is Saturday 12 September</b>, already in the week-3 plan as the first build block. If it runs, committing three more in phase 2 is realistic. If it does not, <b>the DP track is fiction and should be moved rather than left standing as an intention</b> — which is the same failure mode <a href="/open#timed-and-narrated-committed-day-one-never-once-done">narration</a> has demonstrated twenty-one times.</li>
+  <li><b>The test is Saturday 12 September</b>, already in the week-3 plan as the first build block. If it runs, committing three more in phase 2 is realistic. If it does not, <b>the DP track is fiction and should be moved rather than left standing as an intention</b> — which is the failure mode <a href="/open#timed-and-narrated-committed-day-one-never-once-done">narration</a> has demonstrated on every problem so far.</li>
 </ul>
