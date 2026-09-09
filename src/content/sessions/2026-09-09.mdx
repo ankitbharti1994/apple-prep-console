@@ -1,0 +1,185 @@
+---
+date: 2026-09-09
+headline: Both came back with one prompt,<br />and the heap <em>passed tests it could not fail</em>.
+lede: >-
+  The re-pass first, and it took thirty minutes rather than the block it was given — @Sendable
+  boxing and the in-flight dedup mechanism both restored with a single prompt each, which is what
+  repair should look like and is the distinction the whole recall practice exists to draw. The room
+  that left went to the heap, two days ahead of where the branch had put it. It was written
+  independently after one read and every test passed, and that last clause is the finding: a heap
+  that appends and linear-scans passes exactly the same suite.
+blocks:
+  - track: internals
+    title: The re-pass — the week-3 branch, closed
+    href: /open#sendable-stated-backwards
+    bullets:
+      - '<b><code>@Sendable</code> captures — restored.</b> Unprompted after one framing question: "the <code>var</code> gets captured by reference until we explicitly capture it, where it gets copied so no reference is in play." The <em>boxing</em> is back, not the word "mutable" that stood in for it on Monday'
+      - 'It had faded in <b>seven days</b> having been cold and correct on 31 Aug, and took <b>one prompt</b> to restore. The cost of repair is the number worth keeping, not the fact of the decay'
+      - '<b>In-flight dedup — first answer was recall attached to the wrong design.</b> Described the failure path — that storing images gives no retry — which is backwards: storing images stores nothing on failure, so the dictionary stays empty and the next caller retries anyway. The poisoning problem belongs to the <em>task</em>-storing version'
+      - 'Re-framed as a timing question — caller one starts a 300 ms download, caller two arrives at 10 ms — and it landed: <b>"at 10 ms we''ll have the Task instance so the 2nd caller won''t create a new task for the same url"</b>'
+      - '<b>Two corrections.</b> "Both read &amp; write needs to be <em>async</em>" self-corrected to <b>synchronised</b> — <code>async</code> is about suspension, safety comes from serialised access, and async-and-unsynchronised is still a race. And "it''ll execute the same" — caller two executes nothing; it awaits the existing task''s <code>value</code>'
+  - track: internals
+    title: Section 17 — heaps, built two days early
+    href: /internals#17-heaps
+    bullets:
+      - '<b>The concept was asked for before the build</b>, which was the right call — attempting the structure first produces a memorised shape rather than a tool'
+      - 'One rule: <b>every parent is ≤ both children.</b> No left-vs-right ordering, no sorted rows. <b>The weakness is the point</b> — just enough order to answer <em>what is the smallest right now</em>, at O(1) to peek and O(log n) either way, because only one root-to-leaf path is ever repaired'
+      - '<b>Array-backed because the tree is complete</b>, so relationships are arithmetic rather than pointers. The trade-off said out loud: fast access to <em>one</em> extreme and nothing else — an arbitrary search is O(n), no better than an unsorted array'
+      - '<b>Written independently after reading the annotated version once, and all tests passed.</b> Self-reported: <code>siftDown</code> felt uncomfortable and needs more time; the concept landed'
+      - 'The framing that fixes the discomfort: <code>siftDown</code> is not "compare and swap", it is <b>find the smallest among three</b> — me, my left child, my right child. The bounds checks become "does this child exist", and the loop exits when the answer is me'
+      - '<b>Max-heap is two flipped comparisons</b> and nothing else. Learning it as a separate structure is the mistake to avoid'
+labs: [17-heaps]
+openItems:
+  - sendable-stated-backwards
+  - in-flight-dedup-mechanism-faded
+  - heap-tests-that-a-linear-scan-would-also-pass
+  - siftdown-not-yet-traced-by-hand
+  - distinguishing-input
+  - top-k-two-wrong-turns
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: A branch that fired on Monday's measurement, and closed on Wednesday's.
+carriesForward:
+  - from: '"Two or more broken recall answers switches Wednesday from the heap build to a re-pass" — the week-3 condition, triggered 7 Sep'
+    to: <b>Both repaired, one prompt each, and the branch closes.</b> It is the first contingency written in advance that has been opened <em>and</em> shut by measurement rather than by how the morning felt
+  - from: '"The mechanism came out rather than the sentence is evidence it landed <em>today</em>, not that it will keep" — the lesson drawn on 7 Sep from a close that failed'
+    to: '<b>Refined, and the other half now has evidence.</b> It says nothing about durability — but a mechanism that <em>did</em> land is cheap to restore, two for two on one morning. <a href="/open#the-424-stale-maxfreq-safety-argument">The 424 argument</a> is the control: three attempts, never once restored, because there was never a version to restore'
+  - from: The heap — a phase-1 spec item, queued since day 1, moved three times, and pushed to Fri 11 Sep when the branch fired
+    to: <b>Built, on the day it had just been moved off.</b> The re-pass took thirty minutes instead of the block it was given, and the thing it displaced is what the room went to
+  - from: '"The heap has been queued three times and never built, which is also why question 13 is still solved by sorting" — the coverage audit, 8 Sep'
+    to: 'First clause superseded, second clause untouched. <b>Having built the structure and having solved anything with it are different claims</b>, and collapsing them is exactly how depth got read as breadth. Q13 is Thursday'
+  - from: The fake named before the code on 7 and 8 Sep, twice running — and no suite written either time
+    to: '<b>A fake that no input can distinguish.</b> Append-and-linear-scan passes every heap test identically; the difference is complexity, and no correctness test can see complexity. The technique now needs a second move — <b>count work, do not test behaviour</b> — and that was not run either'
+note: >-
+  Ninety-minute slot, cut short at the end for work, and no clock times worth recording against the
+  two blocks. Coding did not run, so there is no coding block and no new problem — the board stays
+  where it was, and narration stays at zero because nothing was there to narrate. Both blocks were
+  internals: the re-pass, then the heap. The heap moved forward from Friday, which leaves Friday
+  open as the last slack before the checkpoint.
+---
+
+## What the re-pass measured, which is not what it repaired
+
+Both items came back with one prompt each. The repair is the smaller half of that; the useful half
+is what it says about the two failures that produced them on Monday.
+
+| Asked | Faded for | What it cost to restore |
+|---|---|---|
+| `@Sendable` captures — the boxing | 7 days | **One framing question**, then unprompted and complete |
+| In-flight dedup — why store the *task* | 5 days | **One re-framing**, from a design question to a timing question |
+
+Neither prompt supplied a fact. The first asked the question a different way; the second changed
+what the question was *about* — from "which design is better" to "what is literally in the
+dictionary at 10 milliseconds." **That is the whole intervention, and it was enough both times.**
+
+**Decay is not the same as never having learned it**, and this is the first morning with evidence
+for that rather than an intuition. The control case is sitting on the same board: the
+[424 stale `maxFreq` argument](/open#the-424-stale-maxfreq-safety-argument) has failed three
+attempts and is parked, because there has never been a version of it to restore. One prompt does
+nothing for a thing that never landed.
+
+The unwelcome corollary, and it is the mistake the [31 Aug close](/open#sendable-stated-backwards)
+already made once: **a cheap repair says nothing about the next gap.** Today's close is
+deliberately narrower than that one was.
+
+## The correction inside the correction
+
+The dedup answer is the more interesting of the two failures, because nothing in it was forgotten.
+
+> Storing images gives no retry mechanism on failure.
+
+Every word of that is a real fact about this pattern. It is attached to the wrong implementation.
+Storing images stores *nothing* on failure, so the dictionary stays empty and the next caller
+retries naturally — the poisoning problem belongs to the **task**-storing version, which is
+precisely why the `catch` removes the entry.
+
+**So the detail was recalled correctly and the design it belongs to was lost.** That is a third
+category alongside "knew it" and "never knew it", and it is not one this board has had before: a
+gap loses the fact, and this lost the fact's owner.
+
+The other correction is a word pair that gets conflated constantly and is worth stating flat:
+
+| | What it is about |
+|---|---|
+| `async` | **Suspension.** This call may pause and resume later. It says nothing about who else is touching the state |
+| Synchronised | **Serialised access.** One at a time. This is where safety comes from |
+
+**Async and unsynchronised is still a race.** Same distinction as "isolation is not a lock" from
+2 Sep, met from the other side.
+
+## The heap, and why the concept came first
+
+The request was for the concept before the build, and it was the right call: attempting the
+structure without knowing what it is for produces a memorised shape rather than a tool. What makes
+a heap worth having is what it *refuses* to do.
+
+Maintaining full sortedness costs more than most problems need. A heap maintains just enough order
+to answer one question — **what is the smallest right now** — and the price of that is stated in
+the same breath: **an arbitrary search is O(n), no better than an unsorted array.** Fast access to
+one extreme and nothing else.
+
+That is what makes [question 13](/coding/13) the case in hand rather than an example. It is solved
+by sorting all *m* distinct elements at `O(m log m)`, where a size-*k* heap gives `O(m log k)` — and
+at *k* = 5 with *m* = 1,000,000, that is the difference the follow-up exists to ask about. The
+problem has been standing since 25 Aug for one reason: there was no heap to replace the sort with.
+
+## The fake worth keeping, and it is a rare one
+
+The build went well by every visible measure — read once, written independently, every test green.
+Here is the version that also passes:
+
+```swift
+struct NotAHeap {
+    private var storage: [Int] = []
+
+    mutating func insert(_ value: Int) {
+        storage.append(value)          // no siftUp
+    }
+
+    mutating func popMin() -> Int? {
+        guard let m = storage.min(),
+              let i = storage.firstIndex(of: m) else { return nil }
+        return storage.remove(at: i)   // O(n), every time
+    }
+}
+```
+
+**Same outputs, every input, every time.** Pop order sorted regardless of insert order; empty;
+single element; duplicates; already-sorted; reverse-sorted. Not one assertion in the suite changes.
+
+This is the cleanest instance yet of [the thing being drilled since 25 Aug](/open#distinguishing-input),
+and it breaks the technique in a new place. Every previous fake on that list differs from the real
+answer on *some* input, and the work is finding it — `("aab","bab")`, `[1,2,1]`, `("ABACADA", 1)`.
+**Here no such input exists.** The two implementations are behaviourally identical and differ only
+in cost, and no correctness test can see cost.
+
+So the standing question — *would this still pass against a deliberately broken version?* — returns
+**yes**, and the suite is inert anyway. The extension the technique needs: **when the fake differs
+only in cost, stop testing behaviour and count work.**
+
+| Implementation | Comparisons, n = 100,000 |
+|---|---|
+| A real heap — roughly *n log n* | **~1.7 million** |
+| Append and linear-scan — *n²/2* | **~5 billion** |
+
+A counter in `siftDown` and two minutes settles it, with no threshold to argue about — one of the
+two does not finish. **It was not run**, which makes this the second consecutive problem where the
+break was argued and no artifact exists. It carries to Thursday
+[as its own item](/open#heap-tests-that-a-linear-scan-would-also-pass).
+
+## Where phase 1 stands, with four days left
+
+| Day | Item |
+|---|---|
+| Thu 10 Sep | **Q13 with the heap** — everything it needs now exists |
+| Fri 11 Sep | Buffer — linked lists, binary search, or the testing habit's unexercised half |
+| Sat 12 Sep | **First build block ever.** Swift 6 strict concurrency on a real target; [phase 2's DP track](/plan) sits on this same slot |
+| Sun 13 Sep | Checkpoint: a random medium in 25 min narrated, then the phase 2 start decision |
+
+Three things are carried rather than closed, and only one of them moved today.
+[Coverage](/open#coverage-every-problem-inside-topic-1) is unchanged — the heap exists as a
+structure, and no problem on the board uses it yet, which are different claims.
+[Narration](/open#timed-and-narrated-committed-day-one-never-once-done) is unchanged for the honest
+reason that no problem ran, and the checkpoint asks for it in four days. The
+[testing habit](/open#distinguishing-input) is the one that moved, and it moved by getting harder:
+naming the fake held for a third session running, and the fake it produced is the first one that
+cannot be killed by an input at all.

@@ -1,9 +1,9 @@
 ---
-title: '@Sendable — stated backwards, and reopened 7 Sep'
+title: '@Sendable — stated backwards, reopened 7 Sep, restored 9 Sep'
 kind: correction
-status: open
+status: closed
 opened: 2026-08-26
-reopened: 2026-09-07
+closed: 2026-09-09
 order: 1
 labs: ['10-sendable-is-about-captures', '12-sendable-what-the-compiler-said']
 notes: ['p-sendfn', 'p-captures']
@@ -55,3 +55,25 @@ notes: ['p-sendfn', 'p-captures']
 </div>
 
 <p>The lesson generalises past this item: <em>"the mechanism came out rather than the sentence"</em> is evidence that it landed <b>today</b>, not evidence that it will keep. Only a gap tests that, and this is the first gap that has been measured. Scheduled for a re-pass on Wed 9 Sep alongside the in-flight dedup rationale.</p>
+
+<p><span class="resolved">closed 9 Sep — the re-pass, one prompt</span></p>
+<p>The <a href="/sessions/2026-09-07">week-3 branch</a> scheduled this for Wednesday, and it took <b>one framing question</b>. Unprompted after it:</p>
+
+<blockquote>the <code>var</code> gets captured by reference until we explicitly capture it, where it gets copied so no reference is in play. If two concurrent invocations happen they use the same reference to update or read it.</blockquote>
+
+<p><b>Correct, and it is the boxing that came back</b> — not the word "mutable" that stood in for it on 7 Sep. Every load-bearing piece is there: captured by reference, the explicit capture list forces a copy, and concurrent invocations sharing one storage slot is <em>why</em> a read is rejected and not only a write.</p>
+<ul>
+  <li><b>It had faded in seven days having been cold and correct on 31 Aug</b>, and it took one prompt to restore. That is the number worth keeping — not that it decayed, but what repair cost once it had.</li>
+  <li>The same shape held for <a href="/open#in-flight-dedup-mechanism-faded">the other half of the branch</a> on the same morning. Two for two, which is what makes it a finding rather than a coincidence: <b>decay is not the same as never having learned it.</b></li>
+</ul>
+
+<p><span class="corrected">one correction applied</span> The sentence offered was that <b>"both read &amp; write needs to be <em>async</em> to avoid stale data"</b>, self-corrected to <b>synchronised</b> as soon as it was flagged. Kept in the record because the two words get conflated constantly and they are not adjacent:</p>
+<table>
+  <tr><th></th><th>What it is about</th></tr>
+  <tr><td><code>async</code></td><td><b>Suspension</b> — this call may pause and resume later. It says nothing about who else is touching the state.</td></tr>
+  <tr><td>Synchronised</td><td><b>Serialised access</b> — one at a time. This is where safety comes from.</td></tr>
+</table>
+<p><b>Async and unsynchronised is still a race.</b> Marking everything <code>async</code> buys suspension points, not exclusion — the same distinction as <a href="/internals#07-actor-reentrancy">isolation is not a lock</a>, met from the other side.</p>
+
+<h4>What this close does not claim</h4>
+<p>Deliberately less than the 31 Aug one, which is quoted above and was falsified by four days off. <b>This close says the mechanism was restorable in one prompt. It does not say it will survive the next gap</b> — that was exactly the prediction that failed, and nothing here is evidence against it. The next real test is the <a href="/open#coverage-every-problem-inside-topic-1">phase 2 transition</a>, when concurrency stops being the daily internals track.</p>
