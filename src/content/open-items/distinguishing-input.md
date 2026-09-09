@@ -108,3 +108,13 @@ notes: ['p-hash', 'p-captures']
 <p>Written up as a standing reference — <a href="/open">how to write tests that can fail</a>, further down this page.</p>
 
 <p>Same relationship the console already draws for <a href="/open#enforcement-not-observation">crediting enforcement to something that only records</a> — a single habit surfacing under different names, tracked once.</p>
+
+<h4>9 Sep — the first fake with no distinguishing input at all</h4>
+<p><span class="kindtag" style="margin-left:0">a new failure mode for this item</span> The <a href="/internals#17-heaps">heap</a> was written independently and every test passed. <b>A "heap" that appends and linear-scans on <code>popMin()</code> passes exactly the same suite</b> — same outputs, every input, every time. Pop order sorted regardless of insert order, empty, single element, duplicates, sorted and reverse-sorted input: not one assertion changes.</p>
+<ul>
+  <li><b>Every entry in the table above has a distinguishing input. This one does not, and cannot.</b> <code>("aab","bab")</code>, <code>[1,2,1]</code> and <code>("ABACADA", 1)</code> exist because the cheap wrong thing differs on <em>some</em> input and the work is finding it. Here the two implementations are behaviourally identical and differ only in complexity — <code>O(n)</code> per pop against <code>O(log n)</code>.</li>
+  <li>So the standing question this item is built on — <em>would this still pass against a deliberately broken version?</em> — returns <b>yes</b>, and the suite is inert anyway. The technique as written does not cover it.</li>
+  <li><b>The extension: when the fake differs only in cost, stop testing behaviour and count work.</b> A counter in <code>siftDown</code>, 100,000 elements in and out — about 1.7 million comparisons for a heap, about 5 billion for the scan. Three orders of magnitude, no threshold to argue about.</li>
+  <li><b>Not run.</b> Which makes it the same shape as the 8 Sep entry above: the break was argued and never executed. That is now <b>two consecutive problems where the reasoning was right and no artifact exists</b> — see <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">the item carrying the measurement</a>.</li>
+</ul>
+<p>The half of this item still open is unchanged and is now sharper: <b>the distinguishing <em>artifact</em>, run.</b> An argument that is never executed produces no evidence, whether the fake differs in output or only in cost.</p>

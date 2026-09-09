@@ -60,6 +60,16 @@ const EXPECTED_DROPS: Array<{ match: RegExp; why: string }> = [
     why: 'the overrun message on /plan is built from prep.plannedWeeks and prep.maxWeeks rather than typed, so it reads "Past the planned 12 weeks and inside the runway to 16 — that is overrun, not completion." Same claim, no hard-coded numbers. It also only renders past week 12, so it is absent from the built HTML until then; see open-items/stretch-or-buffer, which records the original "Plan complete" bug this replaced.',
   },
 
+  /* --- superseded on 9 Sep, day 11 ------------------------------------ *
+   * The heap was a phase-1 spec item queued since day 1 and moved three
+   * times. It was built on 9 Sep, which makes a claim written on 8 Sep
+   * false — not lost. The open item keeps the old wording verbatim and
+   * says what replaced it, rather than being edited quietly.            */
+  {
+    match: /^The heap has been queued three times and never built/,
+    why: 'TRUE WHEN WRITTEN, FALSE THE NEXT DAY. The 8 Sep coverage audit said the heap "has been queued three times and never built"; it was built on 9 Sep, two days ahead of where the recall branch had rescheduled it, because the re-pass it was displaced by took thirty minutes rather than the block it was given. open-items/coverage-every-problem-inside-topic-1 now reads "had been", quotes the original clause and dates the supersession. The rest of the sentence is untouched and still true: question 13 is still solved by sorting, so the symptom the audit named is unchanged — only the blocker behind it is gone. Having built the structure and having solved anything with it are deliberately kept as separate claims, since collapsing them is how depth got read as breadth in the first place.',
+  },
+
   /* --- completed on 7 Sep, day 9 -------------------------------------- */
   {
     match: /^Question 9 is the natural next thing\./,

@@ -18,3 +18,12 @@ problems: [13]
   <li>Also: <code>[..&lt;k]</code> traps if k exceeds count. <code>prefix(k)</code> clamps instead — worth stating unprompted when constraints are relaxed.</li>
   <li>Spotted the bucket-collision hazard unprompted before writing the code — that instinct was right, and the answer is that buckets hold arrays.</li>
 </ul>
+
+<h4>9 Sep — the blocker is gone, the problem is not</h4>
+<p><span class="kindtag" style="margin-left:0">still O(m log m), and now for no reason</span> Attempt 2 has stood since 25 Aug because <b>there was no heap to replace the sort with</b> — no <code>Heap</code> in the Swift stdlib, and building one had been <a href="/open#coverage-every-problem-inside-topic-1">queued three times</a>. <a href="/internals#17-heaps">It was built on 9 Sep.</a></p>
+<ul>
+  <li>The sizes are what the follow-up is actually asking about: sorting all <em>m</em> distinct elements is <code>O(m log m)</code>; a size-<em>k</em> heap is <code>O(m log k)</code>. <b>At k = 5 and m = 1,000,000 that is twenty million comparisons against roughly two.</b></li>
+  <li>The mechanics to state alongside it: <b>a max-heap of size k is the wrong shape</b> — you want a <em>min</em>-heap of size k, so the cheapest thing to evict is the one on top. Push, and pop when the size exceeds k.</li>
+  <li>Bucket sort remains the <code>O(m)</code> answer and is what was eventually reached on 25 Aug. The heap is the one worth being able to <em>write</em>, because it is what the follow-up names.</li>
+</ul>
+<p><b>Carried to Thu 10 Sep</b>, which is open for it — the day 3Sum vacated when it was brought forward to the 8th. Everything it needs now exists, which removes the last reason this has been standing.</p>
