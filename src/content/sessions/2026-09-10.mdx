@@ -1,0 +1,152 @@
+---
+date: 2026-09-10
+headline: The last suboptimal solution closed,<br />and the right answer <em>was already written down</em>.
+lede: >-
+  Forty-five minutes, and question 13 finally met the follow-up it has been failing since 25 Aug —
+  a size-k min-heap at O(m log k), written independently against the structure built yesterday.
+  Both first answers on the way there were wrong and both were reversed by reasoning rather than by
+  being told, which is the half worth keeping. The sharper finding is where the correct answer was
+  sitting: yesterday's open item already said, in writing, that a max-heap of size k is the wrong
+  shape. Asked out loud this morning, the answer was max-heap. The rest of the block went to the
+  measurement flagged yesterday — built, and still not run.
+blocks:
+  - track: coding
+    title: Question 13, closed against its own follow-up
+    href: /coding/22
+    bullets:
+      - '<b>O(m log m) → O(m log k).</b> The sort that has stood since 25 Aug is replaced by a size-<em>k</em> min-heap, written independently. <a href="/coding/22">Question 22</a> traces it; <a href="/coding/13">question 13</a> keeps its bucket sort, which is <code>O(n)</code> and <b>still the better answer</b> — what closes is the follow-up, not the problem'
+      - '<b>First answer: max-heap, "because we need the most frequent."</b> The intuitive answer, and it costs the entire win — push all <em>m</em> then pop k is <code>O(m log m)</code>, which is the sort again wearing a heap'
+      - 'The reversal, reasoned rather than accepted: a min-heap''s root is its <em>smallest</em> element, so capping at k makes the root <b>the weakest of the current top k</b> — and comparing an arrival against it asks exactly the right question, <em>is this better than the worst thing I am keeping?</em>'
+      - '<b>"The min-heap is a filter guarding the entrance, not a container that ranks."</b> The smallest sits on top precisely so it is first to be thrown out. The <em>min</em> in the name describes what is cheapest to remove, not what the problem wants to keep'
+      - '<b>Second wrong turn: "the heap will hold the frequency."</b> That loses which number each count belonged to. Corrected to an <code>Entry</code> carrying both — <b>the dictionary is keyed by value, the heap is ordered by count</b>, two fields doing two jobs'
+      - '<code>Comparable</code> needs <code>&lt;</code> plus <code>Equatable</code>, and Swift synthesises <code>==</code> for an all-<code>Equatable</code> struct. <b>Correct first time.</b> Worth knowing rather than changing: <code>==</code> compares both fields and <code>&lt;</code> only <code>count</code>, so <code>Entry(3,1)</code> and <code>Entry(3,2)</code> are neither — fine for a heap, fatal for a sorted set'
+      - '<b><code>MinHeap&lt;Element: Comparable&gt;</code> and the body did not change at all.</b> That is the point of <code>Comparable</code>, and the conversion was done independently. Four cosmetic fixes on review — two <code>var</code>s that wanted <code>let</code>, a missing <code>private</code>, and it is <b>sift</b>, not shift'
+  - track: internals
+    title: Counting the work, because no test can see cost
+    href: /internals#17-heaps
+    bullets:
+      - '<b>The harness flagged yesterday exists.</b> A comparison counter, a <code>FakeHeap</code> that appends and linear-scans behind the same API, and a <code>measure(n:)</code> that runs both over identical input and <b>asserts the outputs are equal before printing the two counts</b> — the assertion is the point being made, not a safety check'
+      - '<b>Where the comparison sits changes what gets counted.</b> The original <code>siftUp</code> puts it inside the <code>while</code> condition, so a counter there misses the final <em>failed</em> check that exits the loop. Restructured to <code>guard … else { break }</code>. That is a thing you find by writing the counter, not by reasoning about it'
+      - '<b>Read the ratios, not the raw counts.</b> If <code>real ÷ n log n</code> holds flat while n quadruples, the growth is genuinely <em>n log n</em>; if it climbs, something is scanning. One data point cannot show that — three can, which is why it runs at 1k, 4k and 16k'
+      - '<b>The curves separate on the right, not the left.</b> At n = 100 the gap is <b>8×</b> and a test suite, a stopwatch and intuition all miss it; at 100,000 it is <b>3,010×</b>. Testing a heap on seven elements is not a weak version of the right check, it is a check aimed where there is nothing to see'
+      - 'Wall-clock time is the weaker signal — allocation, caching and ARC all contribute and none of them are the algorithm'
+      - '<b>Written, not run.</b> The item closes on the printed ratios and it stays open, which is the same standard the argument was held to yesterday, applied to its own remedy'
+problems: [22]
+labs: [17-heaps]
+openItems:
+  - top-k-two-wrong-turns
+  - top-k-min-heap-or-max-heap
+  - heap-tests-that-a-linear-scan-would-also-pass
+  - distinguishing-input
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: One thing closed on schedule, and one that shows where written-down knowledge stops helping.
+carriesForward:
+  - from: '"Q13 is Thursday. Everything it needs now exists, which removes the last reason this has been standing" — the close-out on 9 Sep'
+    to: '<b>Done, on the day it was given.</b> Fifteen days of standing, and once the blocker was gone it took part of one forty-five minute block. <b>The last known-suboptimal solution on the board</b> — no problem now stands with a solution its own follow-up rules out'
+  - from: '"A max-heap of size k is the wrong shape — you want a <em>min</em>-heap of size k, so the cheapest thing to evict is the one on top" — written into <a href="/open#top-k-two-wrong-turns">the open item</a> on 9 Sep'
+    to: '<b>Asked out loud on 10 Sep, the answer was max-heap.</b> The correct sentence was on the board, in this record, one day old — and it did not survive contact with the question''s own wording. <a href="/open#top-k-min-heap-or-max-heap">A new category</a>: not decay, not a gap, but <b>selecting between two known things under the pull of how the problem is phrased</b>'
+  - from: '"When the fake differs only in cost, stop testing behaviour and count work" — the extension the technique needed, proposed 9 Sep and not run'
+    to: '<b>Built, and still not run.</b> Three consecutive sessions where the reasoning is right and no output exists — but this is the first with an <em>artifact</em> rather than an argument, and building it produced two things arguing about it had not: the miscounted terminating comparison, and three sizes instead of one'
+  - from: '"The heap exists as a structure, and no problem on the board uses it yet, which are different claims" — the coverage item, held apart deliberately on 9 Sep'
+    to: '<b>Both claims now hold, and the audit barely moves.</b> Heaps come off the untouched list on exactly the terms that item set for itself. Nine topics left, and <b>one topic moving does not make the board broad</b>'
+note: >-
+  Forty-five minutes before work, and no clock split worth recording between the two blocks — it was
+  one continuous piece of work on one problem, split here because the heap measurement belongs to
+  section 17 rather than to the problem page. Question 22 is a re-solve of question 13, not a new
+  problem: same question, same LeetCode entry, closed against the follow-up. It was neither timed nor
+  narrated, and Sunday's checkpoint asks for a full medium narrated. Settle tonight which module gets
+  -strict-concurrency=complete pointed at it, so Saturday does not open by choosing one — the
+  instruction stands as written, fix five diagnostics and write down what category each fell into.
+---
+
+## Where the correct answer was, and why that is the finding
+
+The heap solution is the smaller half of this morning. The larger half is a single comparison.
+
+> **A max-heap of size k is the wrong shape** — you want a *min*-heap of size k, so the cheapest
+> thing to evict is the one on top. Push, and pop when the size exceeds k.
+
+That was written into [the Q13 open item](/open#top-k-two-wrong-turns) on 9 Sep, in this record, one
+day before it was needed. Asked the question out loud on 10 Sep, the first answer was **max-heap,
+"because we need the most frequent."**
+
+This is not the decay pattern the [9 Sep re-pass](/sessions/2026-09-09) measured, and it is not the
+never-learned-it pattern of [the 424 argument](/open#the-424-stale-maxfreq-safety-argument). Nothing
+was forgotten — the heap was built the day before and *"max-heap is two flipped comparisons and
+nothing else"* was stated then. **What failed was selecting between two known things while the
+problem's own wording pulled the other way.** "The k *most* frequent" points at a max-heap in plain
+English, and the plain-English reading won.
+
+| | What it looks like | What it costs to fix |
+|---|---|---|
+| Decay | Knew it cold, cannot produce it now | One prompt, twice over, on 9 Sep |
+| Gap | Never had a version of it | Three attempts, still parked |
+| **This** | **Have it in writing, answer the other way under the question's framing** | **One reasoned reversal — but nothing prevents the next one** |
+
+The repair that seems to hold is not "remember min-heap." It is that **the min/max in the name
+describes what is cheapest to remove, not what the problem is asking to keep.** Read that way the
+two stop being interchangeable, and the naming stops fighting the intent.
+
+## The complexity argument, in one table
+
+| Approach | Heap size | Per op | Total |
+|---|---|---|---|
+| Max-heap, push all then pop k | *m* | O(log m) | **O(m log m)** — no better than sorting |
+| Min-heap capped at k | *k* | O(log k) | **O(m log k)** |
+
+The first row is the whole reason the follow-up gets asked, and it is why answering "max-heap"
+is not a small slip: a max-heap ends up holding everything, so it gives back exactly what the sort
+gave. The follow-up has not been answered, only re-implemented.
+
+**What this does not claim.** [Question 13](/coding/13) was already optimal — bucket sort, `O(n)`,
+reached on 25 Aug, and it stays the better solution. `O(m log k)` is *worse* than `O(n)`. What
+closes is narrower and more useful: the solution the interviewer actually names is now one that can
+be **written** rather than only cited. Those have been separate claims in this record since 8 Sep,
+and collapsing them at the last step would have been the same error that let depth read as breadth.
+
+## The measurement, and an honest stop
+
+The [thing flagged yesterday](/open#heap-tests-that-a-linear-scan-would-also-pass) — that a heap and
+an append-and-linear-scan pass identical suites — now has apparatus. The design detail worth keeping
+is not the counter but **where it goes**:
+
+```swift
+// The original has the comparison inside the while condition, so counting
+// there would miss the final failed check that exits the loop.
+private mutating func siftUp(_ index: Int) {
+    var i = index
+    while i > 0 {
+        comparisons += 1
+        guard storage[i] < storage[parent(of: i)] else { break }
+        storage.swapAt(i, parent(of: i))
+        i = parent(of: i)
+    }
+}
+```
+
+A counter in the obvious place undercounts, which would have been a quieter version of the same
+error this whole item is about. **That is found by writing the counter, not by reasoning about it** —
+and it is the most concrete argument yet for why
+[the testing item](/open#distinguishing-input) insists on an artifact rather than an argument.
+
+The second thing building it settled: **read the ratios, not the counts.** Three sizes, because a
+single number has nothing to be compared against — and yesterday's proposal was one run at 100,000.
+
+**Status: written, not run.** The item stays open. Three consecutive sessions now where the
+reasoning is right and no output exists, which is worth stating flatly rather than softening: what
+changed today is that the thing not-run is code instead of prose.
+
+## Where phase 1 stands, with three days left
+
+| Day | Item |
+|---|---|
+| Fri 11 Sep | **Buffer, unspent.** Linked List Cycle, the testing habit's unexercised half — two minutes of it is the harness above — or binary search. Leaving it empty to arrive at Saturday rested is also legitimate |
+| Sat 12 Sep | **First build block in three weeks of scheduling.** Swift 6 strict concurrency on a real target; [phase 2's whole DP track](/plan) sits on this same slot, so if it does not run that plan is fiction |
+| Sun 13 Sep | Checkpoint: a random medium in 25 min, **narrated** — then the phase 2 start decision |
+
+Three items carry, and only one of them moved.
+[Coverage](/open#coverage-every-problem-inside-topic-1) moved by exactly one topic and the audit is
+otherwise unchanged. [Narration](/open#timed-and-narrated-committed-day-one-never-once-done) did not
+move — question 22 was neither timed nor narrated, and the checkpoint asks for a narrated medium in
+three days. [The testing habit](/open#distinguishing-input) moved from an argument to an artifact and
+stopped one step short of a result.

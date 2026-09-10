@@ -16,6 +16,8 @@ const problem: Problem = {
     'Nested loops are still O(n) — the inner loop is bounded in TOTAL (m appends), not per outer iteration. Aggregate analysis, same as sliding window and monotonic stack.',
     'Min-heap alternative is O(m log k) time and O(k) space — worse asymptotically, better when k is small and m is huge. No Heap in the stdlib; it lives in swift-collections.',
     'Two wrong turns before this — see the revision log',
+    '<b>10 Sep — the follow-up is closed, on <a href="/coding/22">question 22</a>.</b> The min-heap the fourth note names was finally written, sixteen days later, against <a href="/internals#17-heaps">the structure built on 9 Sep</a>. This trace and this complexity are unchanged: bucket sort is still <code>O(n)</code> and still the better answer.',
+    'What changed is that the <code>O(m log k)</code> alternative is now something that can be <em>written</em> rather than only cited — which is what the follow-up actually asks for. The two wrong turns on the way there are on <a href="/open#top-k-min-heap-or-max-heap">their own item</a>.',
   ],
   code: `func topKFrequent(_ nums: [Int], _ k: Int) -> [Int] {
     // 1. Count. O(n)
