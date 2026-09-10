@@ -4,7 +4,7 @@ kind: gap
 status: open
 opened: 2026-09-08
 order: 1
-problems: [13, 21]
+problems: [13, 21, 22]
 ---
 
 <p>An audit of what has actually been solved, run on 8 Sep. <b>Every problem on the board sits inside topic 1</b> — arrays, strings, two pointers, sliding window, hashing. The plan assumed phase 1 would ramp <em>"easy→medium across core patterns"</em>; it produced depth in one area instead, and nothing noticed because depth and breadth both look like problems getting solved.</p>
@@ -14,13 +14,18 @@ problems: [13, 21]
   <tr><td>Array basics, in-place, prefix, math</td><td>1, 2, 3, 7, 8, 11, 17</td></tr>
   <tr><td>Two pointers, opposite ends</td><td>4, 5, 6, 12, 19</td></tr>
   <tr><td>Hashing / frequency</td><td>13, 14, 15, 16</td></tr>
+  <tr><td>Heap — size-k selection</td><td>22</td></tr>
   <tr><td>Sliding window</td><td>9, 10, 18, 20</td></tr>
   <tr><td>Sort + anchored two pointers</td><td>21</td></tr>
 </table>
 
 <p><b>Untouched:</b> linked lists, trees and BSTs, graphs, heaps, binary search, stacks and monotonic stack, recursion and backtracking, dynamic programming, intervals, tries. Ten topics, several of them near-standard in an Apple loop.</p>
 
+<p><span class="resolved">10 Sep — nine, not ten</span> <b><code>heaps</code> in the list above is superseded.</b> The wording is left exactly as it was written on 8 Sep rather than edited, because the audit is a dated claim and quietly shrinking it would hide the one thing it was built to show. <a href="/coding/22">Question 22</a> uses a heap, so the honest count is <b>nine</b> — and the other nine are untouched on the same terms they were on 8 Sep.</p>
+
 <p><span class="kindtag" style="margin-left:0">9 Sep — one of them moved, and only half-way</span> The <b>heap now exists as a structure</b>, built from scratch in the <a href="/internals#17-heaps">internals block</a>. It is left in the untouched list above deliberately: this audit counts <em>problems on the board</em>, and <b>no coding problem uses it yet</b>. Having built the data structure and having solved anything with it are different claims, and collapsing them is how "depth looks like breadth" happened in the first place. It moves off this list when <a href="/coding/13">question 13</a> is re-solved with it.</p>
+
+<p><span class="resolved">10 Sep — it moved</span> <a href="/coding/22">Question 22</a> is that re-solve, so both claims now hold on exactly the terms this item set for itself the day before. <b>One topic moving does not make the board broad</b> — every other problem still sits inside topic 1, and the audit is otherwise unchanged.</p>
 
 <h4>What made it visible, and it was not the audit</h4>
 

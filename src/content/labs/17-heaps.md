@@ -192,3 +192,146 @@ tags: ['data-structures', 'heap', 'complexity', 'testing']
   <div class="say-h">Say it out loud</div>
   <p>"My tests prove it returns the minimum. They do not prove it is a heap — a linear scan passes all of them. To prove it is a heap I have to count comparisons."</p>
 </div>
+
+<h3>10 Sep — counting the work, which is the only thing that can tell them apart</h3>
+
+<p>Flagged the day this section was written, and <b>built the next morning</b>. The argument above is unchanged; what follows is the apparatus that would settle it, and an honest note about how far it got.</p>
+
+<h4>Why the gap has to be measured at size</h4>
+
+<table>
+  <tr><th>n</th><th>heap ≈ <em>n log n</em></th><th>linear scan ≈ <em>n²/2</em></th><th>linear ÷ heap</th></tr>
+  <tr><td>100</td><td>664</td><td>5,000</td><td>8×</td></tr>
+  <tr><td>1,000</td><td>9,965</td><td>500,000</td><td>50×</td></tr>
+  <tr><td>4,000</td><td>47,863</td><td>8,000,000</td><td>167×</td></tr>
+  <tr><td>16,000</td><td>223,452</td><td>128,000,000</td><td>573×</td></tr>
+  <tr><td>100,000</td><td>1,660,964</td><td>5,000,000,000</td><td><b>3,010×</b></td></tr>
+</table>
+
+<pre>comparisons, log scale
+
+10^10 |                                          ○  linear scan
+      |                                    ○
+10^8  |                              ○
+      |                        ○
+10^6  |                  ○                       ●  heap
+      |            ○                       ●
+10^4  |      ○                       ●
+      |  ○               ●     ●
+10^2  |  ●
+      +----------------------------------------------
+        100    1k     4k     16k    100k          n</pre>
+
+<p>At n = 100 the gap is <b>8×</b> — small enough that a test suite, a stopwatch and casual intuition all miss it. <b>The two curves separate on the right, not the left</b>, which is exactly why small-input testing cannot catch this class of error. Testing a heap on seven elements is not a weak version of the right check; it is a check aimed at the part of the range where there is nothing to see.</p>
+
+<h4>The harness</h4>
+
+<p>One detail is load-bearing and is the reason <code>siftUp</code> is restructured rather than counted where it stands: <b>the original puts the comparison inside the <code>while</code> condition</b>, so a counter there would miss the final failed check that exits the loop. The <code>guard</code>/<code>break</code> form makes every comparison countable.</p>
+
+<pre><span class="kw">import</span> Foundation
+
+<span class="kw">var</span> comparisons = 0        <span class="cm">// a global is fine for a throwaway measurement</span>
+
+<span class="cm">// ── Inside MinHeap, restructured so the terminating comparison is counted.</span>
+
+<span class="kw">private mutating func</span> siftUp(_ index: <span class="ty">Int</span>) {
+    <span class="kw">var</span> i = index
+    <span class="kw">while</span> i &gt; 0 {
+        comparisons += 1                                   <span class="cm">// ← counted</span>
+        <span class="kw">guard</span> storage[i] &lt; storage[parent(of: i)] <span class="kw">else</span> { <span class="kw">break</span> }
+        storage.swapAt(i, parent(of: i))
+        i = parent(of: i)
+    }
+}
+
+<span class="kw">private mutating func</span> siftDown(_ index: <span class="ty">Int</span>) {
+    <span class="kw">var</span> i = index
+    <span class="kw">while true</span> {
+        <span class="kw">let</span> l = left(of: i), r = right(of: i)
+        <span class="kw">var</span> smallest = i
+
+        <span class="kw">if</span> l &lt; storage.count {
+            comparisons += 1                               <span class="cm">// ← counted</span>
+            <span class="kw">if</span> storage[l] &lt; storage[smallest] { smallest = l }
+        }
+        <span class="kw">if</span> r &lt; storage.count {
+            comparisons += 1                               <span class="cm">// ← counted</span>
+            <span class="kw">if</span> storage[r] &lt; storage[smallest] { smallest = r }
+        }
+
+        <span class="kw">if</span> smallest == i { <span class="kw">return</span> }
+        storage.swapAt(i, smallest)
+        i = smallest
+    }
+}
+
+<span class="cm">// ── The impostor: same API, same output, completely different cost.</span>
+
+<span class="kw">struct</span> <span class="ty">FakeHeap</span>&lt;<span class="ty">Element</span>: <span class="ty">Comparable</span>&gt; {
+    <span class="kw">private var</span> storage = [<span class="ty">Element</span>]()
+
+    <span class="kw">var</span> isEmpty: <span class="ty">Bool</span> { storage.isEmpty }
+    <span class="kw">var</span> count: <span class="ty">Int</span> { storage.count }
+
+    <span class="kw">mutating func</span> insert(_ value: <span class="ty">Element</span>) {
+        storage.append(value)                              <span class="cm">// no sifting at all</span>
+    }
+
+    <span class="kw">mutating func</span> popMin() -&gt; <span class="ty">Element</span>? {
+        <span class="kw">guard</span> !storage.isEmpty <span class="kw">else</span> { <span class="kw">return nil</span> }
+        <span class="kw">var</span> minIndex = 0
+        <span class="kw">for</span> i <span class="kw">in</span> 1..&lt;storage.count {                       <span class="cm">// scan everything</span>
+            comparisons += 1
+            <span class="kw">if</span> storage[i] &lt; storage[minIndex] { minIndex = i }
+        }
+        <span class="kw">return</span> storage.remove(at: minIndex)
+    }
+}
+
+<span class="cm">// ── Run both over identical input.</span>
+
+<span class="kw">func</span> measure(n: <span class="ty">Int</span>) {
+    <span class="kw">let</span> input = (0..&lt;n).map { _ <span class="kw">in</span> <span class="ty">Int</span>.random(in: 0..&lt;1_000_000) }
+
+    comparisons = 0
+    <span class="kw">var</span> real = <span class="ty">MinHeap</span>&lt;<span class="ty">Int</span>&gt;()
+    <span class="kw">for</span> v <span class="kw">in</span> input { real.insert(v) }
+    <span class="kw">var</span> realOut: [<span class="ty">Int</span>] = []
+    <span class="kw">while let</span> m = real.popMin() { realOut.append(m) }
+    <span class="kw">let</span> realComparisons = comparisons
+
+    comparisons = 0
+    <span class="kw">var</span> fake = <span class="ty">FakeHeap</span>&lt;<span class="ty">Int</span>&gt;()
+    <span class="kw">for</span> v <span class="kw">in</span> input { fake.insert(v) }
+    <span class="kw">var</span> fakeOut: [<span class="ty">Int</span>] = []
+    <span class="kw">while let</span> m = fake.popMin() { fakeOut.append(m) }
+    <span class="kw">let</span> fakeComparisons = comparisons
+
+    <span class="cm">// THE POINT: identical output. Correctness cannot tell them apart.</span>
+    <span class="kw">assert</span>(realOut == fakeOut, <span class="st">"outputs differ - one of them is wrong"</span>)
+    <span class="kw">assert</span>(realOut == input.sorted(), <span class="st">"not actually sorted"</span>)
+
+    <span class="kw">let</span> nlogn = <span class="ty">Double</span>(n) * log2(<span class="ty">Double</span>(n))
+    <span class="kw">let</span> nsquared = <span class="ty">Double</span>(n) * <span class="ty">Double</span>(n) / 2
+
+    print(<span class="st">"""
+    n = \(n)
+      real heap    \(realComparisons)   ratio to n log n: \
+    \(String(format: "%.2f", Double(realComparisons) / nlogn))
+      linear scan  \(fakeComparisons)   ratio to n²/2:    \
+    \(String(format: "%.2f", Double(fakeComparisons) / nsquared))
+    """</span>)
+}
+
+measure(n: 1_000)
+measure(n: 4_000)
+measure(n: 16_000)</pre>
+
+<div class="myth" style="margin-top:14px">
+  <b>Read the ratios, not the raw counts</b>
+  If <code>real ÷ n log n</code> stays flat near a small constant while n quadruples, the growth is genuinely <em>n log n</em>. If it climbs, something is scanning where it should be sifting. <b>One data point cannot show that; three can</b> — which is why the harness runs at 1,000, 4,000 and 16,000 rather than once at a big number.
+</div>
+
+<p>Note also what is <em>not</em> being measured. <b>Wall-clock time is the weaker signal</b> — allocation, caching and ARC all contribute to it, and none of them are the algorithm. Counting comparisons measures the thing the complexity claim is actually about.</p>
+
+<p><span class="kindtag" style="margin-left:0">written 10 Sep, not yet run</span> <b>Two minutes on the next session.</b> The <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">item carrying this</a> closes on output, not on apparatus — which is the same standard the argument above was held to, applied to its own remedy.</p>

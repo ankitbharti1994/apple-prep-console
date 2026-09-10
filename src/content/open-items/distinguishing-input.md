@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17, 18, 19, 20, 21]
+problems: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
 notes: ['p-hash', 'p-captures']
 ---
@@ -118,3 +118,12 @@ notes: ['p-hash', 'p-captures']
   <li><b>Not run.</b> Which makes it the same shape as the 8 Sep entry above: the break was argued and never executed. That is now <b>two consecutive problems where the reasoning was right and no artifact exists</b> — see <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">the item carrying the measurement</a>.</li>
 </ul>
 <p>The half of this item still open is unchanged and is now sharper: <b>the distinguishing <em>artifact</em>, run.</b> An argument that is never executed produces no evidence, whether the fake differs in output or only in cost.</p>
+
+<h4>10 Sep — an artifact, for the first time in three sessions</h4>
+<p><span class="kindtag" style="margin-left:0">written, still not run</span> The 9 Sep entry above ends "<b>Not run</b>". On 10 Sep it was <b>built</b>: <a href="/internals#17-heaps">a comparison counter, a <code>FakeHeap</code> behind the same API, and a three-point <code>measure(n:)</code></a>. That is the first time in three consecutive problems that the break exists as code rather than as prose.</p>
+<ul>
+  <li><b>It is movement and it is not a close.</b> The half this item is named for is the distinguishing artifact <em>run</em>. An unexecuted harness is a better thing to be carrying than an argument, and it is still not a result — <a href="/open#hashable-what-a-hash-test-proves">the same standard applied to a test that cannot fail</a>.</li>
+  <li><b>What building it taught that arguing it had not.</b> The comparison in <code>siftUp</code> sits inside the <code>while</code> condition, so counting there silently misses the terminating check. <b>You find that by writing the counter, not by reasoning about the counter</b> — which is a small, concrete argument for why this item insists on the artifact.</li>
+  <li>Second: <b>read the ratios, not the counts.</b> Three sizes, not one, because a single number has nothing to be compared against. The 9 Sep proposal — one run at 100,000 — would have produced exactly that.</li>
+</ul>
+<p>So the shape of this item at the end of three weeks: <b>naming the fake is a habit, building it is now once, running it is still zero.</b> Each of those was the missing step at some point and each moved only after being named separately.</p>
