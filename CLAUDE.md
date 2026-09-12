@@ -202,10 +202,20 @@ To confirm nothing leaks after a change, build and look for a root-absolute link
 that is not under the base:
 
 ```bash
-npm run build && grep -rhoE '(href|src)="/[^"]*"' dist --include=*.html | grep -v '"/apple-prep-console'
+npm run build && grep -rhoE '(href|src)=(\\?&quot;|")/[^"&\\]*' dist --include=*.html | sed -E 's/^(href|src)=(\\?&quot;|")//' | grep -v '^/apple-prep-console'
 ```
 
 Silence is the pass.
+
+The `&quot;` half of that pattern is load-bearing. A React island's props are
+serialised into an HTML attribute with the inner quotes escaped, so an authored
+link inside them reads `href=\&quot;/internals#…\&quot;` and a plain
+`href="/…"` grep walks straight past it. An unbased link authored in
+`src/data/inspectors/` got through the old pattern once and was caught in review
+instead — **an island is the one place where a leak is invisible to the obvious
+check.** Base inspector `body` and `code` strings with `withBaseHtml()` at
+authoring; `Inspector.tsx` applies it again at render, which is harmless because
+the helper is idempotent, and keeps the check above meaningful.
 
 ## Deploying
 

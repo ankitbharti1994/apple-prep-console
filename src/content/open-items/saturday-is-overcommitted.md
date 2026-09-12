@@ -47,7 +47,7 @@ labs: ['18-swift-6-strict-concurrency-on-a-real-target']
 
 <h4>12 Sep — it ran, and the close is narrower than the item</h4>
 
-<p><span class="resolved">the test passed</span> <b>The block happened.</b> Not at 9:00 and not for two hours — ~10pm after a gym session, about an hour — and that is the right trade, because <b>the block happening is what was in doubt</b>, not its length. It produced <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">section 18</a>: strict concurrency on a real target, 259 diagnostics, four categories.</p>
+<p><span class="resolved">the test passed</span> <b>The block happened.</b> Not at 9:00 and not for two hours — ~10pm after a gym session, about an hour — and that is the right trade, because <b>the block happening is what was in doubt</b>, not its length. It produced <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">section 18</a>: strict concurrency on a real target, 259 diagnostics, five categories.</p>
 
 <p>What that settles is the question this item actually turned into on 8 Sep — <em>"a plan track now rests on a slot with an 0-for-2 record"</em>. It no longer does. <b>Committing three more Saturdays in phase 2 is now a bet with evidence behind it rather than an intention</b>, which was the stated condition: <em>"if it runs, committing three more in phase 2 is realistic."</em></p>
 
@@ -58,7 +58,7 @@ labs: ['18-swift-6-strict-concurrency-on-a-real-target']
 <ul>
   <li><b>So the overcommitment half is unresolved and is being closed anyway</b>, because the thing worth tracking was whether the slot was real. It was the 0-for-2 record that made this a dependency, and that is what moved.</li>
   <li><b>The risk named on 28 Aug did not fire, and not because it was managed.</b> The stated fear was that "the build block quietly becomes catch-up, and the one genuinely creative slot gets eaten." It stayed a build block — but half of it went to <b>toolchain configuration</b>, which was nobody's prediction. Losing the slot to build settings is a different failure than losing it to backlog, and it is the one that actually happened.</li>
-  <li><b>If the split matters again it should be re-raised as its own item</b>, scoped to the scheduling rule alone, rather than reopened here. Bundling "will the slot run" with "what should the slot contain" is why this one took fifteen days to resolve either half.</li>
+  <li><b>The split is re-raised as <a href="/open#the-saturday-split-was-never-written-down">its own item</a></b>, scoped to the scheduling rule alone, rather than left on this one. Bundling "will the slot run" with "what should the slot contain" is why this took fifteen days to resolve either half — and closing this without a replacement would have dropped the unresolved half off the board entirely, which is the failure mode the board exists to prevent.</li>
 </ul>
 
 <p>The four small carry-forward items from 27 Aug and the in-flight-<code>Task</code> dedup build are not on this item's ledger any more: the dedup pattern <a href="/internals#16-asyncsequence-detached-tasks-in-flight-dedup">was built on a Wednesday</a>, which is the second time a Saturday claim was settled off-Saturday. Worth noticing rather than celebrating — <b>work moving to weekdays is what made the Saturday record look worse than the output was.</b></p>

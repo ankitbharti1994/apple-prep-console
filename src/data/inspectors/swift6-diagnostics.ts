@@ -1,4 +1,5 @@
 import type { InspectorSpec } from '~/lib/inspector';
+import { withBaseHtml } from '~/lib/base';
 
 /**
  * The five categories isolated from 259 strict-concurrency diagnostics on a
@@ -94,7 +95,7 @@ const spec: InspectorSpec = {
       body:
         '<code>@unchecked Sendable</code> silences category 2 and settles nothing. It promises something ' +
         '<b>unverifiable about arbitrary erased content</b> — whatever view any caller happens to put in the box. ' +
-        'This is precisely <a href="/internals#09-unchecked-under-tsan">the day-3 <code>@unchecked</code> case</a> ' +
+        withBaseHtml('This is precisely <a href="/internals#09-unchecked-under-tsan">the day-3 <code>@unchecked</code> case</a> ') +
         'arriving in production code: the attribute moves the claim from the compiler to you, and there is nothing ' +
         'behind it. Category 1 compiled because <code>CGFloat</code> really is Sendable and the compiler checked. ' +
         '<b>Here nobody checks.</b>',
@@ -113,7 +114,7 @@ const spec: InspectorSpec = {
       title: 'Isolation inherited from a framework you do not control',
       body:
         '<b>This is the same error string attributed to <code>@Sendable</code> on 27 Aug</b>, which ' +
-        '<a href="/internals#12-sendable-what-the-compiler-said">case C proved belongs to isolation checking</a>. ' +
+        withBaseHtml('<a href="/internals#12-sendable-what-the-compiler-said">case C proved belongs to isolation checking</a>. ') +
         'Now met in real code, which teaches it better than the control did. ' +
         '<b><code>nonisolated</code> does not help, and understanding why is the point:</b> the problem is not the ' +
         'property, it is <code>UIDevice.current</code>, which is main-actor-isolated. Marking the property ' +
