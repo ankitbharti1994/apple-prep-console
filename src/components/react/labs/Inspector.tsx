@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { InspectorSpec } from '~/lib/inspector';
+import { withBaseHtml } from '~/lib/base';
 
 /**
  * One component for every "pick a case, read the verdict" lab.
@@ -29,7 +30,7 @@ export default function Inspector({ spec }: { spec: InspectorSpec }) {
         <div className="split">
           {seg ? (
             <div>
-              {c.code && <pre style={{ margin: 0, fontSize: '12px' }} dangerouslySetInnerHTML={{ __html: c.code }} />}
+              {c.code && <pre style={{ margin: 0, fontSize: '12px' }} dangerouslySetInnerHTML={{ __html: withBaseHtml(c.code) }} />}
               {c.panes?.map((p) => (
                 <div
                   key={p.label}
@@ -54,8 +55,13 @@ export default function Inspector({ spec }: { spec: InspectorSpec }) {
 
           <div className="verdictbox">
             <div className={`vt ${c.verdict}`}>{c.title}</div>
-            <p dangerouslySetInnerHTML={{ __html: c.body }} />
-            {!seg && c.code && <pre style={{ margin: 0, fontSize: '12px' }} dangerouslySetInnerHTML={{ __html: c.code }} />}
+            {/* Inspector bodies are authored HTML in .ts data files, so the
+                markdown rehype plugin never sees them. Root-absolute links in
+                them need the deployment base applied here, or they 404 under
+                the Pages sub-path. withBaseHtml is idempotent and leaves
+                external and fragment-only URLs alone. */}
+            <p dangerouslySetInnerHTML={{ __html: withBaseHtml(c.body) }} />
+            {!seg && c.code && <pre style={{ margin: 0, fontSize: '12px' }} dangerouslySetInnerHTML={{ __html: withBaseHtml(c.code) }} />}
             {c.footer && (
               <>
                 <p style={{ marginBottom: 0 }}><b>{c.footer.label}</b></p>
