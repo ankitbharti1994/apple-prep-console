@@ -8,6 +8,15 @@ title: 'Proving concurrency claims'
 swiftc -strict-concurrency=complete file.swift   <span class="cm"># Swift 5 mode</span></pre>
 <p>In a package target:</p>
 <pre>swiftSettings: [.enableExperimentalFeature(<span class="st">"StrictConcurrency"</span>)]</pre>
+<p><b>Superseded 12 Sep, on a real target.</b> The line above is what this note said until then, and it is
+<em>unavailable</em> in current tools — the feature graduated, and the API moved with it:</p>
+<pre>.enableExperimentalFeature(<span class="st">"StrictConcurrency"</span>)   <span class="cm">// gone</span>
+.enableUpcomingFeature(<span class="st">"StrictConcurrency"</span>)       <span class="cm">// what worked</span>
+.swiftLanguageMode(.v6)                            <span class="cm">// Swift 6 tools</span></pre>
+<p><b>Which one applies depends on <code>swift-tools-version</code></b>, so this is a claim to re-check against
+the toolchain rather than to memorise. And a package building clean proves nothing on its own — see
+<a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">the probe</a>, which showed the checking
+was not reaching the code at all.</p>
 <p>Break it deliberately to watch the checker work:</p>
 <pre><span class="kw">final class</span> <span class="ty">Mutable</span> { <span class="kw">var</span> count = 0 }
 <span class="kw">struct</span> <span class="ty">Leaky</span> { <span class="kw">var</span> box = <span class="ty">Mutable</span>() }

@@ -1,0 +1,142 @@
+---
+date: 2026-09-12
+headline: The build block finally ran,<br />and <em>half of it went to build settings</em>.
+lede: >-
+  The first Saturday build block to happen at all — ~10pm after the gym, about an hour rather than
+  the nominal two, and that is the right trade because the block happening is what was in doubt.
+  Phase 2's whole DP track sits on this slot, so this was a test of the slot rather than of Swift
+  concurrency. Roughly half went to toolchain configuration, which is not lost time: it is what
+  adopting Swift 6 on an existing project actually looks like. Then the thing worth keeping — a
+  clean build with no warnings, which was evidence of nothing until a deliberately broken probe
+  proved the checking was never reaching the code. Building the package directly produced 259
+  diagnostics, and five causes underneath them.
+blocks:
+  - track: internals
+    title: Section 18 — Swift 6 strict concurrency on a real target
+    href: /internals#18-swift-6-strict-concurrency-on-a-real-target
+    bullets:
+      - '<b>The toolchain fights first, and that is the finding.</b> Xcode''s Strict Concurrency = Complete produced <code>Failed to produce diagnostics for expression</code> — <b>not a concurrency error at all</b>, but the type checker giving up on a long SwiftUI body, with the real error hidden behind it'
+      - '<code>-Xfrontend</code> takes <b>exactly one</b> following argument, and Xcode''s Other Swift Flags needs them as <b>two separate list entries</b>, not one string. Two such flags means writing <code>-Xfrontend</code> twice'
+      - '<b>The API had moved twice</b> because the feature graduated: <code>enableExperimentalFeature</code> → <code>enableUpcomingFeature</code> → <code>.swiftLanguageMode(.v6)</code>, and which applies depends on <code>swift-tools-version</code>. <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">The footnote on this site carried the superseded form</a> until today'
+      - '<b>Then the clean build, and the move that mattered.</b> No warnings — which could mean the module is safe <em>or</em> that checking was not reaching it, and those have opposite consequences. A five-line <code>Probe</code> was written to force the issue, <b>produced no warning</b>, and settled it. Building the SPM package directly: <b>259 diagnostics</b>'
+      - '<b>Five categories, and the ratio is the point</b> — 259 diagnostics is six or seven causes repeated dozens of times, and only the causes transfer. <b>Categories 1 and 5 print the identical error and need different fixes</b>, so the first question is not "is this Sendable" but <b>"does this actually need to be stored?"</b>'
+      - '<b>Implicit <code>Sendable</code> does not cross module boundaries.</b> A <code>public</code> enum with Sendable payloads loses the inference, so the conformance held all along and was invisible to callers. The compiler <b>verified</b> the claim rather than accepting it — the difference between <code>: Sendable</code> and <code>@unchecked</code>'
+      - '<b>Isolation is contagious through construction, not only through use.</b> UIKit and SwiftUI <code>init</code>s are <code>@MainActor</code>, so merely creating one from a nonisolated context violates isolation — missed because "I am only creating it" feels safe. Fixed by marking the type <code>@MainActor</code>, on the grounds that <em>the type was mostly doing UI work anyway</em>'
+      - '<b>And that sentence is most of Swift 6 migration.</b> The annotation documented a constraint that already existed and had never been written down. <b>The compiler did not impose a new rule; it found an undeclared one</b>'
+labs: [18-swift-6-strict-concurrency-on-a-real-target]
+openItems:
+  - saturday-is-overcommitted
+  - the-anyview-struct-deferred
+  - distinguishing-input
+  - timed-and-narrated-committed-day-one-never-once-done
+carriesForwardNote: A commitment with an 0-for-2 record got its result, and a technique showed up somewhere it was not being chased.
+carriesForward:
+  - from: '"The test is Saturday 12 September. If it runs, committing three more in phase 2 is realistic. If it does not, the DP track is fiction" — the condition set on 8 Sep'
+    to: '<b>It ran.</b> Late, short, and after a gym session, but it ran — so <a href="/plan">phase 2''s DP track</a> now rests on evidence rather than an intention. <b>The close is narrower than the item, though:</b> its stated condition was a scheduling rule written into <code>prep.config.ts</code>, and <a href="/open#saturday-is-overcommitted">that was not done</a>'
+  - from: '"The build block quietly becomes catch-up, and the one genuinely creative slot gets eaten" — the risk named on 28 Aug'
+    to: '<b>It did not become catch-up. It became build settings.</b> Half the block went to toolchain configuration — which nobody predicted, and which is a different failure from the one that was being guarded against. Worth recording as the thing to expect next time rather than as a surprise'
+  - from: '"The distinguishing artifact, run" — the half of <a href="/open#distinguishing-input">the testing item</a> that has never once happened unprompted, two problems behind as of 10 Sep'
+    to: '<b>It happened, unprompted, and not on a coding problem.</b> The probe is the same move as case C on 27 Aug, applied to a <em>build configuration</em>. <b>And it is the more useful instance:</b> a wrong answer from an algorithm eventually surfaces, where <b>a checker silently not running never does</b>. Meanwhile <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">the heap harness from 10 Sep is still unexecuted</a>'
+  - from: 'The <code>Main actor-isolated … can not be referenced from a nonisolated context</code> error, attributed to <code>@Sendable</code> on 27 Aug until <a href="/internals#12-sendable-what-the-compiler-said">case C</a> proved it belonged to isolation checking'
+    to: '<b>The same string, now in real code</b> as category 3 — and a better teacher than the control was, because this time <code>nonisolated</code> was the obvious fix and <b>understanding why it fails is the lesson</b>. The problem is <code>UIDevice.current</code>, not the property; marking it <code>nonisolated</code> restates the violation rather than removing it'
+note: >-
+  One block, internals only. No coding problem ran, so there is no coding block and narration stays
+  where it was — which matters because tomorrow's checkpoint asks for a full medium narrated, and
+  that has never been attempted. No session was logged for Friday 11 Sep either, so the buffer the
+  heap freed up went unspent. Everything from the work codebase is recorded as diagnostic text and
+  structural shapes only: no code, file names or business logic. Category 5 and the qualification to
+  category 1 came in after the session was first written up, and are folded in here rather than kept
+  as a separate day.
+---
+
+## Why this session counted more than its content
+
+Phase 1 scheduled Saturday build blocks with a stated purpose — *"anything you only read about gets
+written."* **None had run.** 29 Aug was a rest day, 5 Sep fell inside the four-day gap, and the one
+piece of work that should have come out of it — [the in-flight dedup pattern](/internals#16-asyncsequence-detached-tasks-in-flight-dedup) —
+got built on a Wednesday instead.
+
+Then on 8 Sep [the phase revision](/plan) put phase 2's entire DP track on this same slot. That
+changed what the slot was: **a plan resting on a commitment with an 0-for-2 record is a hope.**
+
+So tonight was a test of the slot, not of Swift concurrency. It now has a result, and the result is
+the thing worth recording — not because an hour at 10pm is impressive, but because
+[the alternative was moving the DP track](/open#saturday-is-overcommitted) rather than leaving it
+standing as an intention.
+
+## The clean build that meant nothing
+
+The sequence that got to 259 diagnostics went through four dead ends, and the useful moment is the
+one in the middle where **everything appeared to be working**.
+
+```swift
+final class Probe {
+    var count = 0
+}
+
+func probeTest() {
+    let p = Probe()
+    Task {
+        p.count += 1        // expect: capture of non-Sendable type
+    }
+}
+```
+
+The package built clean with no warnings. Two things explain that — the module is already
+concurrency-safe, or **the checking is not reaching this code** — and they point in opposite
+directions. The probe produced no warning, which settled it, and building the SPM package directly
+rather than the app produced the 259.
+
+**This is [the technique the board has been waiting on](/open#distinguishing-input) for three weeks**,
+and it arrived somewhere it was not being chased. Every previous instance targeted an algorithm or a
+language rule. This targeted a build configuration — and it is the more valuable case, because a
+wrong answer from an algorithm eventually shows up in an output, whereas **a checker that is silently
+switched off is indistinguishable from success forever.** Same shape as
+[asserting on `hashValue`](/open#hashable-what-a-hash-test-proves), caught this time before it was
+believed rather than after.
+
+## Same error, two fixes — the part that does not read off the message
+
+Five categories came out of the 259, and the pair worth being able to separate out loud is the one
+that looks like a single category:
+
+```swift
+static var defaultValue: CGFloat = 0     // stored global state — diagnostic fires
+static var defaultValue: CGFloat { 0 }   // computed — clean
+```
+
+**Protocol requirements written as `static var` are satisfied by a computed property.** The `var` in
+the declaration does not mean storage is required — it means the requirement is not `let`, and
+misreading it is what produces the error in the first place.
+
+| | Cause | Fix | `Sendable` helps? | `@MainActor` helps? |
+|---|---|---|---|---|
+| **1** | Type is not Sendable | Declare the conformance | **Yes** | Sometimes |
+| **2** | Type *cannot* be Sendable | Isolate or redesign | No | **Yes** |
+| **5** | Storage exists unnecessarily | **Remove the storage** | Irrelevant | Irrelevant |
+
+Categories 1 and 5 print **the same diagnostic text**. So the first question is not *"is this
+Sendable"* but **"does this actually need to be stored?"** — and the tell, said in exactly these
+words during the session, is *"Sendable or `@MainActor` doesn't solve the issue."* When both obvious
+tools are irrelevant, it is category 5.
+
+That also produces the one non-mechanical action on the remaining 255: **scan for
+`static var x = <constant>`**. A design system accumulates constants written with `=` out of habit
+that never needed storage, and if many are that shape the batch clears with no conformance work at
+all.
+
+## Where phase 1 ends, tomorrow
+
+| | |
+|---|---|
+| **Part 1 — the exit test** | A random medium, unseen, 25-minute timer, **narrated start to finish.** Never attempted. **A fail here is more useful than skipping it**, because phase 2 assumes the ability and there is still time to react |
+| **Part 2 — the decision** | Does phase 2 start on the 14th, or does phase 1 take another week of pure breadth? Three inputs now exist that did not: the exit test result, this block having run, and [the coverage audit](/open#coverage-every-problem-inside-topic-1) |
+
+**The standing assessment, for the record.** Behind on breadth and on two habits — one topic area of
+eleven, narration never once done, timing done once. **Not behind on depth**: the internals track is
+essentially complete, open items have gone from seven to three, and the concurrency work was
+*measured* rather than read, which is the distinction this whole console exists to hold.
+
+The 12–16 week revision exists so a date slip is not a failure. **The failure mode to avoid is
+starting phase 2 and treating its coding track as optional** — that is what turns a schedule slip
+into a preparation gap.

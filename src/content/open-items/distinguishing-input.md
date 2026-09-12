@@ -5,8 +5,8 @@ status: open
 opened: 2026-08-25
 order: 1
 problems: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
-labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven']
-notes: ['p-hash', 'p-captures']
+labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven', '18-swift-6-strict-concurrency-on-a-real-target']
+notes: ['p-hash', 'p-captures', 'p-conc']
 ---
 
 <p>One technique, seven instances now — not seven separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
@@ -127,3 +127,23 @@ notes: ['p-hash', 'p-captures']
   <li>Second: <b>read the ratios, not the counts.</b> Three sizes, not one, because a single number has nothing to be compared against. The 9 Sep proposal — one run at 100,000 — would have produced exactly that.</li>
 </ul>
 <p>So the shape of this item at the end of three weeks: <b>naming the fake is a habit, building it is now once, running it is still zero.</b> Each of those was the missing step at some point and each moved only after being named separately.</p>
+
+<h4>12 Sep — run, unprompted, and not on code at all</h4>
+<p><span class="resolved">the artifact was executed</span> <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">The build block</a> turned strict concurrency on and the package <b>built clean with no warnings</b>. The reading that invites itself is "the module is already concurrency-safe." The reading that was actually taken: <b>this result has two causes and I cannot tell them apart.</b></p>
+
+<pre>final class Probe { var count = 0 }
+
+func probeTest() {
+    let p = Probe()
+    Task { p.count += 1 }      // expect: capture of non-Sendable type
+}</pre>
+
+<p><b>It produced no warning</b> — so the checking was not reaching the code, and building the SPM package directly produced <b>259 diagnostics</b>. A clean build had been evidence of nothing, and five deliberately broken lines are what showed it.</p>
+
+<ul>
+  <li><b>This is the step this item has been waiting on for three weeks: written, run, and acted on.</b> Not argued in prose. The <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">heap harness</a> from 10 Sep is still unexecuted, so the technique arrived somewhere other than where it was being chased.</li>
+  <li><b>And it was not on a coding problem.</b> Every row in the table above targets an algorithm or a language rule; this targeted a <em>build configuration</em>. Same move as <a href="/internals#12-sendable-what-the-compiler-said">case C on 27 Aug</a> — remove one variable so the result can only have one cause — applied to the toolchain.</li>
+  <li><b>Why that is the more useful instance, not the lesser one.</b> A wrong answer from an algorithm eventually shows up. <b>A checker that is silently not running never does</b> — the failure is indistinguishable from success, exactly like <a href="/open#hashable-what-a-hash-test-proves">a test that cannot fail</a>. The probe is the same shape as asserting on <code>hashValue</code>, caught this time before it was believed.</li>
+</ul>
+
+<p><b>What this does and does not change.</b> The half of this item still open is unchanged in <em>letter</em>: a distinguishing case written before a coding suite is run, unprompted. But the underlying claim — that generating and executing a probe is the missing step — <b>now has a counterexample in its own favour</b>. The behaviour exists; it has not yet appeared where the coding problems are. Worth watching whether tomorrow's checkpoint gets one.</p>
