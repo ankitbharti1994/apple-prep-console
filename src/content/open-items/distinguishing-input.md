@@ -11,6 +11,8 @@ notes: ['p-hash', 'p-captures', 'p-conc']
 
 <p>One technique, seven instances now — not seven separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
 
+<p><span class="resolved">count superseded</span> <b>“Seven” was true when this was written and has not been true for a while.</b> The sentence is left standing rather than edited, because the technique it describes is the point and a running total is not — <b>the table below is the count</b>, and the dated sections under it carry the instances that came after. Re-typing a number here every time one is added is exactly the hand-maintenance this record keeps getting bitten by; see <a href="/open#coverage-every-problem-inside-topic-1">the coverage audit</a>, whose own “ten topics” needed the same treatment on 10 Sep.</p>
+
 <table>
   <tr><th>Date</th><th>The cheapest wrong thing</th><th>The distinguishing input</th></tr>
   <tr>
