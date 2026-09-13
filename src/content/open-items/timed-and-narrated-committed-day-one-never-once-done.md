@@ -1,10 +1,11 @@
 ---
 title: Timed and narrated — committed on day one, never once done
 kind: gap
-status: open
+status: closed
 opened: 2026-09-07
+closed: 2026-09-13
 order: 0
-problems: [20, 21]
+problems: [11, 20, 21, 22]
 counter: disciplines
 ---
 
@@ -68,3 +69,20 @@ counter: disciplines
   <li><b>Tomorrow is not a fair test of the discipline, and should be run anyway.</b> A first attempt under a 25-minute clock on an unseen medium is the hardest possible conditions for something never once practised. <b>A fail is more useful than a skip</b>, because phase 2 assumes the ability and there is still runway to react — where a skip produces no information and rolls the question into phase 2 unchanged.</li>
 </ul>
 <p>Closes on one problem timed and narrated end to end — <b>unchanged for five sessions</b>, which is itself the finding. Whatever tomorrow returns, the result belongs on this item rather than only in the session note.</p>
+
+<h4>13 Sep — closed, on the attempt that counted</h4>
+
+<p><span class="resolved">the exit test passed</span> The entry above ended <em>"whatever tomorrow returns, the result belongs on this item."</em> It returned a pass. <a href="/coding/11">Product of Array Except Self</a>, re-solved cold under exam conditions: <b>20 minutes against a 25-minute limit, optimal, narrated start to finish, and with a suite that demonstrably kills a named fake.</b></p>
+
+<p>This item closes on its own stated condition — <b>one problem timed and narrated end to end</b> — unchanged since 7 Sep and now met. The counter above is computed from the problem files, so it moves on its own and cannot go stale the way the hand-written <em>"0 of 20"</em> in this body once did.</p>
+
+<h4>What the close does and does not claim</h4>
+
+<ul>
+  <li><b>The mechanism theory held.</b> Timing was adopted the moment it got a trigger — <em>start the clock before reading</em> — and narration never had one, which was the diagnosis on 7 Sep and the reason this item kept insisting the two halves were different problems rather than one lapse. Narration got its trigger by being made <b>the thing under test</b> rather than an extra to remember mid-solve.</li>
+  <li><b>Two caveats are on the record rather than argued away.</b> The clock was <b>paused once</b> at 3:31 and resumed, so the twenty minutes is honest working time and not a clean comparison against <a href="/coding/21">3Sum's fourteen</a>. And the pattern was <b>drilled, not unknown</b> — chosen deliberately so a first narration attempt tested one variable instead of two, which was the right call and also means the harder version of this test has not been run.</li>
+  <li><b>Neither caveat touches what was being measured.</b> The question was whether narration blocks the solve. It did not.</li>
+  <li><b>One instance is a close here and would not be elsewhere</b>, and the difference is worth stating. <a href="/open#distinguishing-input">The testing item</a> explicitly refuses to close on one instance, because it is about a <em>habit</em>. This item was about a <em>capability</em> that had never once been demonstrated — and a capability is settled by doing it once. Whether it survives contact with an untouched topic under an unpaused clock is a phase-2 question, and phase 2 makes it a per-problem commitment rather than an intention.</li>
+</ul>
+
+<p>The third discipline on the phase-1 list, <b>naming the fake before the code</b>, is not closed here and never belonged to this item — it has <a href="/open#distinguishing-input">its own history</a>, and 13 Sep is the first day both of <em>its</em> halves ran.</p>
