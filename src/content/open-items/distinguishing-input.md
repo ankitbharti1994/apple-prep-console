@@ -4,12 +4,14 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven', '18-swift-6-strict-concurrency-on-a-real-target']
 notes: ['p-hash', 'p-captures', 'p-conc']
 ---
 
 <p>One technique, seven instances now — not seven separate corrections. The move is always the same: <b>name the cheapest wrong implementation, work out what it gets right, then write the input that targets exactly that</b>. More cases do not help. A distinguishing case does.</p>
+
+<p><span class="resolved">count superseded</span> <b>“Seven” was true when this was written and has not been true for a while.</b> The sentence is left standing rather than edited, because the technique it describes is the point and a running total is not — <b>the table below is the count</b>, and the dated sections under it carry the instances that came after. Re-typing a number here every time one is added is exactly the hand-maintenance this record keeps getting bitten by; see <a href="/open#coverage-every-problem-inside-topic-1">the coverage audit</a>, whose own “ten topics” needed the same treatment on 10 Sep.</p>
 
 <table>
   <tr><th>Date</th><th>The cheapest wrong thing</th><th>The distinguishing input</th></tr>
@@ -147,3 +149,23 @@ func probeTest() {
 </ul>
 
 <p><b>What this does and does not change.</b> The half of this item still open is unchanged in <em>letter</em>: a distinguishing case written before a coding suite is run, unprompted. But the underlying claim — that generating and executing a probe is the missing step — <b>now has a counterexample in its own favour</b>. The behaviour exists; it has not yet appeared where the coding problems are. Worth watching whether tomorrow's checkpoint gets one.</p>
+
+<h4>13 Sep — both halves, on the same problem, for the first time</h4>
+
+<p><span class="resolved">named and killed</span> <a href="/coding/11">The exit test</a>. The fake was named <b>before the code</b> — multiply everything <em>after</em> the current element, the suffix product alone — and then a suite was written that demonstrably kills it. <b>That second half has not happened on a coding problem since this item was opened on 25 Aug.</b></p>
+
+<table>
+  <tr><th>Input</th><th>Expected</th><th>Suffix-only fake</th><th>Fires?</th></tr>
+  <tr><td><code>[1,2,3,4]</code></td><td><code>[24,12,8,6]</code></td><td><code>[24,12,4,1]</code></td><td><b>Yes</b></td></tr>
+  <tr><td><code>[1,0,4,6]</code></td><td><code>[0,24,0,0]</code></td><td><code>[0,24,6,1]</code></td><td><b>Yes</b></td></tr>
+</table>
+
+<ul>
+  <li><b>The fake is a good one for a reason this table shows:</b> at index 0 it is <em>correct by coincidence</em>. A suite that checked only the first element, or only that the output had the right length, would pass it — which is precisely the accident this item exists to catch.</li>
+  <li><b>The second case is targeted, not filler.</b> A zero is the input that breaks any division-based solution outright, so it covers the other cheap wrong implementation at the same time. Two cases, two distinct fakes killed.</li>
+  <li><b>Where this leaves the count.</b> Naming the fake has now held on four of the last five problems. Writing the executable case that kills it has happened <b>once on a coding problem</b>, plus <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">the probe on 12 Sep</a>, which was the same move aimed at a build configuration.</li>
+</ul>
+
+<p><b>Not closing, and the standard is this item's own.</b> On 2 Sep it read <em>"one instance is not a habit"</em> and stayed open for exactly that reason; applying a weaker bar now, on the day the result is good, would make the record flatter to read and worth less. <b>Closes if the next problem does both unprompted</b> — the first of phase 2's linked-list problems, on 14 Sep.</p>
+
+<p>Worth naming the asymmetry with <a href="/open#timed-and-narrated-committed-day-one-never-once-done">the discipline item that did close today</a>: that one asked whether a capability existed, and one demonstration settles it. This one asks whether a habit holds, and one demonstration is the weakest possible evidence for a habit — <b>it is the same evidence that was already on the board on 2 Sep, before five sessions went by without a repeat.</b></p>

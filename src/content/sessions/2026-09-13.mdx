@@ -1,0 +1,121 @@
+---
+date: 2026-09-13
+headline: The exit test passed,<br />and phase 1 closes <em>on the one thing it never did</em>.
+lede: >-
+  The first checkpoint of the prep, three weeks late, and the question it was built to ask was
+  whether a medium could be finished in 25 minutes narrated. Never once attempted until today.
+  It passed on every count — 20 minutes, optimal, narrated start to finish, and with a suite that
+  demonstrably kills a named fake. Two caveats are on the record rather than argued away: the clock
+  was paused once, and the pattern was drilled rather than unknown. Neither touches what was being
+  measured. Phase 2 starts tomorrow, and the decision is recorded rather than rolled forward
+  quietly.
+blocks:
+  - track: coding
+    title: Part 1 — the exit test, on a drilled pattern by choice
+    href: /coding/11
+    bullets:
+      - '<b>Passed on every count.</b> <a href="/coding/11">Product of Array Except Self</a> in <b>20 minutes</b> against a 25-minute limit — O(n) time, O(1) extra space, narrated throughout, and tested against a fake that was named before the code'
+      - '<b>A drilled pattern was chosen over an untouched topic</b>, on the reasoning that a first attempt at narrating under a clock should test <em>one</em> unknown rather than two. That is the right call, and it is also why the harder version of this test has not been run'
+      - '<b>The follow-up was answered without being asked:</b> the output array doubles as the prefix accumulator, so no second buffer exists. <b>That instinct is worth more than the solution</b>'
+      - 'The ordering is where this problem usually fails, and both passes got it right cold — assigning <code>result[index] = prefixValue</code> <em>before</em> folding in <code>nums[index]</code> is what makes each slot hold the product of everything strictly to its left'
+      - '<b>The fake is a good one because it is right by coincidence at index 0.</b> Suffix-only gives <code>[24,12,4,1]</code> against <code>[24,12,8,6]</code> — a suite checking the first element, or just the length, would pass it. The second case is targeted rather than filler: a zero breaks any division-based solution outright'
+      - '<b>Two caveats, recorded so the result stays useful.</b> The clock was <b>paused once</b> at 3:31 and resumed, so 20 minutes is honest working time and not a clean comparison against <a href="/coding/21">3Sum''s fourteen</a>. And the pattern was drilled. Neither invalidates it — narration was the thing under test, and it did not block the solve'
+      - 'Minor and worth keeping, because naming is assessed: the cold re-solve called the answer array <code>numbers</code>, where <a href="/coding/11">the 26 Aug version</a> called it <code>result</code>. A small piece of ground given back under the clock'
+  - track: behavioural
+    title: Part 2 — the decision, recorded rather than defaulted
+    href: /plan
+    bullets:
+      - '<b>Phase 2 starts Monday 14 September.</b> Decided on the inputs, not on the calendar — which is what the 12–16 week revision exists to make possible'
+      - '<b>The reasoning is that extending phase 1 would be doing phase 2 under a different name.</b> Phase 1''s internals track is done; the one remaining gap is coding breadth, and <a href="/plan">the rewritten phase 2</a> <em>is</em> a breadth track'
+      - 'Where phase 1 ended up behind: <b>every problem solved sits inside one topic area</b>, and of the build blocks it scheduled, <a href="/open#saturday-is-overcommitted">only the last one ran</a>. Where it did not: depth, understanding, and an open-items board that <a href="/open">has closed more than it carries</a>'
+      - '<b>What starting commits to:</b> weekdays 90 min split <b>40 coding / 50 internals</b> — coding first-class, not maintenance. Week 4 is linked lists ×3 and stacks ×2; Saturdays carry DP in the first hour'
+      - '<b>Every problem: timer before reading, narrated, fake named first.</b> As of today all three are demonstrated rather than aspirational — which is the whole reason the checkpoint was worth running before committing to them'
+      - '<b>The failure mode to watch is treating the coding track as optional.</b> Phase 1''s coding was first-class on paper too and produced one topic area, because internals kept winning the block. <b>A date slip is absorbed by the 12–16 week runway; a breadth slip is absorbed by nothing</b>'
+problems: [11]
+openItems:
+  - timed-and-narrated-committed-day-one-never-once-done
+  - distinguishing-input
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: The one thing phase 1 never did, done on the last day it could count.
+carriesForward:
+  - from: '"Tomorrow is not a fair test of the discipline, and should be run anyway. A fail is more useful than a skip" — <a href="/open#timed-and-narrated-committed-day-one-never-once-done">written on 12 Sep</a>, the day before'
+    to: '<b>It was not a fail.</b> The hedge was honest and turned out not to be needed — but the reason to run it stands unchanged, because the value was in having a measured answer before committing phase 2 to three per-problem disciplines. <b>An unrun exit test would have left all three aspirational</b>'
+  - from: '"Narration has still never been given a mechanism. <em>Speak while typing</em> is a description of the goal, not a trigger" — the diagnosis carried since 7 Sep'
+    to: '<b>It got one, and it was structural rather than verbal.</b> Narration stopped being an extra to remember mid-solve and became <em>the thing under test</em>. Same shape as the fix that worked for timing — <em>start the clock before reading</em> — which is a step you cannot reach and skip'
+  - from: '"The half that remains is the half it is named for — the distinguishing <em>input</em>, written down and executed" — <a href="/open#distinguishing-input">the testing item</a>, open since 25 Aug'
+    to: '<b>Both halves ran on one problem for the first time.</b> And it stays open, on that item''s own 2 Sep standard that one instance is not a habit. <b>Applying a weaker bar on the day the result is good would make the record flatter and worth less</b>'
+  - from: 'The heap re-solve on 10 Sep and <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">the build block on 12 Sep</a> — both untimed, unnarrated, and the second with no coding problem at all'
+    to: '<b>Neither was a refusal; neither session was shaped to allow it.</b> The exit test was the first session built around the discipline rather than expected to fit it in, and that is the difference the phase-2 commitment has to carry every weekday'
+note: >-
+  Sunday checkpoint, and structural rather than additive: phase 1 closes here. Question 11 is
+  updated in place rather than added again — the re-solve is the same problem under exam conditions,
+  and its 26 Aug trace and complexity are unchanged. The timed and narrated counters are computed
+  from the problem files, so they move on their own. The phase rail needed no edit either: the
+  current phase is derived from the date, phase 1 is weeks 1–3 ending today, and tomorrow flips to
+  phase 2 on its own. One number in the report is not reproduced here — see the note on Saturday's
+  category count in the body.
+---
+
+## What the exit test actually measured
+
+The criterion was written into the plan three weeks ago and never attempted: **can you finish a
+random medium in 25 minutes, narrated?** Narration had stood at zero for every problem on the
+board, and [the item carrying it](/open#timed-and-narrated-committed-day-one-never-once-done) had
+spent five sessions recording that the gap was a missing *mechanism* rather than a missing
+intention.
+
+| Criterion | Result |
+|---|---|
+| Under 25 minutes | **20 min** |
+| Optimal solution | **Yes** — O(n) time, O(1) extra space |
+| Narrated throughout | **Yes** |
+| Tests that can fail | **Yes**, verified against the named fake |
+
+The mechanism that worked is the same shape as the one that fixed timing, and worth stating because
+it generalises: **narration stopped being a step to remember mid-solve and became the thing under
+test.** *Start the clock before reading* worked for the same reason — it is a step you cannot reach
+and skip. "Speak while typing" never worked because it is a description of the goal.
+
+## Why one instance closes one item and not the other
+
+Two items were candidates for closing today and only one did, which is the distinction worth
+keeping.
+
+| | What it asks | What one instance proves |
+|---|---|---|
+| [Timed and narrated](/open#timed-and-narrated-committed-day-one-never-once-done) | Does the **capability** exist? | **Settles it.** It had never once been demonstrated; now it has |
+| [The distinguishing input](/open#distinguishing-input) | Does the **habit** hold? | **Almost nothing.** This is the same evidence that was on the board on 2 Sep, before five sessions passed without a repeat |
+
+The second item said *"one instance is not a habit"* on 2 Sep and stayed open on exactly that
+reasoning. Closing it today, on a good day, would be applying a weaker standard because the result
+was pleasant — and the whole value of this board is that it does not do that.
+
+## The decision, and the thing it is exposed to
+
+Phase 2 starts tomorrow. The argument is short: **phase 1's internals track is finished, the one
+remaining gap is coding breadth, and the rewritten phase 2 is a breadth track** — so extending
+phase 1 would mean running phase 2 under a different name for a week.
+
+What that commits to is a weekday split of **40 coding / 50 internals**, with coding as a
+first-class track rather than maintenance, and three per-problem disciplines that are — as of
+today — all three demonstrated rather than aspirational.
+
+**The failure mode is not the schedule.** Phase 1's coding track was first-class on paper too, and
+produced [a board that sits entirely inside one topic area](/open#coverage-every-problem-inside-topic-1) because
+internals kept winning the block. Phase 3 assumes this breadth exists: its LRU problem needs linked
+lists, which start tomorrow and have never been touched.
+
+> **A date slip is absorbed by the 12–16 week runway. A breadth slip is absorbed by nothing.**
+
+## One number not carried over
+
+The checkpoint's inputs table records Saturday's build block as *"six categories from 259
+diagnostics."* [Section 18](/internals#18-swift-6-strict-concurrency-on-a-real-target) says **five**,
+which is what the day-13 addendum enumerated and named — global mutable state, genuinely
+non-Sendable types, framework isolation, main-actor initialisers, and storage that was never needed.
+
+No sixth category is named anywhere, so five stands until one is. The likely source of the six is
+the lab's inspector, which has **six tabs** because `@unchecked Sendable` is included as the
+*tempting wrong fix* for category 2 rather than as a category of its own. Recorded here rather than
+silently reconciled, because a count that drifts without an enumeration behind it is exactly the
+kind of number this site was rebuilt to stop hand-maintaining.
