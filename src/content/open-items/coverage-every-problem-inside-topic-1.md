@@ -4,7 +4,7 @@ kind: gap
 status: open
 opened: 2026-09-08
 order: 1
-problems: [13, 21, 22]
+problems: [13, 21, 22, 23]
 ---
 
 <p>An audit of what has actually been solved, run on 8 Sep. <b>Every problem on the board sits inside topic 1</b> — arrays, strings, two pointers, sliding window, hashing. The plan assumed phase 1 would ramp <em>"easy→medium across core patterns"</em>; it produced depth in one area instead, and nothing noticed because depth and breadth both look like problems getting solved.</p>
@@ -15,6 +15,7 @@ problems: [13, 21, 22]
   <tr><td>Two pointers, opposite ends</td><td>4, 5, 6, 12, 19</td></tr>
   <tr><td>Hashing / frequency</td><td>13, 14, 15, 16</td></tr>
   <tr><td>Heap — size-k selection</td><td>22</td></tr>
+  <tr><td><b>Linked list — pointer relinking</b></td><td><b>23</b></td></tr>
   <tr><td>Sliding window</td><td>9, 10, 18, 20</td></tr>
   <tr><td>Sort + anchored two pointers</td><td>21</td></tr>
 </table>
@@ -47,3 +48,15 @@ problems: [13, 21, 22]
 </ul>
 
 <p>Closes when the phase 2 breadth curriculum has actually run — not when it is written down, which it now is.</p>
+
+<h4>15 Sep — the audit stops being a list and starts being a track</h4>
+
+<p><span class="resolved">linked lists started</span> <a href="/coding/23">Reverse a Linked List</a> is <b>the first problem outside topic 1 in the entire record</b>, and it is specifically the topic this audit was written about. The dependency named on 8 Sep — <em>phase 3's LRU cache is a hash map plus a doubly linked list, and linked lists had never been covered</em> — is no longer true of the second clause.</p>
+
+<ul>
+  <li><b>Two topics have now come off</b> — heaps on 10 Sep, linked lists today — and the count is deliberately not restated here, because <a href="/open#distinguishing-input">re-typing a running total</a> is what put the original sentence out of date in the first place. <b>The shapes table above is the count.</b></li>
+  <li><b>What actually changed is that this is measurable now.</b> For five weeks this item recorded a static gap; from today it records a rate. That is a different kind of object, and it is the one worth watching — <a href="/plan">phase 2's curriculum</a> assumes roughly five problems a week.</li>
+  <li><b>Week 4 opened one behind on a five-problem plan.</b> Worth watching rather than correcting: five a week is roughly double the rate of the first three weeks, so a shortfall was predictable. <b>If week 4 lands three or four, that is the real rate</b> — and the curriculum needs resizing rather than the sessions being squeezed.</li>
+</ul>
+
+<p>The failure mode named at <a href="/sessions/2026-09-13">the checkpoint</a> has not fired yet and is still the one to watch: <b>treating the coding track as optional.</b> On the first two days of phase 2 it was the <em>only</em> track that ran on Monday, and it ran ahead of internals on Tuesday — which is the opposite of the phase-1 pattern and worth one line of credit.</p>

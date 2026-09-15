@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22]
+problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven', '18-swift-6-strict-concurrency-on-a-real-target']
 notes: ['p-hash', 'p-captures', 'p-conc']
 ---
@@ -169,3 +169,27 @@ func probeTest() {
 <p><b>Not closing, and the standard is this item's own.</b> On 2 Sep it read <em>"one instance is not a habit"</em> and stayed open for exactly that reason; applying a weaker bar now, on the day the result is good, would make the record flatter to read and worth less. <b>Closes if the next problem does both unprompted</b> — the first of phase 2's linked-list problems, on 14 Sep.</p>
 
 <p>Worth naming the asymmetry with <a href="/open#timed-and-narrated-committed-day-one-never-once-done">the discipline item that did close today</a>: that one asked whether a capability existed, and one demonstration settles it. This one asks whether a habit holds, and one demonstration is the weakest possible evidence for a habit — <b>it is the same evidence that was already on the board on 2 Sep, before five sessions went by without a repeat.</b></p>
+
+<h4>15 Sep — named again, untested again, and the fakes are converging on one shape</h4>
+
+<p><span class="kindtag" style="margin-left:0">fifth of the last six, still no suite</span> <a href="/coding/23">Reverse a Linked List</a>. The fake was named before the code for the fifth time in six problems: <b>walk the list collecting values into an array, then build a new list from them.</b> <b>No tests were written for it.</b></p>
+
+<p>So the split this item has carried since 8 Sep is unchanged — naming is a habit, executing is not — and <a href="/sessions/2026-09-13">the checkpoint</a> was the one instance of both, two sessions ago. <b>One instance followed immediately by a miss is the exact pattern that played out after 2 Sep</b>, and it is why this item refused to close on the checkpoint.</p>
+
+<h4>The shape worth tracking, which is new</h4>
+
+<p>This fake is an <em>honest</em> one: <b>it produces correct output.</b> Array-collect-and-rebuild returns exactly the right list. What it gets wrong is the constraint — <code>O(n)</code> extra space and <em>n</em> fresh nodes, against relinking the existing ones at <code>O(1)</code>.</p>
+
+<table>
+  <tr><th>Date</th><th>The fake</th><th>Differs in</th></tr>
+  <tr><td>9 Sep</td><td><a href="/internals#17-heaps">Append and linear-scan behind a heap's API</a></td><td><b>Cost only</b></td></tr>
+  <tr><td>15 Sep</td><td>Collect into an array, rebuild the list</td><td><b>Cost only</b></td></tr>
+</table>
+
+<ul>
+  <li><b>Second instance of correct-output-wrong-cost in a week</b>, and the generalisation is worth stating: <b>the plausible wrong answer is usually right and expensive, not wrong.</b> That is the opposite of every fake in the table at the top of this item, where the work was finding the input that produces a different answer.</li>
+  <li>Which means <b>the technique keeps landing in the case it least covers.</b> <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">The extension named on 9 Sep</a> — stop testing behaviour, count work — applies exactly here and was not reached for. A node-allocation counter would settle this one in about the same two minutes the heap harness needs.</li>
+  <li><b>And that harness is still unrun</b>, six days on. Two problems in a row have now produced a fake that <em>only</em> a work-count can kill, and the work-count has never once been executed.</li>
+</ul>
+
+<p>Unchanged close condition: <b>the next problem does both, unprompted.</b> Merge Two Sorted Lists, whenever it runs.</p>
