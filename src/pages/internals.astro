@@ -17,14 +17,19 @@ const numberOf = new Map(all.map((l, i) => [l.id, i + 1]));
  * that false — the same hand-maintained-number failure the rewrite exists
  * to stop.
  */
-const labWeeks = days.map((d) => weekOf(d.day));
-const weekSpan = labWeeks.length
-  ? (() => {
-      const lo = Math.min(...labWeeks);
-      const hi = Math.max(...labWeeks);
-      return lo === hi ? `W${lo}` : `W${lo}–${hi}`;
-    })()
-  : '';
+const weekSpan = (() => {
+  const weeks = [...new Set(days.map((d) => weekOf(d.day)))].sort((a, b) => a - b);
+  if (!weeks.length) return '';
+  // Collapse consecutive runs, so a week with no labs shows as a gap rather
+  // than being swallowed by a min-max range: "W1-4, 6", never a silent "W1-6".
+  const runs: Array<[number, number]> = [];
+  for (const w of weeks) {
+    const last = runs[runs.length - 1];
+    if (last && w === last[1] + 1) last[1] = w;
+    else runs.push([w, w]);
+  }
+  return 'W' + runs.map(([a, b]) => (a === b ? `${a}` : `${a}–${b}`)).join(', ');
+})();
 
 const DAY_TITLE: Record<string, string> = {
   '2026-08-24': 'Value semantics & ARC',
@@ -95,15 +100,25 @@ const DAY_TITLE: Record<string, string> = {
       });
     });
 
-    // Open the block that owns whatever the hash points at.
-    const hash = decodeURIComponent(location.hash.slice(1));
-    if (hash) {
+    /**
+     * Open the block that owns whatever the hash points at.
+     *
+     * Runs on load AND on hashchange: a lab linking to another day's section
+     * is a same-page link, so it only changes the fragment. Without the
+     * hashchange half the target stays inside a display:none block and the
+     * click appears to do nothing at all.
+     */
+    function openHashTarget(scroll) {
+      const hash = decodeURIComponent(location.hash.slice(1));
+      if (!hash) return;
       const direct = hash.startsWith('day-') ? hash.slice(4) : null;
       const owner = direct ?? blocks.find((b) => b.querySelector(`#${CSS.escape(hash)}`))?.dataset.day;
-      if (owner) {
-        show(owner, false);
-        document.getElementById(hash)?.scrollIntoView({ block: 'start' });
-      }
+      if (!owner) return;
+      show(owner, false);
+      document.getElementById(hash)?.scrollIntoView({ block: 'start', behavior: scroll ? 'smooth' : 'auto' });
     }
+
+    openHashTarget(false);
+    window.addEventListener('hashchange', () => openHashTarget(true));
   }
 </script>
