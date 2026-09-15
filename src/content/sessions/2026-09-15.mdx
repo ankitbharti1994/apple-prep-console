@@ -1,0 +1,149 @@
+---
+date: 2026-09-15
+headline: The first problem outside topic 1,<br />written cold <em>a day after being stuck</em>.
+lede: >-
+  Phase 2's breadth track opens, and it opens badly and then well. Monday ran coding only, was cut
+  short, and ended with eighteen minutes stuck on a linked list and the structure supplied. Tonight
+  the same problem came out of an empty file, correct, four lines in the right order — which is a
+  better test of trace-then-rewrite than anything it has been used on before, because this topic had
+  never been touched at all. Then a new internals track: five UIKit questions cold, two right, two
+  mixed, one held exactly backwards. Merge Two Sorted Lists did not run, and that was a decision
+  rather than a slip.
+blocks:
+  - track: coding
+    title: Question 23 — the first problem outside topic 1
+    href: /coding/23
+    bullets:
+      - '<b>Eighteen minutes stuck on Monday, and the structure had to be supplied.</b> Recorded as a data point rather than a failure — it is a first encounter with pointer manipulation, and <b>the array intuitions do not transfer</b>'
+      - '<b>The blocker is the whole problem:</b> standing on node 2, writing <code>node2.next = node1</code> <b>destroys the only reference to node 3</b>. The list is cut. So the saved <code>next</code> is not an optimisation — <b>it is what makes the operation possible</b>, which is why it is the first line of the loop'
+      - '<b>Tuesday: written cold from an empty file</b>, a day later. All four lines in order and <code>return prev</code> — the part people get wrong under pressure, because the loop exits when <code>current</code> is nil and <b>prev lags one step behind on the last real node</b>'
+      - '<b>The four beats, as a phrase: save, flip, prev forward, current forward.</b>'
+      - '<b>Why this is a stronger result than <a href="/open#the-424-stale-maxfreq-safety-argument">424</a>.</b> 424 had been solved before it was re-derived. This had never been touched — stuck, supplied, then produced cold after a day''s gap. <b>Trace-then-rewrite working on genuinely new material is a better test of the method</b> than it working on something already solved'
+      - '<b>The fake, named first — and it is an honest one.</b> Collect the values into an array and rebuild: it produces <b>correct output</b>, so no correctness test catches it. It is wrong about the <em>constraint</em> — <code>O(n)</code> space and <em>n</em> new nodes against relinking in place at <code>O(1)</code>'
+      - '<b>Second correct-output-wrong-cost fake in a week</b>, after <a href="/internals#17-heaps">the heap</a>. Worth generalising: <b>the plausible wrong answer is usually right and expensive, not wrong</b> — and <a href="/open#distinguishing-input">no tests were written for this one either</a>'
+      - '<b>Not attempted: the recursive version</b>, <a href="/open#recursive-reverselist-not-attempted">parked for later in the week</a>. No timer Monday, and Tuesday was a recall check rather than a timed solve, so <b>neither discipline counter moves</b>'
+  - track: internals
+    title: Section 19 — UIKit rendering pipeline, and a new track entirely
+    href: /internals#19-uikit-rendering-pipeline-and-the-run-loop
+    bullets:
+      - '<b>Five questions cold: two right, two mixed, one held backwards.</b> Concurrency is closed; this is the platform layer, and the recall is being recorded as answered rather than as the tidied-up version'
+      - '<b>Setting <code>backgroundColor</code> never draws immediately.</b> It marks the layer dirty and returns; the redraw happens in the run loop''s <b>commit phase</b>, once per frame. Set it ten times in one handler and only the last is drawn — which sharpens the main-thread rule from "be responsive" to <b>"the commit phase is in the same loop iteration as your code"</b>'
+      - '<b><code>setNeedsLayout</code> and <code>layoutIfNeeded</code> came out exactly backwards.</b> <code>setNeeds…</code> = ask nicely, later; <code>…IfNeeded</code> = do it now. Restated correctly when asked, with a refinement supplied unprompted — <code>layoutIfNeeded</code> does nothing on a clean view, so <b>the name is literal</b>. <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">Flagged for re-asking</a>'
+      - '<b>Wrong category on the per-frame phases:</b> <code>viewDidLoad</code> and <code>viewWillAppear</code> are <em>lifecycle</em>, firing once. The pipeline runs 60–120 times a second — <b>update constraints → layout → display → prepare → commit</b> — and commit hands the layer tree to the <b>render server, a separate process</b>. <b>Your app never draws pixels</b>'
+      - '<b>Core Animation was the one answered correctly and unprompted</b>, and it reframes the rest: <code>UIView.animate</code> sets presentation values and the render server interpolates. The view jumps to its final value immediately, so mid-animation <code>view.frame</code> already reports the destination and <code>layer.presentation()?.frame</code> is what is on screen'
+      - '<b>Nothing is "skipped" when frames drop.</b> At 60Hz the budget is <b>16.67ms</b>; miss the commit deadline and the render server <b>re-shows the previous frame</b>. The same frame twice, motion stalled 33ms — and at 120Hz the budget is <b>8.33ms</b>, so <b>a 12ms method that is merely slow on an older device blows the whole frame on a newer one</b>'
+problems: [23]
+labs: [19-uikit-rendering-pipeline-and-the-run-loop]
+openItems:
+  - setneedslayout-and-layoutifneeded-came-out-backwards
+  - recursive-reverselist-not-attempted
+  - distinguishing-input
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: Phase 2 opens on the dependency it was rewritten to fix, and the first two days already test the thing the checkpoint warned about.
+carriesForward:
+  - from: '"Phase 3 assumes this breadth exists — its LRU problem needs linked lists that still have not been touched" — <a href="/sessions/2026-09-13">the checkpoint</a>, two days ago'
+    to: '<b>Touched, and it is the first problem outside topic 1 in the record.</b> <a href="/open#coverage-every-problem-inside-topic-1">The coverage audit</a> changes character here: for five weeks it recorded a static gap, and from today it records a <em>rate</em>'
+  - from: '"The failure mode to watch is treating the coding track as optional. Phase 1''s coding was first-class on paper too" — the checkpoint''s one stated risk'
+    to: '<b>Not yet, and worth one line of credit.</b> Monday ran coding <em>only</em>, and Tuesday ran coding before internals — the opposite of the phase-1 pattern, where internals kept winning the block. <b>Two days is not a trend</b>, but the risk named was that it would slip immediately, and it did not'
+  - from: '"When the fake differs only in cost, stop testing behaviour and count work" — <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">the extension named on 9 Sep</a>, still unrun'
+    to: '<b>The second fake in a week that only a work-count can kill.</b> Array-collect-and-rebuild returns the right list; it is wrong about space. The technique keeps landing in exactly the case it least covers — <b>and a node-allocation counter would settle it in the two minutes the heap harness has been owed for six days</b>'
+  - from: 'Two pointers inverted on 8 Sep, then <a href="/open#top-k-min-heap-or-max-heap">max-heap for the k most frequent</a> on 10 Sep — <b>structure right, rule inverted</b>'
+    to: '<b>Third instance in eight days</b>, and the trigger is now visible in all three: <b>the English pulls the wrong way.</b> "Most frequent" suggests max; "set needs layout" sounds like an instruction to do it. <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">Re-ask scheduled</a>, because a reversal feels like knowledge where a gap announces itself'
+note: >-
+  Monday ran coding only and was cut short, and Monday evening was missed — no session is logged for
+  14 Sep, and its problem is written up here because the cold rewrite is what completed. Tonight ran
+  about sixty minutes. Merge Two Sorted Lists did not run and moves to Wednesday, which leaves week 4
+  one behind on a five-problem plan. That was the maintainer's decision rather than a slip, and it is
+  the right one — the two-problem test was retired on 1 Sep precisely because throughput was never
+  the bottleneck. Problem numbering note: the report calls this question 21, which is the old
+  console's numbering; here 21 and 22 are already taken by 3Sum and the heap re-solve, so it is 23.
+---
+
+## The result worth keeping, and it is not the code
+
+The solution is eight lines and standard. What makes Monday-into-Tuesday worth recording is the
+sequence:
+
+| | |
+|---|---|
+| **Mon 14 Sep** | Eighteen minutes stuck. Structure supplied. No timer, nothing narrated |
+| **Tue 15 Sep** | **Written cold from an empty file.** Four lines, right order, `return prev` |
+
+**This is a better test of trace-then-rewrite than anything it has been used on before.**
+[The 424 argument](/open#the-424-stale-maxfreq-safety-argument) — the method's previous showcase —
+was re-derived on material that had already been solved once. This topic had *never been touched*.
+Stuck, supplied, then produced cold after a day's gap is a genuinely different claim, and it is the
+first evidence that the method works on new ground rather than on recovery.
+
+## Why the saved pointer is the problem, not a detail
+
+The orienting difficulty, and the reason array intuition fails here:
+
+```swift
+// standing on node 2
+node2.next = node1    // the arrow flips...
+                      // ...and the only reference to node 3 is gone
+```
+
+**The list is cut.** So `let next = current?.next` is not a tidy-up or a micro-optimisation — it is
+what makes the operation possible at all. Saying that out loud is the difference between
+remembering four lines and being able to re-derive them, which is exactly what Tuesday tested.
+
+## The fake was honest, and that is the second time in a week
+
+Named before the code, as it has been for five of the last six problems: *collect the values into an
+array, then build a new list.*
+
+**It returns the correct list.** Every correctness test passes. What it gets wrong is the
+constraint — `O(n)` extra space and *n* fresh nodes, against relinking the existing ones at `O(1)`.
+
+| Date | The fake | Differs in |
+|---|---|---|
+| 9 Sep | [Append and linear-scan behind a heap's API](/internals#17-heaps) | **Cost only** |
+| 15 Sep | Collect into an array, rebuild the list | **Cost only** |
+
+> **The plausible wrong answer is usually right and expensive, not wrong.**
+
+That inverts every earlier entry on [the testing item](/open#distinguishing-input), where the work
+was finding an input that produces a *different answer*. And it means the technique keeps landing in
+the one case it least covers — [the extension named on 9 Sep](/open#heap-tests-that-a-linear-scan-would-also-pass),
+*stop testing behaviour and count work*, has now been the right move on two consecutive problems and
+has still never been run.
+
+## The reversed pair, and the pattern it completes
+
+`setNeedsLayout` and `layoutIfNeeded` came out backwards — the flag described as forcing, the force
+as deferring. It was corrected in-session, which is why it is a correction rather than a gap, and
+why it cannot close on that correction.
+
+**A gap announces itself. A reversal feels like knowledge**: fluent, confident, and it produces code
+that looks right and fails in exactly one way — the constraint animation that snaps instead of
+animating, because layout ran at the end of the run loop rather than inside the block.
+
+Third instance of one shape in eight days:
+
+| Date | Held backwards |
+|---|---|
+| 8 Sep | [Two-pointer directions](/open#two-pointer-directions-inverted) — sum too large moved *left* rightward |
+| 10 Sep | [Max-heap for the k *most* frequent](/open#top-k-min-heap-or-max-heap) |
+| 15 Sep | `setNeeds…` against `…IfNeeded` |
+
+The trigger is the same in all three and is now worth naming: **the English pulls the wrong way.**
+"Most frequent" suggests a max-heap. "Set needs layout" sounds like an instruction to do it. In each
+case the structure was retrieved correctly and the direction was filled in by the reading the words
+suggested — which is the signature of pattern-matching rather than deriving.
+
+## Week 4, one behind, and why that is being watched rather than fixed
+
+Merge Two Sorted Lists did not run. It moves to Wednesday, which leaves the week one short on a
+five-problem plan.
+
+**Five a week is roughly double the rate of the first three weeks**, so a shortfall was predictable
+rather than surprising. The decision to drop it rather than compress two days into one evening is
+the right one, and it is the same reasoning that retired
+[the two-problem test](/open#two-problems-at-ninety-minutes) on 1 Sep: throughput was never the
+bottleneck.
+
+**If week 4 lands three or four, that is the real rate** — and the honest response is to resize
+[phase 2's curriculum](/plan) rather than squeeze the sessions, because squeezing is what produced
+the one-topic board in the first place.

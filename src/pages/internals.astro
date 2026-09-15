@@ -3,13 +3,28 @@ import Shell from '~/layouts/Shell.astro';
 import NoteStore from '~/components/NoteStore.astro';
 import LabSection from '~/components/LabSection.astro';
 import { labsByDay, allLabs, sessionDates } from '~/lib/content';
-import { formatShort, sessionOrdinal } from '~/lib/progress';
+import { formatShort, sessionOrdinal, weekOf } from '~/lib/progress';
 
 const days = await labsByDay();
 const dates = await sessionDates();
 const all = await allLabs();
 // Section numbers run continuously across days, exactly as the original did.
 const numberOf = new Map(all.map((l, i) => [l.id, i + 1]));
+
+/**
+ * The week range this track spans, derived rather than typed. It read
+ * "W1-3" until 15 Sep, when phase 2 added a week-4 internals day and made
+ * that false — the same hand-maintained-number failure the rewrite exists
+ * to stop.
+ */
+const labWeeks = days.map((d) => weekOf(d.day));
+const weekSpan = labWeeks.length
+  ? (() => {
+      const lo = Math.min(...labWeeks);
+      const hi = Math.max(...labWeeks);
+      return lo === hi ? `W${lo}` : `W${lo}–${hi}`;
+    })()
+  : '';
 
 const DAY_TITLE: Record<string, string> = {
   '2026-08-24': 'Value semantics & ARC',
@@ -20,10 +35,11 @@ const DAY_TITLE: Record<string, string> = {
   '2026-09-02': 'AsyncSequence & dedup',
   '2026-09-09': 'Heaps',
   '2026-09-12': 'Swift 6 migration',
+  '2026-09-15': 'UIKit rendering',
 };
 ---
 <Shell title="Internals" track="internals" description="Swift internals labs — working models to poke at.">
-  <p class="eyebrow">Track 03 · W1–3 internals</p>
+  <p class="eyebrow">Track 03 · {weekSpan} internals</p>
   <h1>Where things live,<br />and <em>who owns them</em>.</h1>
   <p class="lede">
     Value semantics, copy-on-write, and ARC — the three ideas Swift concurrency is built on.
