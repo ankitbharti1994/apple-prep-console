@@ -108,14 +108,14 @@ const DAY_TITLE: Record<string, string> = {
      * hashchange half the target stays inside a display:none block and the
      * click appears to do nothing at all.
      */
-    function openHashTarget(scroll) {
+    function openHashTarget(smooth: boolean) {
       const hash = decodeURIComponent(location.hash.slice(1));
       if (!hash) return;
       const direct = hash.startsWith('day-') ? hash.slice(4) : null;
       const owner = direct ?? blocks.find((b) => b.querySelector(`#${CSS.escape(hash)}`))?.dataset.day;
       if (!owner) return;
       show(owner, false);
-      document.getElementById(hash)?.scrollIntoView({ block: 'start', behavior: scroll ? 'smooth' : 'auto' });
+      document.getElementById(hash)?.scrollIntoView({ block: 'start', behavior: smooth ? 'smooth' : 'auto' });
     }
 
     openHashTarget(false);
