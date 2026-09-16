@@ -4,7 +4,7 @@ kind: gap
 status: open
 opened: 2026-09-08
 order: 1
-problems: [13, 21, 22, 23]
+problems: [13, 21, 22, 23, 24]
 ---
 
 <p>An audit of what has actually been solved, run on 8 Sep. <b>Every problem on the board sits inside topic 1</b> — arrays, strings, two pointers, sliding window, hashing. The plan assumed phase 1 would ramp <em>"easy→medium across core patterns"</em>; it produced depth in one area instead, and nothing noticed because depth and breadth both look like problems getting solved.</p>
@@ -15,7 +15,7 @@ problems: [13, 21, 22, 23]
   <tr><td>Two pointers, opposite ends</td><td>4, 5, 6, 12, 19</td></tr>
   <tr><td>Hashing / frequency</td><td>13, 14, 15, 16</td></tr>
   <tr><td>Heap — size-k selection</td><td>22</td></tr>
-  <tr><td><b>Linked list — pointer relinking</b></td><td><b>23</b></td></tr>
+  <tr><td><b>Linked list — pointer relinking</b></td><td><b>23, 24</b></td></tr>
   <tr><td>Sliding window</td><td>9, 10, 18, 20</td></tr>
   <tr><td>Sort + anchored two pointers</td><td>21</td></tr>
 </table>
@@ -60,3 +60,13 @@ problems: [13, 21, 22, 23]
 </ul>
 
 <p>The failure mode named at <a href="/sessions/2026-09-13">the checkpoint</a> has not fired yet and is still the one to watch: <b>treating the coding track as optional.</b> On the first two days of phase 2 it was the <em>only</em> track that ran on Monday, and it ran ahead of internals on Tuesday — which is the opposite of the phase-1 pattern and worth one line of credit.</p>
+
+<h4>16 Sep — three of five, and the failure mode fired</h4>
+
+<p><span class="resolved">superseded</span> The paragraph above read <em>"the failure mode named at the checkpoint has not fired yet"</em>, written on 15 Sep. <b>It fired the next morning.</b> The session opened with <em>"first internal"</em>, and <a href="/coding/24">Merge Two Sorted Lists</a> — already slipped from Tuesday — would very likely have slipped again inside a 60-minute block. It was <b>pushed back on, the order was switched, and the problem got done</b>; the sentence above is left standing rather than rewritten, because the prediction it records was correct and the date it was wrong on is the point. <a href="/open#internals-first-on-day-three-of-phase-2">Its own item carries the rest.</a></p>
+
+<ul>
+  <li><b>Three problems in week 4, against a plan of five</b>, and the third is a second linked-list problem — so the shapes table above gains a row-mate rather than a row. <b>The rate is what this item now measures</b>, and three by Wednesday is on track for four.</li>
+  <li><b>Still one behind, holding steady rather than slipping further.</b> That distinction is the whole reason to watch rather than correct: a week that stabilises one short is evidence about the rate, and a week that slips further each day is evidence about the plan.</li>
+  <li><b>The 15 Sep line stands unchanged: if week 4 lands three or four, that is the real rate</b> — and <a href="/plan">phase 2's curriculum</a> should be resized rather than the sessions squeezed. <b>Sunday's checkpoint decides it</b>, on four days of data rather than on one bad morning.</li>
+</ul>

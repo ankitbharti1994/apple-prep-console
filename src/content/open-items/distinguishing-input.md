@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven', '18-swift-6-strict-concurrency-on-a-real-target']
 notes: ['p-hash', 'p-captures', 'p-conc']
 ---
@@ -193,3 +193,17 @@ func probeTest() {
 </ul>
 
 <p>Unchanged close condition: <b>the next problem does both, unprompted.</b> Merge Two Sorted Lists, whenever it runs.</p>
+
+<h4>16 Sep — it ran, and it went the same way</h4>
+
+<p><span class="kindtag" style="margin-left:0">sixth of the last seven, still no suite</span> <a href="/coding/24">Merge Two Sorted Lists</a>, the problem the line above was waiting on. <b>The fake was named before the code for the sixth time in seven problems</b> — <em>plain concatenation: attach the last node of list 1 to the head of list 2 and ignore the sort.</em> <b>No tests were written.</b> So the close condition set on 13 Sep was met on one half and missed on the other, for the third problem running.</p>
+
+<p><b>The naming is now unambiguously good, and this one is the best of the seven.</b> The trap was identified without prompting: concatenation is <b>correct whenever every value in list 1 is ≤ every value in list 2</b>, so <code>[1,2]</code> and <code>[3,4]</code> passes it — <em>a casually chosen test case would not catch it</em>. And the distinguishing input was named too: <b>the problem's own example</b>, where <code>1→2→4</code> and <code>1→3→4</code> gives <code>1→2→4→1→3→4</code>.</p>
+
+<ul>
+  <li><b>That is a distinguishing input, stated, and then not executed.</b> Which is the narrowest this item has ever been: not "no fake", not "no input", but <b>an input identified out loud and never turned into a line of code</b>. Everything upstream of running it now happens reliably.</li>
+  <li><b>And the second fake on the same problem was the cost one again</b> — building new nodes with <code>ListNode(value)</code> rather than splicing. Same output, <em>n</em> extra allocations. <a href="/open#the-recurring-fake-shape-correct-output-wrong-cost">Third instance in eight days</a>, now tracked on its own item rather than repeated here.</li>
+  <li><b>The split this item has carried since 8 Sep is unchanged</b>, and it is the only thing left in it: <b>naming is a habit, executing is not.</b> One instance, at <a href="/sessions/2026-09-13">the checkpoint</a>, followed by three misses.</li>
+</ul>
+
+<p><b>Worth naming what has not been tried:</b> every attempt to fix this has been a resolution to write the test. The two disciplines that actually stuck — <a href="/open#timed-and-narrated-committed-day-one-never-once-done">start the clock before reading</a>, and narration as the thing under test — <b>stuck because they became steps you cannot reach and skip</b>. Writing the distinguishing case <em>before</em> the solution, as the first thing in the file, is the equivalent move and has never been tried.</p>
