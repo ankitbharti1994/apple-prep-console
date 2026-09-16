@@ -87,8 +87,12 @@ const problem: Problem = {
       out.push(takeA ? a : b);
       if (takeA) p1++; else p2++;
 
+      const lastOfLoop = p1 >= l1.length || p2 >= l2.length;
+
       const note = equal
-        ? `Both fronts are <em>${a}</em>. <b><code>&lt;=</code> is doing real work here</b> — the equal case does the same thing as less-than, so it <b>collapses into it</b> and there is no third branch. Take list1's; the other <em>${b}</em> is simply the next one taken.`
+        ? lastOfLoop
+          ? `Both fronts are <em>${a}</em> again, so <code>&lt;=</code> takes list1's — and <b>that empties list1</b>. The loop ends here with <b>list2 still holding nodes</b>, which is the case the line after it exists for.`
+          : `Both fronts are <em>${a}</em>. <b><code>&lt;=</code> is doing real work here</b> — the equal case does the same thing as less-than, so it <b>collapses into it</b> and there is no third branch. Take list1's; the other <em>${b}</em> is simply the next one taken.`
         : step === 1
           ? `list2's <em>${b}</em> is smaller, so the merge <b>switches sides</b>. Nothing was copied — <code>tail.next = b</code> <b>points at the node that already exists</b>, and that is the entire difference between splicing and rebuilding.`
           : takeA
