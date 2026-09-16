@@ -43,28 +43,31 @@ const spec: InspectorSpec = {
       body:
         'Correct on <code>@State</code> (private, view-scoped, owned by the view) and on <code>@StateObject</code> ' +
         '(the view owns it, it initialises <b>once</b>, and it survives the view struct being re-created). ' +
-        '<b>Wrong on <code>@ObservedObject</code>: it does not survive.</b> It carries <b>no ownership at all</b> — it is a ' +
-        'reference to something handed in from outside. If the parent re-creates the child with a fresh object, ' +
-        '<b>the state is simply gone</b>. ' +
+        '<b>Wrong on <code>@ObservedObject</code>: it was described as surviving on its own terms, and it has no terms.</b> ' +
+        'It carries <b>no ownership at all</b> — it observes an object owned somewhere else, and <b>it lives exactly as long as that owner does</b>. ' +
+        'Handed a stable instance by a parent that owns it with <code>@StateObject</code>, the state persists across every parent redraw. ' +
+        '<b>Construct it in the child, or hand it a fresh instance, and it is gone</b> — and nothing in the child can prevent that, ' +
+        'which is the half that was missing. ' +
         'Also corrected: <code>@EnvironmentObject</code> is a separate wrapper, not the mechanism for passing an ' +
         '<code>@ObservedObject</code> down. Observed objects go in as ordinary init parameters; ' +
         '<code>.environmentObject()</code> feeds <code>@EnvironmentObject</code>.',
       code:
-        '<span class="cm">// the bug, in four lines</span>\n' +
-        '<span class="kw">struct</span> <span class="ty">Child</span>: <span class="ty">View</span> {\n' +
-        '    <span class="kw">@ObservedObject</span> <span class="kw">var</span> model = <span class="ty">Model</span>()  <span class="cm">// ← re-made on every parent redraw</span>\n' +
-        '    <span class="kw">@StateObject</span>    <span class="kw">var</span> model = <span class="ty">Model</span>()  <span class="cm">// ← made once, survives</span>\n' +
-        '}',
+        '<span class="cm">// the trigger is the CONSTRUCTION, not the wrapper</span>\n' +
+        '<span class="kw">@ObservedObject</span> <span class="kw">var</span> model = <span class="ty">Model</span>()   <span class="cm">// resets</span>\n' +
+        '<span class="kw">@StateObject</span>    <span class="kw">var</span> model = <span class="ty">Model</span>()   <span class="cm">// survives</span>\n\n' +
+        '<span class="cm">// and this is fine — the parent owns it,</span>\n' +
+        '<span class="cm">// so it lives exactly as long as the parent does</span>\n' +
+        '<span class="kw">@ObservedObject</span> <span class="kw">var</span> model: <span class="ty">Model</span>',
       panes: [
         {
           label: 'the rule',
           tone: 'good',
-          text: '@StateObject   owns   and survives.\n@ObservedObject borrows and does not.',
+          text: '@StateObject   owns.    It survives.\n@ObservedObject borrows.  It lasts exactly as long\n                         as the lender does.',
         },
         {
           label: 'why it is the classic one',
           tone: 'neutral',
-          text: "Using @ObservedObject where @StateObject was\nneeded resets state for no visible reason. Nothing\ncrashes, nothing warns — a form just empties itself\nwhen an unrelated parent redraws.",
+          text: "Declaring @ObservedObject where @StateObject was\nneeded resets state for no visible reason. Nothing\ncrashes, nothing warns — a form just empties itself\nwhen an unrelated parent redraws.",
         },
       ],
     },
@@ -101,20 +104,26 @@ const spec: InspectorSpec = {
         'Correct that <code>AnyView</code> erases the type, and correct that this is why it resists <code>Sendable</code> — ' +
         withBaseHtml('connecting back to <a href="/internals#18-swift-6-strict-concurrency-on-a-real-target">Saturday\'s category 2</a>, ') +
         'which is the right connection to have made unprompted. ' +
-        '<b>The cost cited was dynamic dispatch. The real SwiftUI cost is sharper: <code>AnyView</code> destroys structural identity.</b> ' +
-        'Diffing relies on the <b>static type of the view tree</b> to know what corresponds to what between updates. Wrapped in ' +
-        '<code>AnyView</code>, the diff cannot see inside, so it frequently <b>tears down and rebuilds instead of updating in place</b> — ' +
-        '<b>losing state and animations, not just cycles.</b>',
+        '<b>The cost cited was dynamic dispatch, and the real one is paid in identity rather than in cycles.</b> ' +
+        'Diffing reads the <b>static type of the view tree</b> to work out what corresponds to what between updates — ' +
+        '<code>VStack&lt;TupleView&lt;(Header, List)&gt;&gt;</code> says exactly what is where. <b><code>AnyView</code> erases precisely that</b>, ' +
+        'so every wrapped subtree has the same type whatever is inside it. ' +
+        '<b>Position and an explicit <code>.id()</code> still count</b>, so a stable <code>AnyView</code> in a stable place is not reset on every render. ' +
+        'What is gone is the information that would let SwiftUI tell <em>same view, new value</em> from <em>different view</em> — ' +
+        'so <b>when the wrapped concrete type changes it must replace the subtree rather than update it, and that subtree\'s state and ' +
+        'in-flight animations go with it.</b>',
       code:
         '<span class="cm">// the type IS the identity. Erase it and the diff</span>\n' +
         '<span class="cm">// cannot tell "same view, changed" from "new view".</span>\n' +
-        '<span class="ty">VStack</span> { <span class="ty">Header</span>(); <span class="ty">List</span>() }     <span class="cm">// VStack&lt;TupleView&lt;(Header, List)&gt;&gt;</span>\n' +
-        '<span class="ty">AnyView</span>(<span class="ty">VStack</span> { … })         <span class="cm">// AnyView. Opaque.</span>',
+        '<span class="ty">VStack</span> { <span class="ty">Header</span>(); <span class="ty">List</span>() }\n' +
+        '  <span class="cm">→ VStack&lt;TupleView&lt;(Header, List)&gt;&gt;</span>\n' +
+        '<span class="ty">AnyView</span>(<span class="ty">VStack</span> { … })\n' +
+        '  <span class="cm">→ AnyView. Opaque, whatever is inside.</span>',
       panes: [
         {
           label: 'closes the loop with Q3',
           tone: 'good',
-          text: 'AnyView is bad largely BECAUSE it breaks identity.\nThe two answers are one answer, and neither half\nwas connected to the other when asked cold.',
+          text: 'The real cost of AnyView is paid in identity,\nthe same currency as Q3 — not in cycles.\nNeither half was connected to the other\nwhen asked cold.',
         },
       ],
     },

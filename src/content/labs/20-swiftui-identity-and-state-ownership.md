@@ -31,24 +31,33 @@ AnyView       <span class="cm">// identity erased     — so nothing can be matc
   <tr><th>Wrapper</th><th>Who owns it</th><th>Survives the view being re-created?</th></tr>
   <tr><td><code>@State</code></td><td>This view. Private, view-scoped</td><td><b>Yes</b> — while identity holds</td></tr>
   <tr><td><code>@StateObject</code></td><td><b>This view.</b> Initialised once</td><td><b>Yes</b></td></tr>
-  <tr><td><code>@ObservedObject</code></td><td><b>Nobody here.</b> A reference passed in</td><td><b>No</b></td></tr>
+  <tr><td><code>@ObservedObject</code></td><td><b>Nobody here.</b> A reference to something owned elsewhere</td><td><b>It has no say.</b> Exactly as long as its owner does</td></tr>
   <tr><td><code>@EnvironmentObject</code></td><td>An ancestor, via <code>.environmentObject()</code></td><td>Yes — it is the ancestor's</td></tr>
 </table>
 
 <div class="say">
   <div class="say-h">Say it out loud</div>
-  <p>"<code>@StateObject</code> owns and survives. <code>@ObservedObject</code> borrows and does not."</p>
+  <p>"<code>@StateObject</code> owns, so it survives. <code>@ObservedObject</code> borrows, so it lasts exactly as long as the lender does."</p>
 </div>
 
 <p>The last row is its own small correction, and it was made in the session: <b><code>@EnvironmentObject</code> is a separate wrapper, not the mechanism for passing an <code>@ObservedObject</code> down.</b> Observed objects arrive as ordinary init parameters. <code>.environmentObject()</code> feeds <code>@EnvironmentObject</code> and nothing else.</p>
 
 <h3>Why the <code>@ObservedObject</code> mistake is invisible</h3>
 
-<p>Nothing crashes. Nothing warns. The parent redraws for some unrelated reason, the child struct is re-created, its <code>@ObservedObject</code> is re-made from scratch, and <b>a half-filled form empties itself</b>. The reported symptom is "the state resets randomly", which is the worst possible description of a completely deterministic bug — and it is deterministic on <em>the parent's</em> redraws, not the child's, which is why looking at the child never finds it.</p>
+<p><b>The wrapper is not the bug — the construction is.</b> An <code>@ObservedObject</code> handed a stable instance by a parent that owns it with <code>@StateObject</code> behaves perfectly: the parent redraws, a new child struct is made, and it observes the same object it observed before. What breaks is the child <em>building</em> the object, or a parent that hands down a fresh one:</p>
+
+<pre><span class="cm">// the trigger is the construction, not the wrapper</span>
+@ObservedObject <span class="kw">var</span> model = Model()   <span class="cm">// new one every redraw. resets</span>
+@StateObject    <span class="kw">var</span> model = Model()   <span class="cm">// made once. survives</span>
+
+<span class="cm">// and this is fine — the parent owns it</span>
+@ObservedObject <span class="kw">var</span> model: Model       <span class="cm">// lives as long as its owner</span></pre>
+
+<p>And then nothing crashes and nothing warns. <b>A half-filled form empties itself</b>, and the reported symptom is "the state resets randomly" — the worst possible description of a completely deterministic bug, deterministic on <em>the parent's</em> redraws rather than the child's, which is why looking at the child never finds it.</p>
 
 <div class="myth" style="margin-top:14px">
   <b>The same shape as Tuesday's reversed pair</b>
-  <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">setNeedsLayout / layoutIfNeeded</a> and this one both produce <b>code that looks right and fails in exactly one way</b>. The difference is the direction of the error: that one was <b>inverted</b>, this one was <b>absent</b> — <code>@ObservedObject</code>'s lifetime had simply never been a question. <a href="/open#observedobject-does-not-survive-re-creation">A gap, not a correction</a>, and it gets the weaker kind of flag for that reason.
+  <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">setNeedsLayout / layoutIfNeeded</a> and this one both produce <b>code that looks right and fails in exactly one way</b>. The difference is the direction of the error: that one was <b>inverted</b>, this one was <b>absent</b> — <b>who owns the object</b> had simply never been a question, so the ownership rule was generalised from <code>@StateObject</code> to its neighbour. <a href="/open#observedobject-does-not-survive-re-creation">A gap, not a correction</a>, and it gets the weaker kind of flag for that reason.
 </div>
 
 <h3>Identity, which is the half that was missing</h3>
@@ -68,11 +77,13 @@ ProfileView().id(userID)</pre>
 
 <h3>What <code>AnyView</code> actually costs</h3>
 
-<p>The erasure was right, and the connection to <code>Sendable</code> was made unprompted. The cost was not: <b>dynamic dispatch is the small half.</b> The static type of the view tree <em>is</em> its structural identity — <code>VStack&lt;TupleView&lt;(Header, List)&gt;&gt;</code> tells SwiftUI precisely what corresponds to what between two updates. <code>AnyView</code> is opaque, so the diff cannot see inside and <b>frequently tears down and rebuilds instead of updating in place.</b></p>
+<p>The erasure was right, and the connection to <code>Sendable</code> was made unprompted. The cost was not: <b>dynamic dispatch is the small half.</b> The static type of the view tree is what structural identity is <em>read from</em> — <code>VStack&lt;TupleView&lt;(Header, List)&gt;&gt;</code> tells SwiftUI precisely what corresponds to what between two updates. <b><code>AnyView</code> erases exactly that</b>, so every wrapped subtree has the same type whatever is inside it.</p>
 
-<p><b>So it loses state and animations, not cycles</b> — which closes the loop with the question above it: <b><code>AnyView</code> is bad largely <em>because</em> it breaks identity.</b> That also sharpens <a href="/open#the-anyview-struct-deferred">the struct parked on 12 Sep</a>: removing the <code>AnyView</code> there was already listed as the only option that solves the problem rather than placing it, and this is the reason why.</p>
+<p><b>Worth being precise about what that does and does not cost</b>, because the overstated version is easy to say and wrong. Position and an explicit <code>.id()</code> still contribute identity, so a stable <code>AnyView</code> in a stable place is <em>not</em> torn down on every render. What is gone is the information that would let SwiftUI distinguish <em>same view, new value</em> from <em>different view</em> — so <b>when the wrapped concrete type changes, it has to replace the subtree rather than update it, and that subtree's state and in-flight animations go with it.</b></p>
+
+<p><b>So the cost is paid in identity, not in cycles</b> — the same currency as the question above it, which is what closes the loop between them. That also sharpens <a href="/open#the-anyview-struct-deferred">the struct parked on 12 Sep</a>: removing the <code>AnyView</code> there was already listed as the only option that solves the problem rather than placing it, and this is the reason why.</p>
 
 <div class="say">
   <div class="say-h">Say it out loud</div>
-  <p>"Identity is not a performance concept. It is what decides whether state lives or dies — and <code>AnyView</code> erases it."</p>
+  <p>"Identity is not a performance concept — it is what decides whether state lives or dies. And <code>AnyView</code> erases the static type it is read from."</p>
 </div>

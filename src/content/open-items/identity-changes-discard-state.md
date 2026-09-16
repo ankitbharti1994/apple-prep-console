@@ -34,9 +34,9 @@ ProfileView().id(userID)</pre>
 
 <h4>It is the same gap as the <code>AnyView</code> one, and they were answered separately</h4>
 
-<p><a href="/internals#20-swiftui-identity-and-state-ownership">Q4 in the same session</a> got the erasure right and cited <b>dynamic dispatch</b> as the cost. The real cost is that <code>AnyView</code> <b>destroys structural identity</b>, so the diff cannot match old tree to new and rebuilds instead of updating — <b>losing state and animations, not cycles</b>.</p>
+<p><a href="/internals#20-swiftui-identity-and-state-ownership">Q4 in the same session</a> got the erasure right and cited <b>dynamic dispatch</b> as the cost. The real cost is paid in identity: <b><code>AnyView</code> erases the static type that structural identity is read from</b>, so SwiftUI loses the information that distinguishes <em>same view, new value</em> from <em>different view</em>. <b>Position and an explicit <code>.id()</code> still count</b> — a stable <code>AnyView</code> in a stable place is not reset on every render — but <b>when the wrapped concrete type changes, the subtree is replaced rather than updated, and its state and animations go with it</b>.</p>
 
-<p><b>So <code>AnyView</code> is bad largely <em>because</em> it breaks identity</b>, and the two answers are one answer. Neither half was connected to the other when asked cold, which is the finding rather than either individual miss: <b>both were held as performance facts about a mechanism whose real consequence is lifetime.</b></p>
+<p><b>So the cost of <code>AnyView</code> is paid in the same currency as this item</b>, and the two answers are one answer. Neither half was connected to the other when asked cold, which is the finding rather than either individual miss: <b>both were held as performance facts about a mechanism whose real consequence is lifetime.</b></p>
 
 <p>It also sharpens <a href="/open#the-anyview-struct-deferred">the <code>AnyView?</code> struct parked on 12 Sep</a>, whose third option — remove the erasure — was already listed as the only one that solves the problem rather than placing it. <b>This is the reason why.</b></p>
 

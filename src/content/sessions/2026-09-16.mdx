@@ -29,9 +29,9 @@ blocks:
       - '<b>Three of four substantially correct, against two of five on Tuesday.</b> A clear step up, and a different framework with a different model — which is why it is its own section rather than an extension of the UIKit one'
       - '<b>Closed: Tuesday''s reversed pair.</b> Asked cold with no lead-in — <em>"setNeedsLayout flags and layoutIfNeeded forces"</em> — and <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">correct, two days after being stated backwards</a>. The re-ask is what closed it; the in-session correction was explicitly not accepted as evidence'
       - '<b>Q1 right, and right for the right reason:</b> <em>"View is used to create a diffable tree, not to draw anything on screen."</em> Filled in — <code>body</code> can run many times a second and must be cheap and side-effect-free, which is why work placed inside it is a <b>common performance bug</b>'
-      - '<b>Q2, one important correction: <code>@ObservedObject</code> does not survive.</b> It holds no ownership — just a reference passed in. If the parent recreates the child with a fresh object, <b>the state is gone</b>. <a href="/open#observedobject-does-not-survive-re-creation">The classic SwiftUI bug</a>, and the sentence is <b><code>@StateObject</code> owns and survives; <code>@ObservedObject</code> borrows and does not</b>'
+      - '<b>Q2, one important correction: <code>@ObservedObject</code> has no say in whether its object survives.</b> It holds no ownership — it observes something owned elsewhere, so it <b>lasts exactly as long as that owner does</b>. Handed a stable instance it is fine; <b>let the child construct it and the state is gone</b>. <a href="/open#observedobject-does-not-survive-re-creation">The classic SwiftUI bug</a>, and the trigger is <b>the construction, not the wrapper</b>'
       - '<b>Q3 was half.</b> The performance half was held — identity drives diffing. <b>The larger half is state lifetime</b>: when identity changes SwiftUI treats it as a <em>different view</em>, tears the old one down and <b>discards all its <code>@State</code></b>. Same pixels, state silently reset. It is what <code>id:</code> in a <code>ForEach</code> controls, and why <a href="/open#identity-changes-discard-state">array indices as ids break on reorder</a>'
-      - '<b>Q4 right on the erasure, wrong on the cost.</b> Dynamic dispatch was cited; <b>the real SwiftUI cost is that <code>AnyView</code> destroys structural identity</b>, so the diff cannot see inside and rebuilds rather than updating — <b>losing state and animations, not cycles</b>. Which closes the loop with Q3: <b><code>AnyView</code> is bad largely <em>because</em> it breaks identity</b>'
+      - '<b>Q4 right on the erasure, wrong on the cost.</b> Dynamic dispatch was cited; <b>the real cost is paid in identity</b> — <code>AnyView</code> erases the static type that structural identity is read from, so SwiftUI can no longer tell <em>same view, new value</em> from <em>different view</em>. Position and <code>.id()</code> still count, so a stable one is not reset every render; <b>change the wrapped concrete type and the subtree is replaced, state and animations with it</b>. Same currency as Q3, which is what closes the loop'
 problems: [24]
 labs: [20-swiftui-identity-and-state-ownership]
 openItems:
@@ -142,15 +142,15 @@ score but **the direction the two partial answers missed in**, which was the sam
 | | What was held | What was missing |
 |---|---|---|
 | **Identity** | Drives diffing — a performance concern | **It decides whether `@State` survives** |
-| **`AnyView`** | Erases the type, costs dynamic dispatch | **It destroys structural identity** |
+| **`AnyView`** | Erases the type, costs dynamic dispatch | **It erases what identity is read from** |
 
 Both were held as *performance* facts about a mechanism whose real consequence is **lifetime**. When
 identity changes, SwiftUI does not update the view — it decides this is a different view, tears the
 old one down and discards its state. Same pixels on screen, state silently reset.
 
-And the two answers close each other's loop: **`AnyView` is bad largely *because* it breaks
-identity.** Neither half was connected to the other when asked cold, which is the finding worth
-carrying rather than either individual miss. It also sharpens
+And the two answers close each other's loop: **`AnyView`'s real cost is paid in the same currency**,
+because it erases the static type that identity is read from. Neither half was connected to the
+other when asked cold, which is the finding worth carrying rather than either individual miss. It also sharpens
 [the `AnyView?` struct parked on 12 Sep](/open#the-anyview-struct-deferred), whose third option —
 remove the erasure — was already listed as the only one that solves the problem rather than placing
 it. This is the reason why.
