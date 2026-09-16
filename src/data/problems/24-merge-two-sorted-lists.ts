@@ -78,7 +78,9 @@ const problem: Problem = {
       codeLines: [2, 3, 4, 5],
     }));
 
-    let step = 0;
+    /** True on the first frame that takes from a different list than the one before. */
+    let tookFrom: 1 | 2 | null = null;
+    let seenSwitch = false;
     while (p1 < l1.length && p2 < l2.length) {
       const a = l1[p1]!;
       const b = l2[p2]!;
@@ -88,12 +90,16 @@ const problem: Problem = {
       if (takeA) p1++; else p2++;
 
       const lastOfLoop = p1 >= l1.length || p2 >= l2.length;
+      const switched = tookFrom !== null && tookFrom !== (takeA ? 1 : 2);
+      const firstSwitch = switched && !seenSwitch;
+      if (switched) seenSwitch = true;
+      tookFrom = takeA ? 1 : 2;
 
       const note = equal
         ? lastOfLoop
           ? `Both fronts are <em>${a}</em> again, so <code>&lt;=</code> takes list1's — and <b>that empties list1</b>. The loop ends here with <b>list2 still holding nodes</b>, which is the case the line after it exists for.`
           : `Both fronts are <em>${a}</em>. <b><code>&lt;=</code> is doing real work here</b> — the equal case does the same thing as less-than, so it <b>collapses into it</b> and there is no third branch. Take list1's; the other <em>${b}</em> is simply the next one taken.`
-        : step === 1
+        : firstSwitch && !takeA
           ? `list2's <em>${b}</em> is smaller, so the merge <b>switches sides</b>. Nothing was copied — <code>tail.next = b</code> <b>points at the node that already exists</b>, and that is the entire difference between splicing and rebuilding.`
           : takeA
             ? `Back to list1 for <em>${a}</em>. <b>The invariant, out loud:</b> everything behind <em>tail</em> is merged and sorted, and both fronts are still ahead of it — so <b>the smaller of the two fronts is always the next answer</b>, with nothing to look back at.`
@@ -114,7 +120,6 @@ const problem: Problem = {
         note,
         codeLines: takeA ? [7, 8, 9, 10, 15] : [8, 12, 13, 15],
       }));
-      step++;
     }
 
     const restOf1 = p1 < l1.length;
