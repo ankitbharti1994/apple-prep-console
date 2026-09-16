@@ -1,0 +1,167 @@
+---
+date: 2026-09-16
+headline: The block order was argued first,<br />and <em>that is why the problem got done</em>.
+lede: >-
+  The session opened with "first internal" — the exact failure mode the phase 2 decision named
+  three days earlier, arriving on day three. It was pushed back on, the order switched without
+  argument, and Merge Two Sorted Lists finally ran after slipping from Tuesday. One structural bug,
+  not the "couple of bugs" diagnosed: one variable doing two jobs. Then SwiftUI cold, a new
+  framework and a new section — three of four substantially correct against two of five on Tuesday,
+  and the two partial answers were partial in the same direction. Tuesday's reversed pair was
+  re-asked cold and came back right, so it closes.
+blocks:
+  - track: coding
+    title: Question 24 — the dummy node, and one variable doing two jobs
+    href: /coding/24
+    bullets:
+      - '<b>25 minutes, one bug away</b>, and it ran <em>because the block order was argued first</em>. Merge Two Sorted Lists had already slipped from Tuesday; with 60 minutes available, internals-first meant <a href="/open#internals-first-on-day-three-of-phase-2">it very likely slipped again</a>'
+      - '<b>The diagnosis was "couple of bugs". There was one.</b> <code>resultNode</code> was doing <b>two jobs</b> — the head to return <em>and</em> the append point. After the first append the next iteration overwrites the same <code>.next</code>, so <b>every append clobbers the previous one</b> and a two-node list comes out'
+      - '<b>The fix is two pointers: one that never moves, one that walks.</b> That is what <code>dummy</code> and <code>tail</code> are, and in the trace <em>dummy</em> sits still for the entire run'
+      - '<b>The causality was stated backwards and corrected.</b> "It was lengthy, that''s why I introduced a bug" — the other way round. <b>The length came <em>from</em> the missing idea</b>: without a dummy you need a first-append check in every branch, without <code>&lt;=</code> you need a third branch for equality, and each one duplicates the append block'
+      - '<b>Three collapses, each removing a branch.</b> The dummy removes <code>if resultNode != nil</code>; <code>&lt;=</code> folds the equal case into less-than; and <code>tail.next = p1 ?? p2</code> replaces both single-list branches — <b>the remainder of the other list is already a sorted list</b>, so you point at it and stop. That last one is the operation arrays do not permit, and it is what makes this <code>O(1)</code> space'
+      - '<b>The generalisable signal, worth saying out loud in the room:</b> when the same four lines appear in five places, <b>the repetition is pointing at a missing abstraction</b>. Saying so is often what gets you to the dummy node unaided'
+      - '<b>The fake, named first — sixth of the last seven.</b> Plain concatenation, and the trap was named too: it is <b>correct whenever list 1 is entirely below list 2</b>, so <code>[1,2]</code> and <code>[3,4]</code> passes. The distinguishing input was named as well — the problem''s own example — and <a href="/open#distinguishing-input">then not written</a>'
+      - '<b>Third correct-output-wrong-cost fake in eight days</b>, after the heap and Reverse List: building nodes with <code>ListNode(value)</code> instead of splicing. Same answer, <em>n</em> allocations. <a href="/open#the-recurring-fake-shape-correct-output-wrong-cost">Now tracked as its own shape</a> — <b>correctness tests cannot see any of the three</b>'
+  - track: internals
+    title: Section 20 — SwiftUI identity and state ownership
+    href: /internals#20-swiftui-identity-and-state-ownership
+    bullets:
+      - '<b>Three of four substantially correct, against two of five on Tuesday.</b> A clear step up, and a different framework with a different model — which is why it is its own section rather than an extension of the UIKit one'
+      - '<b>Closed: Tuesday''s reversed pair.</b> Asked cold with no lead-in — <em>"setNeedsLayout flags and layoutIfNeeded forces"</em> — and <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">correct, two days after being stated backwards</a>. The re-ask is what closed it; the in-session correction was explicitly not accepted as evidence'
+      - '<b>Q1 right, and right for the right reason:</b> <em>"View is used to create a diffable tree, not to draw anything on screen."</em> Filled in — <code>body</code> can run many times a second and must be cheap and side-effect-free, which is why work placed inside it is a <b>common performance bug</b>'
+      - '<b>Q2, one important correction: <code>@ObservedObject</code> has no say in whether its object survives.</b> It holds no ownership — it observes something owned elsewhere, so it <b>lasts exactly as long as that owner does</b>. Handed a stable instance it is fine; <b>let the child construct it and the state is gone</b>. <a href="/open#observedobject-does-not-survive-re-creation">The classic SwiftUI bug</a>, and the trigger is <b>the construction, not the wrapper</b>'
+      - '<b>Q3 was half.</b> The performance half was held — identity drives diffing. <b>The larger half is state lifetime</b>: when identity changes SwiftUI treats it as a <em>different view</em>, tears the old one down and <b>discards all its <code>@State</code></b>. Same pixels, state silently reset. It is what <code>id:</code> in a <code>ForEach</code> controls, and why <a href="/open#identity-changes-discard-state">array indices as ids break on reorder</a>'
+      - '<b>Q4 right on the erasure, wrong on the cost.</b> Dynamic dispatch was cited; <b>the real cost is paid in identity</b> — <code>AnyView</code> erases the static type that structural identity is read from, so SwiftUI can no longer tell <em>same view, new value</em> from <em>different view</em>. Position and <code>.id()</code> still count, so a stable one is not reset every render; <b>change the wrapped concrete type and the subtree is replaced, state and animations with it</b>. Same currency as Q3, which is what closes the loop'
+problems: [24]
+labs: [20-swiftui-identity-and-state-ownership]
+openItems:
+  - setneedslayout-and-layoutifneeded-came-out-backwards
+  - observedobject-does-not-survive-re-creation
+  - identity-changes-discard-state
+  - the-recurring-fake-shape-correct-output-wrong-cost
+  - internals-first-on-day-three-of-phase-2
+  - distinguishing-input
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: Two predictions from earlier in the week came due on the same morning, and they came due in opposite directions.
+carriesForward:
+  - from: '"The failure mode to watch is treating the coding track as optional. Phase 1''s coding was first-class on paper too" — <a href="/sessions/2026-09-13">the checkpoint</a>, three days ago, and <a href="/open#coverage-every-problem-inside-topic-1">"has not fired yet"</a> written yesterday'
+    to: '<b>It fired this morning, on day three.</b> The session opened with "first internal". <b>Three days is fast enough that the prediction was not a hedge</b> — and the countermeasure that worked was <a href="/open#internals-first-on-day-three-of-phase-2">naming it at the moment it happened</a>, not the plan text that anticipated it. The plan had already named this exact risk in writing and the writing did not stop it'
+  - from: '"Closes on being re-asked cold in a few days and answered right — not on the correction, and not on re-reading this page" — <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">the reversed pair</a>, written yesterday'
+    to: '<b>Asked cold with no lead-in, and answered right.</b> The close is the condition exactly, and the caveat is on the record: <b>two days is a shorter interval than the one <a href="/open#sendable-stated-backwards">the Sendable close failed at</a></b>. What does not close is the shape — <em>structure right, rule inverted</em> keeps its three instances'
+  - from: '"Second instance of correct-output-wrong-cost in a week… the technique keeps landing in the case it least covers" — <a href="/open#distinguishing-input">the testing item</a>, yesterday'
+    to: '<b>Third instance, eight days, and it has its own item now.</b> Allocating nodes rather than splicing. <b>Three consecutive problems have produced a fake only a work-count can kill</b>, and <a href="/open#heap-tests-that-a-linear-scan-would-also-pass">the work-count named on 9 Sep</a> has been built once and run zero times'
+  - from: 'The fake named before the code on five of the last six, and <b>no suite written</b> on any of the last three'
+    to: '<b>Sixth of seven named — and this time the distinguishing input was named too, and still not written.</b> That is the narrowest this gap has ever been: not a missing fake, not a missing input, but <b>an input identified out loud and never turned into a line of code</b>'
+  - from: 'Tuesday''s UIKit round — <b>two of five</b>, one held exactly backwards'
+    to: '<b>Three of four, and no reversals.</b> Both partial answers were partial in the <em>same</em> direction, which is the finding: <b>identity and <code>AnyView</code> were each held as performance facts</b> about a mechanism whose real consequence is whether state survives'
+note: >-
+  Wednesday, about 60 minutes, coding first after the order was argued. The report numbers this
+  problem 22 and the SwiftUI material section 20; here the problem is 24, because the old console's
+  numbering has been one behind since 15 Sep — the section number matches. Week 4 stands at three
+  problems against a plan of five, still one behind and holding steady rather than slipping further.
+  Neither timer nor narration was run today: the 25 minutes was self-reported at the point of being
+  stuck rather than measured, so both discipline counters are unchanged and are computed from the
+  problem files rather than written here.
+---
+
+## The order of the block, which is the part worth keeping
+
+The session opened with *"first internal."* It was pushed back on, and the reason is on the record
+three days earlier — [the phase 2 decision](/sessions/2026-09-13) named exactly this:
+
+> **Phase 1's coding was a first-class track on paper too, and internals kept winning the block.**
+
+[Merge Two Sorted Lists](/coding/24) had already slipped from Tuesday. With 60 minutes available,
+internals-first meant it very likely slipped again. The pushback distinguished **a real reason** —
+mid-thought on something, a work need — **from a preference**, and offered to proceed either way.
+
+**The user switched to coding first without argument, and the problem got done.** Had the order
+held, week 4 would be two problems behind rather than one.
+
+What makes this worth [its own item](/open#internals-first-on-day-three-of-phase-2) rather than a
+line in the note: **the failure mode was predicted correctly at the phase boundary and appeared on
+day three.** It will appear again, because the pull that produced it has not changed. And the thing
+that worked was **naming it at the moment it happened** — not the plan text that anticipated it in
+writing, which is the same lesson as [start the clock before reading](/open#timed-and-narrated-committed-day-one-never-once-done):
+an intention does not interrupt anything, a step you cannot skip does.
+
+## One bug, not several
+
+The diagnosis in the room was *"couple of bugs."* There was one, and it produced all the symptoms.
+
+```swift
+// resultNode is doing two jobs: the head to return, AND the append point
+resultNode?.next = node   // ← the next iteration overwrites this same .next
+```
+
+**Every append clobbers the previous one**, leaving a two-node list. Two pointers are needed: one
+that never moves, and one that walks forward as you append.
+
+That is also where the second correction lives. The read offered was *"it was lengthy, that's why I
+introduced a bug."* **Backwards** — the length came *from* the missing idea:
+
+| Missing | What it forces |
+|---|---|
+| The dummy node | A first-append check in **every branch** |
+| `<=` rather than `<` | A **third branch** for the equal case |
+
+Each one duplicates the append block. **The dummy did not shorten a correct solution; it removed the
+condition that was forcing the duplication.** Which generalises into something you can say out loud
+in an interview: *"I'm repeating this check in every branch — there's probably a way to make it
+unnecessary."* That sentence is often what gets you to the dummy node unaided.
+
+## Three fakes, one shape
+
+The fake was named before the code for the sixth time in seven problems, and it is a good one:
+**plain concatenation is correct whenever every value in list 1 is ≤ every value in list 2.**
+`[1,2]` and `[3,4]` passes it.
+
+But the fake that actually got written is the other one — `ListNode(value)` building new nodes where
+the problem asks for splicing existing ones. Same output, *n* unnecessary allocations.
+
+| Date | Problem | The fake | Differs in |
+|---|---|---|---|
+| 9 Sep | [Heap](/internals#17-heaps) | Append + linear scan | **Cost only** |
+| 15 Sep | [Reverse List](/coding/23) | Collect values, rebuild | **Cost only** |
+| 16 Sep | [Merge Lists](/coding/24) | Allocate new nodes | **Cost only** |
+
+> **The plausible wrong answer is usually right and expensive, not wrong.**
+
+Three instances in eight days is enough that it stops being a property of individual problems, so it
+is [tracked on its own item](/open#the-recurring-fake-shape-correct-output-wrong-cost) from today.
+**Correctness tests cannot see any of the three** — which means
+[the testing technique](/open#distinguishing-input) keeps landing in the one case it does not cover,
+and [the work-count that would kill them](/open#heap-tests-that-a-linear-scan-would-also-pass) has
+been owed since 9 Sep.
+
+## The two SwiftUI answers that were one answer
+
+Three of four substantially correct, against two of five on Tuesday. The interesting part is not the
+score but **the direction the two partial answers missed in**, which was the same direction twice.
+
+| | What was held | What was missing |
+|---|---|---|
+| **Identity** | Drives diffing — a performance concern | **It decides whether `@State` survives** |
+| **`AnyView`** | Erases the type, costs dynamic dispatch | **It erases what identity is read from** |
+
+Both were held as *performance* facts about a mechanism whose real consequence is **lifetime**. When
+identity changes, SwiftUI does not update the view — it decides this is a different view, tears the
+old one down and discards its state. Same pixels on screen, state silently reset.
+
+And the two answers close each other's loop: **`AnyView`'s real cost is paid in the same currency**,
+because it erases the static type that identity is read from. Neither half was connected to the
+other when asked cold, which is the finding worth carrying rather than either individual miss. It also sharpens
+[the `AnyView?` struct parked on 12 Sep](/open#the-anyview-struct-deferred), whose third option —
+remove the erasure — was already listed as the only one that solves the problem rather than placing
+it. This is the reason why.
+
+## Week 4, still one behind
+
+Three problems by Wednesday against a plan of five. **Still one behind, holding steady rather than
+slipping further** — and that distinction is the whole reason this is being watched rather than
+corrected. A week that stabilises one short is evidence about the rate; a week that slips further
+each day is evidence about the plan.
+
+The line from [yesterday](/sessions/2026-09-15) stands unchanged: if week 4 lands three or four,
+**that is the real rate**, and [phase 2's curriculum](/plan) should be resized rather than the
+sessions squeezed. Sunday's checkpoint decides it, on four days of data rather than on one morning.

@@ -1,10 +1,11 @@
 ---
 title: '<code>setNeedsLayout</code> and <code>layoutIfNeeded</code> came out backwards'
 kind: correction
-status: open
+status: closed
 opened: 2026-09-15
+closed: 2026-09-16
 order: 2
-labs: ['19-uikit-rendering-pipeline-and-the-run-loop']
+labs: ['19-uikit-rendering-pipeline-and-the-run-loop', '20-swiftui-identity-and-state-ownership']
 ---
 
 <p>Asked cold in <a href="/internals#19-uikit-rendering-pipeline-and-the-run-loop">the first phase-2 internals session</a>: <code>setNeedsLayout</code> was described as <em>forcing</em> layout, and <code>layoutIfNeeded</code> as <em>leaving it to the system</em>. <b>Exactly inverted.</b></p>
@@ -59,3 +60,13 @@ view.setNeedsLayout()          <span class="cm">// flag it</span>
 <p>All three are the signature of <b>pattern-matching rather than deriving</b> — the shape of the answer is retrieved correctly and the direction is filled in by whichever reading the words suggest. Worth noting the common trigger: in each case the <em>English</em> pulled the wrong way. "Most frequent" suggests max; "set needs layout" sounds like an instruction to do it.</p>
 
 <p><b>Closes on being re-asked cold in a few days and answered right</b> — not on the correction above, and not on re-reading this page.</p>
+
+<h4>16 Sep — re-asked cold, answered right</h4>
+
+<p><span class="resolved">closed 16 Sep — one day after the close condition was written</span> Asked with <b>no lead-in</b> at the top of <a href="/internals#20-swiftui-identity-and-state-ownership">the SwiftUI session</a>, before any other material: <em>"setNeedsLayout flags and layoutIfNeeded forces."</em> Correct, two days after being stated backwards.</p>
+
+<ul>
+  <li><b>This is exactly the close condition above, and nothing weaker.</b> Cold, unprompted, no page re-read in between — which is the distinction this item was opened to protect, because the in-session correction on 15 Sep was explicitly <em>not</em> accepted as evidence.</li>
+  <li><b>The control case it was measured against held up.</b> <a href="/open#sendable-stated-backwards">The Sendable close on 31 Aug</a> was a clean in-session repair and faded inside a week; this one was deliberately not closed on the repair, and the re-ask is what closed it. <b>The two-day gap is short</b>, and that is the honest caveat on this close — it is a shorter interval than the one Sendable failed at.</li>
+  <li><b>What does not close is the shape.</b> <em>Structure right, rule inverted</em> has three instances in the table above and this only retires the third one. The trigger named there — <b>the English pulling the wrong way</b> — is a property of how the fact is retrieved, not of this particular pair.</li>
+</ul>
