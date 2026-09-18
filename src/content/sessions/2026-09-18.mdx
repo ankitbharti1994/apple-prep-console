@@ -1,0 +1,113 @@
+---
+date: 2026-09-18
+headline: Timed, narrated and optimal —<br />and <em>the named fake was already in the helper code</em>.
+lede: >-
+  Linked List Cycle in 20 minutes, optimal, narrated — both disciplines moved on the same problem.
+  It hung first, and the hang was not in the solution: two of three infinite loops were in helper
+  code written days earlier, and one of those was the fake named out loud before the code. Then the
+  strongest internals session so far, driven by the user's own questions: the main thread does not
+  time-slice, a frame is binary, and a hitch reads as a jump rather than a pause. One re-ask closed;
+  identity missed the same half for the second time.
+blocks:
+  - track: coding
+    title: Question 25 — fast and slow, and identity rather than equality
+    href: /coding/25
+    bullets:
+      - '<b>20 minutes, optimal, narrated.</b> Third linked-list problem and the first encounter with fast/slow pointers — and <b>both disciplines moved on one problem</b>, which the counters pick up from the problem file'
+      - '<b>A clarification that was a real gap in the problem, not a misunderstanding.</b> How can <code>-4</code> point back to <code>2</code> when the diagram shows nothing after it? <b>The linear notation cannot express a back-edge.</b> The list has <b>no tail at all</b> — walking it yields 3, 2, 0, -4, 2, 0, -4 forever'
+      - '<b>The fake, named first — seventh of the last eight:</b> compare node values rather than node identity. Breaks on <code>1 → 2 → 2 → nil</code>, a false positive, and values carry no uniqueness guarantee. <b>Identity, not equality — <code>===</code>, not <code>==</code>.</b> <a href="/open#distinguishing-input">No test written</a>'
+      - '<b>"The compiler is not giving me any response" — it was hanging, and not in the solution.</b> Three infinite loops: <code>debugDescription</code> walking to a <code>nil</code> that does not exist, <b>before <code>hasCycle</code> ran at all</b>; an <code>==</code> conformance recursing through <code>next</code>; and both pointers advancing one step, so they never met'
+      - '<b>The fake ended up inside the real code.</b> The <code>Equatable</code> conformance compares values — the exact fake named out loud — and <code>==</code> was used inside the solution. <b>Naming a fake does not immunise you against writing it</b>, especially when it arrives as helper code written for a different purpose'
+      - '<b>"Earlier too I was at the right path" — structure present, mechanism absent.</b> The two variables were there; equal speeds and <code>==</code> were not the algorithm. <b>Same shape as <a href="/coding/24">Merge Two Sorted Lists</a> two days earlier</b>, second instance in three days, and worth watching'
+      - '<b>Fast/slow is a pattern, not a trick.</b> It finds the midpoint too — reorder list, palindrome linked list — and cycle detection comes back in graphs'
+  - track: internals
+    title: Section 21 — frame budget, hitches, and the Instruments workflow
+    href: /internals#21-frame-budget-hitches-and-instruments
+    bullets:
+      - '<b>Closed: <code>@StateObject</code> vs <code>@ObservedObject</code>.</b> Re-asked cold and answered in full — owned and reattached, against handed in and replaced. <a href="/open#observedobject-does-not-survive-re-creation">It led with ownership</a>, which was the condition'
+      - '<b>Identity — still failing, second time.</b> Again <em>"diff gets created, view re-renders."</em> The missing half: a changed identity is a <b>different view</b>, and its <code>@State</code> is <b>destroyed</b>. Not a re-render, a teardown. <a href="/open#identity-changes-discard-state">Two misses, tracked</a>'
+      - '<b>Q3–Q5, Instruments.</b> Hitches was the right instinct, and it finds <em>when</em>, not <em>why</em>. A 40ms method was restated rather than measured <b>against</b> anything — the budget, the thread, the call count. <code>os_signpost</code> was <em>"no idea"</em>, and it is the piece that connects the workflow'
+      - '<b>The correction of the session: the main thread does not time-slice.</b> Commit is a run loop observer on the same thread, after your block returns. <b>Nobody interrupts you to draw</b> — which is why "move it off the main thread" is not general responsiveness advice'
+      - '<b>Binary per frame.</b> 17ms and 20ms cost the same, and 40ms costs two or three depending on alignment. The ~50ms gap from a 40ms sleep is the block rounded up to the next refresh boundary'
+      - '<b>The one correction to the user''s own summary.</b> Not <em>"a lag of 13.33ms"</em> — <b>one frame lasting 33.3ms</b>. In a scroll that reads as content <b>jumping</b>, because the next frame arrives with double the displacement'
+      - '<b>Hitches are not inevitable</b>, because most frames have almost nothing to do. Nothing over ~5ms on the main thread; measure hitch time per second of scrolling, not the count; real devices only'
+problems: [25]
+labs: [21-frame-budget-hitches-and-instruments]
+openItems:
+  - observedobject-does-not-survive-re-creation
+  - identity-changes-discard-state
+  - distinguishing-input
+  - coverage-every-problem-inside-topic-1
+carriesForwardNote: Two lines from Wednesday came due, and both were about a half — one arrived, one did not.
+carriesForward:
+  - from: '"Closes on being re-asked cold in a few days and answered right — specifically on <em>who owns the object</em>" — <a href="/open#observedobject-does-not-survive-re-creation">the <code>@ObservedObject</code> item</a>, 16 Sep'
+    to: '<b>Re-asked, and ownership came first.</b> Closed on its own condition — with the same two-day caveat as the setNeedsLayout close'
+  - from: '"Closes on being re-asked cold and reaching state lifetime first" — <a href="/open#identity-changes-discard-state">identity</a>, 16 Sep'
+    to: '<b>Re-asked, and the performance half came back alone, again.</b> Two misses on the same half, while its neighbour from the same morning closed'
+  - from: '"Structure present, the idea missing" — the dummy node in <a href="/coding/24">Merge Two Sorted Lists</a>, 16 Sep'
+    to: '<b>The same shape on the next problem:</b> two pointers present, speeds equal and <code>==</code> in place of <code>===</code>. <b>Recognising a solution''s shape and having the solution are different states</b> — second instance in three days'
+  - from: '"An input identified out loud and never turned into a line of code" — <a href="/open#distinguishing-input">the testing item</a>, 16 Sep'
+    to: '<b>The same again, with a sharper cost:</b> <code>1 → 2 → 2</code> was named, not run, and <b>the fake it targets was already in the helper code</b>. Run once, it would have caught the bug the same minute'
+  - from: 'Section 19 — <em>"16.67ms is the number every Time Profiler investigation is measured against"</em>'
+    to: '<b>Used today, and it was what Q4 was missing.</b> 40ms means nothing on its own; against the budget it is 2.4 frames, and only if it is on the main thread'
+note: >-
+  Friday, one day after a day off. The report is dated "Friday 19 September", but Friday is the
+  18th — its week table has the same one-day slip from Thursday on — so the session is filed under
+  2026-09-18. The report numbers the problem 23; it is 25 here, because the site's problem numbers
+  have run ahead of the old console's since 15 Sep. The section number, 21, matches. Timed and
+  narrated counts are derived from the problem file. Two things are owed and not yet run: the
+  HitchMonitor on a real device, and the cycle guard on debugDescription.
+---
+
+## The fake that was already in the file
+
+The fake was named before the code, for the seventh time in eight problems: **compare node values
+rather than node identity.** It is a good one — `1 → 2 → 2 → nil` has two nodes sharing a value in
+a list that ends cleanly, and a value check calls it a cycle.
+
+Then the program hung, and the hang was not in the solution.
+
+| # | Where | Cause |
+|---|---|---|
+| 1 | `debugDescription` | Walks until `current == nil`. A cyclic list has no `nil` — the print never returns, **before `hasCycle` runs at all** |
+| 2 | `==` conformance | `lhs.next == rhs.next` recurses forever on a cyclic list |
+| 3 | `hasCycle` | Both pointers advanced one step — fast never outpaced slow, so they never met and never hit `nil` |
+
+The second one is the finding. The `Equatable` conformance was written days earlier for a
+different purpose, it compares values — **the exact fake named out loud** — and `==` was used
+inside the solution. **Naming a fake does not immunise you against writing it**, and helper code
+is where nobody is looking. A two-line test on the named input would have caught it the moment
+it ran; [it was not written](/open#distinguishing-input).
+
+## Structure present, mechanism absent
+
+*"Earlier too I was at the right path."* The two variables were there. But equal-speed pointers
+never meet, and `==` in place of `===` was the named fake sitting in the solution.
+
+| Date | Problem | The shape that was there | The idea that was missing |
+|---|---|---|---|
+| 16 Sep | [Merge Two Sorted Lists](/coding/24) | Walk both lists, append the smaller | One pointer that never moves — the dummy |
+| 18 Sep | [Linked List Cycle](/coding/25) | Two pointers | **Different speeds**, and **identity** |
+
+Two instances in three days. **Recognising a solution's shape and having the solution are
+different states**, and the gap between them is where interview time goes.
+
+## The session that was driven by questions
+
+The internals block went furthest where the prepared list stopped. The three questions asked back —
+*why ~50ms for a 40ms sleep*, *will the 40ms be split*, *does partial work carry over* — each landed
+on the same fact from a different side: [the main thread does not time-slice](/internals#21-frame-budget-hitches-and-instruments).
+Commit waits behind your block; a frame is binary; a hitch is one frame lasting two, and the user
+sees the jump that follows it rather than a pause.
+
+The closing restatement was exact, in the user's own words: *"user won't see the new update before
+the next cycle even though the data is ready and committed."*
+
+## Week 4, and Saturday
+
+Three problems against a plan of five, with one day off; Valid Parentheses and Daily Temperatures
+outstanding. The recommendation for Saturday is unchanged — DP first, Valid Parentheses second,
+the showcase if time remains — and **Daily Temperatures moves to next week**, because a monotonic
+stack is a new pattern and the tail of a three-hour block is the wrong place to meet it. The week
+lands at four, and [the coverage item](/open#coverage-every-problem-inside-topic-1) carries what
+that says about the rate into Sunday's checkpoint.

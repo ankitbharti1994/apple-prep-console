@@ -4,7 +4,7 @@ kind: gap
 status: open
 opened: 2026-09-08
 order: 1
-problems: [13, 21, 22, 23, 24]
+problems: [13, 21, 22, 23, 24, 25]
 ---
 
 <p>An audit of what has actually been solved, run on 8 Sep. <b>Every problem on the board sits inside topic 1</b> — arrays, strings, two pointers, sliding window, hashing. The plan assumed phase 1 would ramp <em>"easy→medium across core patterns"</em>; it produced depth in one area instead, and nothing noticed because depth and breadth both look like problems getting solved.</p>
@@ -15,7 +15,7 @@ problems: [13, 21, 22, 23, 24]
   <tr><td>Two pointers, opposite ends</td><td>4, 5, 6, 12, 19</td></tr>
   <tr><td>Hashing / frequency</td><td>13, 14, 15, 16</td></tr>
   <tr><td>Heap — size-k selection</td><td>22</td></tr>
-  <tr><td><b>Linked list — pointer relinking</b></td><td><b>23, 24</b></td></tr>
+  <tr><td><b>Linked list — pointer relinking</b></td><td><b>23, 24, 25</b></td></tr>
   <tr><td>Sliding window</td><td>9, 10, 18, 20</td></tr>
   <tr><td>Sort + anchored two pointers</td><td>21</td></tr>
 </table>
@@ -69,4 +69,25 @@ problems: [13, 21, 22, 23, 24]
   <li><b>Three problems in week 4, against a plan of five</b>, and the third is a second linked-list problem — so the shapes table above gains a row-mate rather than a row. <b>The rate is what this item now measures</b>, and three by Wednesday is on track for four.</li>
   <li><b>Still one behind, holding steady rather than slipping further.</b> That distinction is the whole reason to watch rather than correct: a week that stabilises one short is evidence about the rate, and a week that slips further each day is evidence about the plan.</li>
   <li><b>The 15 Sep line stands unchanged: if week 4 lands three or four, that is the real rate</b> — and <a href="/plan">phase 2's curriculum</a> should be resized rather than the sessions squeezed. <b>Sunday's checkpoint decides it</b>, on four days of data rather than on one bad morning.</li>
+</ul>
+
+<h4>18 Sep — the week, with one day off, and the rate it is pointing at</h4>
+
+<p><a href="/coding/25">Linked List Cycle</a> is the third linked-list problem, so the shapes table gains another row-mate rather than a row. <b>Stacks begin next session</b>, which is the next topic to come off.</p>
+
+<table>
+  <tr><th>Day</th><th>Planned</th><th>Actual</th></tr>
+  <tr><td>Mon 14</td><td>Reverse a Linked List</td><td>Partial — stuck 18 min</td></tr>
+  <tr><td>Tue 15</td><td>Merge Two Sorted Lists</td><td>Not run</td></tr>
+  <tr><td>Wed 16</td><td>Linked List Cycle</td><td>Merge Two Sorted Lists</td></tr>
+  <tr><td>Thu 17</td><td>Valid Parentheses</td><td><b>Day off</b></td></tr>
+  <tr><td>Fri 18</td><td>Daily Temperatures</td><td><b>Linked List Cycle</b></td></tr>
+  <tr><td>Sat 19</td><td>DP + showcase</td><td>To settle</td></tr>
+  <tr><td>Sun 20</td><td>Checkpoint</td><td></td></tr>
+</table>
+
+<ul>
+  <li><b>Three against a plan of five, with one day off.</b> Outstanding: Valid Parentheses and Daily Temperatures.</li>
+  <li><b>Saturday, as recommended:</b> DP first hour, <b>Valid Parentheses</b> second, the showcase project if time remains. <b>Daily Temperatures moves to next week</b> — monotonic stack is a new pattern, and the tail of a three-hour session is the wrong place to meet one. The week lands at four.</li>
+  <li><b>The Sunday question this sets up.</b> Three weeks of data said roughly one problem per session across four or five sessions, and week 4 is tracking exactly that. <b>If it lands at four, that is the rate</b> — and <a href="/plan">phase 2's curriculum</a> should be resized rather than the sessions squeezed.</li>
 </ul>
