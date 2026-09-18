@@ -102,6 +102,8 @@ Time Profiler   <span class="cm">// WHERE in the code — zoomed to the hitch wi
     <span class="kw">private</span>(set) <span class="kw">var</span> elapsed: <span class="ty">CFTimeInterval</span> = 0
 
     <span class="kw">func</span> start() {
+        <span class="kw">guard</span> link == <span class="kw">nil</span> <span class="kw">else</span> { <span class="kw">return</span> }   <span class="cm">// a second start would orphan a live link</span>
+        hitches = 0; hitchTime = 0; elapsed = 0   <span class="cm">// each run measures fresh</span>
         link = <span class="ty">CADisplayLink</span>(target: <span class="kw">self</span>, selector: #selector(tick))
         link?.add(to: .main, forMode: .common)
     }
@@ -132,6 +134,6 @@ Time Profiler   <span class="cm">// WHERE in the code — zoomed to the hitch wi
     }
 }</pre>
 
-<p><span class="resolved">two fixes to the supplied version</span> As written in the session it printed <code>hitches / frames</code> — <b>how often</b> a hitch happened, which weighs a 200ms stall the same as a 33ms one. That is the count this section says not to use. It now accumulates <b>time past the expected frame</b> and prints <b>hitch milliseconds per second</b>, the metric above. It also had no <code>stop()</code>: <code>CADisplayLink</code> retains its target, so the monitor and its link kept each other alive after the screen that started it had gone. Call <code>stop()</code> from the owner's teardown.</p>
+<p><span class="resolved">two fixes to the supplied version</span> As written in the session it printed <code>hitches / frames</code> — <b>how often</b> a hitch happened, which weighs a 200ms stall the same as a 33ms one. That is the count this section says not to use. It now accumulates <b>time past the expected frame</b> and prints <b>hitch milliseconds per second</b>, the metric above. It also had no <code>stop()</code>: <code>CADisplayLink</code> retains its target, so the monitor and its link kept each other alive after the screen that started it had gone. Call <code>stop()</code> from the owner's teardown. <code>start()</code> is idempotent — a second call would otherwise overwrite the only reference to a link the run loop is still firing — and each run starts its totals from zero.</p>
 
 <p><b>The decisive experiment for the non-preemption claim:</b> run the monitor, then <code>Thread.sleep(forTimeInterval: 0.040)</code> on the main thread. The prediction is <code>block starts</code>, <code>block ends</code>, then a single ~50ms gap — <b>with no <code>CADisplayLink</code> callbacks in between</b>. If the main thread were sliced, callbacks would appear during the sleep. Swap in <code>DispatchQueue.global().async</code> and the gaps should stay at ~16.7ms throughout.</p>
