@@ -1,10 +1,11 @@
 ---
 title: '<code>@ObservedObject</code> — no ownership, and what that does to state'
 kind: gap
-status: open
+status: closed
 opened: 2026-09-16
+closed: 2026-09-18
 order: 2
-labs: ['20-swiftui-identity-and-state-ownership']
+labs: ['20-swiftui-identity-and-state-ownership', '21-frame-budget-hitches-and-instruments']
 ---
 
 <p>Asked cold in <a href="/internals#20-swiftui-identity-and-state-ownership">the second phase-2 internals session</a>. <code>@State</code> and <code>@StateObject</code> were both correct — private and view-scoped, and <em>the view owns it, initialises once, survives re-creation</em>. <b><code>@ObservedObject</code> was described as surviving on the same terms. It has no terms.</b></p>
@@ -45,3 +46,13 @@ labs: ['20-swiftui-identity-and-state-ownership']
 <p><b>Corrected in-session, which is why it opens rather than closes.</b> That is this record's standing rule and it has a control case: <a href="/open#sendable-stated-backwards">the Sendable close on 31 Aug</a> was a clean in-session repair and the same material faded inside a week.</p>
 
 <p><b>Closes on being re-asked cold in a few days and answered right</b> — specifically on <em>who owns the object</em>, not on reciting the wrapper list, and not on the compressed "does not survive" version.</p>
+
+<p><span class="resolved">closed 18 Sep — re-asked cold, two days on</span> Asked at the top of <a href="/internals#21-frame-budget-hitches-and-instruments">the frame-budget session</a> and answered correctly and in full: <em><code>@StateObject</code> is owned and reattached on recreation; <code>@ObservedObject</code> is handed in by the parent and replaced when the parent updates.</em></p>
+
+<p><b>One word to tighten, as the report paraphrases it:</b> "replaced when the parent updates" is only true when the parent hands in a <em>different instance</em>. A parent that owns one model with <code>@StateObject</code> and passes it down keeps the child observing the same object through every redraw — the third line of the code block above. <b>Ownership came first, which is the close condition; the precision about <em>when</em> replacement happens is the part to keep saying carefully.</b></p>
+
+<ul>
+  <li><b>It closes on the condition written above, and nothing weaker:</b> the answer led with <b>who owns the object</b>, not with the wrapper list, and not with the compressed "does not survive" version this item warned against.</li>
+  <li><b>The same caveat as <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">the setNeedsLayout close</a>:</b> two days is a short interval, shorter than the one <a href="/open#sendable-stated-backwards">the Sendable close</a> faded at.</li>
+  <li><b>Its neighbour from the same session did not close.</b> <a href="/open#identity-changes-discard-state">Identity</a> was re-asked the same morning and missed the same half for the second time — so the two gaps opened on 16 Sep have now separated, and the one that closed is the one that was a list of facts rather than a model.</li>
+</ul>

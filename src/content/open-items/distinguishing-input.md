@@ -4,7 +4,7 @@ kind: correction
 status: open
 opened: 2026-08-25
 order: 1
-problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+problems: [11, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
 labs: ['12-sendable-what-the-compiler-said', '13-string-units-proven', '18-swift-6-strict-concurrency-on-a-real-target']
 notes: ['p-hash', 'p-captures', 'p-conc']
 ---
@@ -207,3 +207,13 @@ func probeTest() {
 </ul>
 
 <p><b>Worth naming what has not been tried:</b> every attempt to fix this has been a resolution to write the test. The two disciplines that actually stuck — <a href="/open#timed-and-narrated-committed-day-one-never-once-done">start the clock before reading</a>, and narration as the thing under test — <b>stuck because they became steps you cannot reach and skip</b>. Writing the distinguishing case <em>before</em> the solution, as the first thing in the file, is the equivalent move and has never been tried.</p>
+
+<h4>18 Sep — named, the input named with it, and the fake written anyway</h4>
+
+<p><span class="kindtag" style="margin-left:0">seventh of the last eight, still no suite</span> <a href="/coding/25">Linked List Cycle</a>. The fake was named first: <b>compare node values rather than node identity.</b> The distinguishing input came with it — <code>1 → 2 → 2 → nil</code>, two nodes sharing a value in a list that ends, where a value check reports a cycle that is not there. <b>No test was written.</b> The second half of this item has now been exercised <b>once since 2 Sep</b>.</p>
+
+<ul>
+  <li><b>Unlike the last three, this fake is not correct-output-wrong-cost.</b> It produces a wrong answer, so it is exactly the kind this technique covers — and <code>1 → 2 → 2</code> is a clean distinguishing input. <b>The case the technique was built for arrived, and it still was not run.</b></li>
+  <li><b>And then the fake was in the code.</b> The <code>Equatable</code> conformance written days earlier compares values, and <code>==</code> was used inside the solution. <b>Naming a fake does not immunise you against writing it</b> — especially when it arrives as helper code written for a different purpose. A two-line test on <code>1 → 2 → 2</code> would have caught it the moment it ran.</li>
+  <li>The move named on 16 Sep — <b>write the distinguishing case first, as the first thing in the file</b> — would have caught this one before the solution existed. It has still never been tried.</li>
+</ul>

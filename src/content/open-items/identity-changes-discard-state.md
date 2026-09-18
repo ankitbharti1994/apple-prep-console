@@ -4,7 +4,7 @@ kind: gap
 status: open
 opened: 2026-09-16
 order: 2
-labs: ['20-swiftui-identity-and-state-ownership']
+labs: ['20-swiftui-identity-and-state-ownership', '21-frame-budget-hitches-and-instruments']
 ---
 
 <p>Asked cold in <a href="/internals#20-swiftui-identity-and-state-ownership">the SwiftUI session</a>. <b>The performance half was held and it was right:</b> identity drives diffing, so structure the view tree to avoid refreshing everything. <b>The larger half was absent.</b></p>
@@ -41,3 +41,15 @@ ProfileView().id(userID)</pre>
 <p>It also sharpens <a href="/open#the-anyview-struct-deferred">the <code>AnyView?</code> struct parked on 12 Sep</a>, whose third option — remove the erasure — was already listed as the only one that solves the problem rather than placing it. <b>This is the reason why.</b></p>
 
 <p><b>Closes on being re-asked cold and reaching state lifetime first</b>, rather than the diffing answer with lifetime added when prompted.</p>
+
+<h4>18 Sep — re-asked, and the same half missing</h4>
+
+<p><span class="kindtag" style="margin-left:0">second miss</span> Re-asked cold at the top of <a href="/internals#21-frame-budget-hitches-and-instruments">the frame-budget session</a>. The answer was the performance half again — <em>"diff gets created, view re-renders."</em> <b>State lifetime did not appear</b>, with or without a prompt.</p>
+
+<ul>
+  <li><b>The missing half, once more in the shortest form:</b> when identity changes, SwiftUI treats it as a <b>different view</b> and <b>destroys its <code>@State</code></b>. <b>Not a re-render — a teardown.</b> Same pixels, state silently gone.</li>
+  <li><b>What it explains, which is why it is worth drilling:</b> a text field that empties itself, a toggle that resets, a <code>ForEach</code> with index-based ids losing state on reorder. Each of those looks impossible until identity is read as lifetime.</li>
+  <li><b>The report for this session asked for identity to be promoted from a loose re-ask to a tracked item.</b> It has been one here since 16 Sep; what changes is that it is now <b>two misses on the same half</b>, 16 and 18 Sep, while <a href="/open#observedobject-does-not-survive-re-creation">its neighbour from the same morning closed</a>.</li>
+</ul>
+
+<p>Close condition unchanged: <b>re-asked cold and reaching state lifetime first.</b> The word to listen for is <em>teardown</em>; "re-render" in the first sentence is the miss.</p>
