@@ -40,13 +40,15 @@ tags: ['uikit', 'performance', 'instruments', 'run-loop', 'hitches', 'recall']
 
 <p><b>No — binary per frame.</b> No partial effect, no leftover, and no credit for being nearly on time: 17ms and 20ms cost exactly the same.</p>
 
+<p><b>The table assumes the work starts on a refresh boundary</b> — as a block dispatched from a display-link callback does. Start mid-frame and what matters is the budget <em>left</em>, not the duration: a 5ms block beginning 2ms before a deadline crosses it and can cost a frame, and a 17ms block can cost two. Every row is a best case; the 40ms row just shows the range explicitly.</p>
+
 <table>
-  <tr><th>Work</th><th>Frames missed</th></tr>
+  <tr><th>Work, starting on a boundary</th><th>Frames missed</th></tr>
   <tr><td>5ms</td><td>0</td></tr>
   <tr><td>16ms</td><td>0</td></tr>
   <tr><td>17ms</td><td>1</td></tr>
   <tr><td>20ms</td><td>1</td></tr>
-  <tr><td>40ms</td><td>2–3, depending on alignment</td></tr>
+  <tr><td>40ms</td><td>2 — and 3 if it starts mid-frame</td></tr>
 </table>
 
 <p>The 40ms range is honest rather than vague: start on a boundary and it misses two; start mid-frame and it misses three.</p>
@@ -96,29 +98,40 @@ Time Profiler   <span class="cm">// WHERE in the code — zoomed to the hitch wi
     <span class="kw">private var</span> link: <span class="ty">CADisplayLink</span>?
     <span class="kw">private var</span> last: <span class="ty">CFTimeInterval</span> = 0
     <span class="kw">private</span>(set) <span class="kw">var</span> hitches = 0
-    <span class="kw">private</span>(set) <span class="kw">var</span> frames = 0
+    <span class="kw">private</span>(set) <span class="kw">var</span> hitchTime: <span class="ty">CFTimeInterval</span> = 0   <span class="cm">// time past the expected frame</span>
+    <span class="kw">private</span>(set) <span class="kw">var</span> elapsed: <span class="ty">CFTimeInterval</span> = 0
 
     <span class="kw">func</span> start() {
         link = <span class="ty">CADisplayLink</span>(target: <span class="kw">self</span>, selector: #selector(tick))
         link?.add(to: .main, forMode: .common)
     }
 
+    <span class="cm">// the display link retains its target — without this, the monitor never dies</span>
+    <span class="kw">func</span> stop() {
+        link?.invalidate()
+        link = <span class="kw">nil</span>
+        last = 0
+    }
+
     <span class="kw">@objc private func</span> tick(_ link: <span class="ty">CADisplayLink</span>) {
         <span class="kw">defer</span> { last = link.timestamp }
         <span class="kw">guard</span> last != 0 <span class="kw">else</span> { <span class="kw">return</span> }
 
-        frames += 1
         <span class="kw">let</span> actual = link.timestamp - last
         <span class="kw">let</span> expected = link.duration          <span class="cm">// not hardcoded: 8.33 on ProMotion</span>
+        elapsed += actual
 
         <span class="kw">if</span> actual &gt; expected * 1.5 {
             hitches += 1
+            hitchTime += actual - expected
             <span class="kw">let</span> missed = <span class="ty">Int</span>((actual / expected).rounded()) - 1
-            print(<span class="ty">String</span>(format: <span class="st">"hitch: %.1fms, %d frame(s) missed — ratio %.2f%%"</span>,
+            print(<span class="ty">String</span>(format: <span class="st">"hitch: %.1fms, %d frame(s) missed — %.1f ms/s"</span>,
                          actual * 1000, missed,
-                         <span class="ty">Double</span>(hitches) / <span class="ty">Double</span>(frames) * 100))
+                         hitchTime * 1000 / elapsed))
         }
     }
 }</pre>
+
+<p><span class="resolved">two fixes to the supplied version</span> As written in the session it printed <code>hitches / frames</code> — <b>how often</b> a hitch happened, which weighs a 200ms stall the same as a 33ms one. That is the count this section says not to use. It now accumulates <b>time past the expected frame</b> and prints <b>hitch milliseconds per second</b>, the metric above. It also had no <code>stop()</code>: <code>CADisplayLink</code> retains its target, so the monitor and its link kept each other alive after the screen that started it had gone. Call <code>stop()</code> from the owner's teardown.</p>
 
 <p><b>The decisive experiment for the non-preemption claim:</b> run the monitor, then <code>Thread.sleep(forTimeInterval: 0.040)</code> on the main thread. The prediction is <code>block starts</code>, <code>block ends</code>, then a single ~50ms gap — <b>with no <code>CADisplayLink</code> callbacks in between</b>. If the main thread were sliced, callbacks would appear during the sleep. Swap in <code>DispatchQueue.global().async</code> and the gaps should stay at ~16.7ms throughout.</p>

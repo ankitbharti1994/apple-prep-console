@@ -49,6 +49,8 @@ labs: ['20-swiftui-identity-and-state-ownership', '21-frame-budget-hitches-and-i
 
 <p><span class="resolved">closed 18 Sep — re-asked cold, two days on</span> Asked at the top of <a href="/internals#21-frame-budget-hitches-and-instruments">the frame-budget session</a> and answered correctly and in full: <em><code>@StateObject</code> is owned and reattached on recreation; <code>@ObservedObject</code> is handed in by the parent and replaced when the parent updates.</em></p>
 
+<p><b>One word to tighten, as the report paraphrases it:</b> "replaced when the parent updates" is only true when the parent hands in a <em>different instance</em>. A parent that owns one model with <code>@StateObject</code> and passes it down keeps the child observing the same object through every redraw — the third line of the code block above. <b>Ownership came first, which is the close condition; the precision about <em>when</em> replacement happens is the part to keep saying carefully.</b></p>
+
 <ul>
   <li><b>It closes on the condition written above, and nothing weaker:</b> the answer led with <b>who owns the object</b>, not with the wrapper list, and not with the compressed "does not survive" version this item warned against.</li>
   <li><b>The same caveat as <a href="/open#setneedslayout-and-layoutifneeded-came-out-backwards">the setNeedsLayout close</a>:</b> two days is a short interval, shorter than the one <a href="/open#sendable-stated-backwards">the Sendable close</a> faded at.</li>

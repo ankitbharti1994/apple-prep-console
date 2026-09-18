@@ -24,7 +24,7 @@ blocks:
     title: Section 21 — frame budget, hitches, and the Instruments workflow
     href: /internals#21-frame-budget-hitches-and-instruments
     bullets:
-      - '<b>Closed: <code>@StateObject</code> vs <code>@ObservedObject</code>.</b> Re-asked cold and answered in full — owned and reattached, against handed in and replaced. <a href="/open#observedobject-does-not-survive-re-creation">It led with ownership</a>, which was the condition'
+      - '<b>Closed: <code>@StateObject</code> vs <code>@ObservedObject</code>.</b> Re-asked cold and answered in full — owned and reattached, against handed in by the parent — and replaced only when the parent hands in a different instance, not on every redraw. <a href="/open#observedobject-does-not-survive-re-creation">It led with ownership</a>, which was the condition'
       - '<b>Identity — still failing, second time.</b> Again <em>"diff gets created, view re-renders."</em> The missing half: a changed identity is a <b>different view</b>, and its <code>@State</code> is <b>destroyed</b>. Not a re-render, a teardown. <a href="/open#identity-changes-discard-state">Two misses, tracked</a>'
       - '<b>Q3–Q5, Instruments.</b> Hitches was the right instinct, and it finds <em>when</em>, not <em>why</em>. A 40ms method was restated rather than measured <b>against</b> anything — the budget, the thread, the call count. <code>os_signpost</code> was <em>"no idea"</em>, and it is the piece that connects the workflow'
       - '<b>The correction of the session: the main thread does not time-slice.</b> Commit is a run loop observer on the same thread, after your block returns. <b>Nobody interrupts you to draw</b> — which is why "move it off the main thread" is not general responsiveness advice'

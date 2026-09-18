@@ -18,7 +18,8 @@ const spec: InspectorSpec = {
       title: 'Closed — correct and complete, two days after the miss',
       body: withBaseHtml(
         '<code>@StateObject</code> is <b>owned</b>, and reattached when the view struct is recreated. ' +
-          '<code>@ObservedObject</code> is <b>handed in by the parent</b>, and replaced when the parent updates. ' +
+          '<code>@ObservedObject</code> is <b>handed in by the parent</b> — as the report paraphrases it, "replaced when the parent updates". ' +
+          '<b>Tightened: it is replaced only when the parent hands in a <em>different instance</em>.</b> A parent that owns one model and passes it down keeps the child observing the same object across every redraw. ' +
           '<b>Who owns the object</b> — the question that had never been asked on 16 Sep — was the first thing in the answer. ' +
           '<a href="/open#observedobject-does-not-survive-re-creation">The item closes</a> on exactly its own condition.',
       ),
@@ -26,7 +27,7 @@ const spec: InspectorSpec = {
         {
           label: 'the rule, as it came back',
           tone: 'good',
-          text: '@StateObject    owned — reattached on recreation\n@ObservedObject handed in — replaced when the\n                parent updates',
+          text: '@StateObject    owned — reattached on recreation\n@ObservedObject handed in — lasts as long as the\n                parent keeps passing the same instance',
         },
       ],
     },
